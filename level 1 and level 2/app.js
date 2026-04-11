@@ -1,0 +1,623 @@
+/**
+ * app.js — Chitra Katha main application logic
+ *
+ * Screens:  home → identify → level1 → level2
+ * Modes:    camera  |  upload
+ */
+
+/* ------------------------------------------------------------------ */
+/*  State                                                               */
+/* ------------------------------------------------------------------ */
+
+let webcam           = null;   // Classifier webcam controller
+let rafId            = null;   // requestAnimationFrame id for camera loop
+let mode             = null;   // "camera" | "upload"
+let leafletMap       = null;   // Leaflet map instance
+let currentArtKey    = null;   // key into ARTFORMS for the identified piece
+let currentImageSrc  = null;   // data-URL of the image used for identification
+
+
+/* ------------------------------------------------------------------ */
+/*  Screen transitions                                                  */
+/* ------------------------------------------------------------------ */
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  Camera lifecycle                                                    */
+/* ------------------------------------------------------------------ */
+
+async function startCamera() {
+  const container = document.getElementById('camera-container');
+  // Clear any previous video element
+  container.innerHTML = '';
+
+  try {
+    await Classifier.loadModel();
+    webcam = await Classifier.startWebcam(container);
+    // Drive the camera frame updates
+    function loop() {
+      if (webcam) webcam.update();
+      rafId = requestAnimationFrame(loop);
+    }
+    loop();
+  } catch (err) {
+    console.error('[Camera]', err);
+    showErrorState(err.message);
+  }
+}
+
+function stopCamera() {
+  if (rafId)  { cancelAnimationFrame(rafId); rafId = null; }
+  if (webcam) { webcam.stop(); webcam = null; }
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  Identify flow                                                       */
+/* ------------------------------------------------------------------ */
+
+function showLoadingState() {
+  setStateOverlay('state-loading');
+  document.getElementById('identify-footer').style.display = 'none';
+}
+
+function showErrorState(msg) {
+  if (msg) document.querySelector('#state-error .state-body').textContent = msg;
+  setStateOverlay('state-error');
+  document.getElementById('identify-footer').style.display = 'none';
+}
+
+function clearStateOverlays() {
+  document.querySelectorAll('.state-overlay').forEach(el => {
+    el.style.display = 'none';
+  });
+  document.getElementById('identify-footer').style.display = 'block';
+}
+
+function setStateOverlay(id) {
+  document.querySelectorAll('.state-overlay').forEach(el => {
+    el.style.display = el.id === id ? 'flex' : 'none';
+  });
+}
+
+async function runIdentify() {
+  showLoadingState();
+
+  try {
+    await Classifier.loadModel();
+
+    let result;
+    if (mode === 'camera') {
+      webcam.update();
+      // Capture the frame now, before we stop the camera
+      currentImageSrc = webcam.canvas.toDataURL('image/jpeg', 0.92);
+      result = await Classifier.predictFromCanvas(webcam.canvas);
+    } else {
+      const img = document.getElementById('preview-img');
+      currentImageSrc = img.src;
+      result = await Classifier.predictFromImageElement(img);
+    }
+
+    // Trim any invisible whitespace the model might return
+    const className = result.className.trim();
+    console.log('[Identify] class:', className, '| confidence:', (result.probability * 100).toFixed(1) + '%');
+    console.log('[Identify] above threshold:', result.aboveThreshold);
+    console.log('[Identify] ARTFORMS has key:', !!ARTFORMS[className]);
+
+    // Both non-craft classes the model knows about
+    const NON_CRAFT = ['Not a  craft', 'Painting but not crafts'];
+
+    if (NON_CRAFT.includes(className) || !result.aboveThreshold) {
+      showErrorState("This doesn't look like one of the folk art forms we know yet. Try a different image.");
+      return;
+    }
+
+    if (!ARTFORMS[className]) {
+      // Log exact character codes to catch invisible character mismatches
+      console.error('[Identify] Unknown key:', [...className].map(c => c.charCodeAt(0)));
+      showErrorState(`Recognised as "${className}" but we don't have a profile for it yet.`);
+      return;
+    }
+
+    currentArtKey = className;
+    stopCamera();
+    populateLevel1(className, result.probability);
+
+    // Clear overlays BEFORE transitioning so they don't flash
+    clearStateOverlays();
+    showScreen('screen-level1');
+
+    // Init map — wrapped in try/catch so a Leaflet failure doesn't break the page
+    setTimeout(() => {
+      try {
+        initMap(className);
+      } catch (mapErr) {
+        console.warn('[Map] Leaflet failed to load, skipping map:', mapErr.message);
+        document.getElementById('l1-map').textContent = 'Map unavailable offline.';
+      }
+    }, 150);
+
+  } catch (err) {
+    console.error('[Identify] Error:', err);
+    showErrorState("Something went wrong. Please try again.");
+  }
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  Level 1 — populate content                                         */
+/* ------------------------------------------------------------------ */
+
+function populateLevel1(key, probability) {
+  const art = ARTFORMS[key];
+
+  document.getElementById('l1-region').textContent  = art.region.toUpperCase();
+  document.getElementById('l1-name').textContent    = art.name;
+  document.getElementById('l1-tagline').textContent = art.tagline;
+  document.getElementById('l1-history').textContent = art.history;
+  document.getElementById('l1-community').textContent = art.community;
+
+  const pct = Math.round(probability * 100);
+  document.getElementById('confidence-pill').textContent = `${pct}% match`;
+
+  // Materials list
+  const matList = document.getElementById('l1-materials');
+  matList.innerHTML = art.materials.map(m => `<li>${m}</li>`).join('');
+
+  // Tools list
+  const toolList = document.getElementById('l1-tools');
+  toolList.innerHTML = art.tools.map(t => `<li>${t}</li>`).join('');
+
+  // Level 2 art name
+  document.getElementById('l2-artname').textContent = art.name;
+
+  // Scroll to top of level 1
+  document.getElementById('screen-level1').scrollTop = 0;
+}
+
+function initMap(key) {
+  const art    = ARTFORMS[key];
+  const mapEl  = document.getElementById('l1-map');
+
+  // Destroy previous map instance if one exists
+  if (leafletMap) {
+    leafletMap.remove();
+    leafletMap = null;
+  }
+
+  leafletMap = L.map(mapEl, { zoomControl: true, attributionControl: false });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 12
+  }).addTo(leafletMap);
+
+  // Custom terracotta marker icon
+  const icon = L.divIcon({
+    html: `<div style="
+      width:14px; height:14px;
+      background:#B94012;
+      border:3px solid #FDF8EE;
+      border-radius:50%;
+      box-shadow:0 1px 4px rgba(0,0,0,0.4);
+    "></div>`,
+    className: '',
+    iconSize:   [14, 14],
+    iconAnchor: [7, 7],
+  });
+
+  L.marker(art.coords, { icon })
+    .addTo(leafletMap)
+    .bindPopup(`<strong>${art.name}</strong><br>${art.region}`, { closeButton: false })
+    .openPopup();
+
+  leafletMap.setView(art.coords, 6);
+  leafletMap.invalidateSize();
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  Level 3 — contour extraction (Sobel edge detection in JS)          */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Mirrors the OpenCV preprocessing pipeline in the browser:
+ *   grayscale → gaussian blur → sobel gradients → threshold → invert
+ * Output: warm parchment background (#F7EDD0) with dark brown edges.
+ */
+function buildContourCanvas(imageSrc, callback) {
+  const SIZE = 512;
+  const img  = new Image();
+  img.onload = () => {
+    // --- Draw source image centred into a square canvas ---
+    const srcCanvas = document.createElement('canvas');
+    srcCanvas.width = srcCanvas.height = SIZE;
+    const sCtx = srcCanvas.getContext('2d');
+
+    // Cream background so letterbox areas blend with the UI
+    sCtx.fillStyle = '#F7EDD0';
+    sCtx.fillRect(0, 0, SIZE, SIZE);
+
+    const ratio = img.naturalWidth / img.naturalHeight;
+    let dw = SIZE, dh = SIZE;
+    if (ratio > 1) dh = SIZE / ratio;
+    else           dw = SIZE * ratio;
+    sCtx.drawImage(img, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
+
+    const pixels = sCtx.getImageData(0, 0, SIZE, SIZE).data;
+
+    // --- Grayscale ---
+    const gray = new Uint8Array(SIZE * SIZE);
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      gray[i] = Math.round(
+        0.299 * pixels[i * 4] +
+        0.587 * pixels[i * 4 + 1] +
+        0.114 * pixels[i * 4 + 2]
+      );
+    }
+
+    // --- Gaussian blur (5×5 approximation) ---
+    const kernel5 = [
+      1,  4,  6,  4, 1,
+      4, 16, 24, 16, 4,
+      6, 24, 36, 24, 6,
+      4, 16, 24, 16, 4,
+      1,  4,  6,  4, 1,
+    ];
+    const k5sum = 256;
+    const blurred = new Uint8Array(SIZE * SIZE);
+    for (let y = 2; y < SIZE - 2; y++) {
+      for (let x = 2; x < SIZE - 2; x++) {
+        let sum = 0;
+        for (let ky = -2; ky <= 2; ky++)
+          for (let kx = -2; kx <= 2; kx++)
+            sum += gray[(y + ky) * SIZE + (x + kx)] * kernel5[(ky + 2) * 5 + (kx + 2)];
+        blurred[y * SIZE + x] = sum / k5sum;
+      }
+    }
+
+    // --- Sobel gradients ---
+    const mag = new Float32Array(SIZE * SIZE);
+    let maxMag = 0;
+    for (let y = 1; y < SIZE - 1; y++) {
+      for (let x = 1; x < SIZE - 1; x++) {
+        const gx =
+          -    blurred[(y - 1) * SIZE + (x - 1)] - 2 * blurred[y * SIZE + (x - 1)] -     blurred[(y + 1) * SIZE + (x - 1)] +
+               blurred[(y - 1) * SIZE + (x + 1)] + 2 * blurred[y * SIZE + (x + 1)] +     blurred[(y + 1) * SIZE + (x + 1)];
+        const gy =
+          -    blurred[(y - 1) * SIZE + (x - 1)] - 2 * blurred[(y - 1) * SIZE + x] -     blurred[(y - 1) * SIZE + (x + 1)] +
+               blurred[(y + 1) * SIZE + (x - 1)] + 2 * blurred[(y + 1) * SIZE + x] +     blurred[(y + 1) * SIZE + (x + 1)];
+        mag[y * SIZE + x] = Math.sqrt(gx * gx + gy * gy);
+        if (mag[y * SIZE + x] > maxMag) maxMag = mag[y * SIZE + x];
+      }
+    }
+
+    // --- Threshold + render (parchment bg, dark-brown edges) ---
+    const threshold = maxMag * 0.12;  // 12% of max gradient — adjust for finer/bolder lines
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width = outCanvas.height = SIZE;
+    const oCtx   = outCanvas.getContext('2d');
+    const outImg  = oCtx.createImageData(SIZE, SIZE);
+    const d       = outImg.data;
+
+    for (let i = 0; i < SIZE * SIZE; i++) {
+      const isEdge = mag[i] > threshold;
+      // Parchment: rgb(247, 237, 208) | Deep brown: rgb(58, 26, 2)
+      d[i * 4]     = isEdge ? 58  : 247;
+      d[i * 4 + 1] = isEdge ? 26  : 237;
+      d[i * 4 + 2] = isEdge ? 2   : 208;
+      d[i * 4 + 3] = 255;
+    }
+    oCtx.putImageData(outImg, 0, 0);
+    callback(outCanvas);
+  };
+  img.src = imageSrc;
+}
+
+async function showLevel3() {
+  const art = ARTFORMS[currentArtKey];
+  document.getElementById('l3-artname').textContent = art.name;
+  showScreen('screen-level3');
+  document.getElementById('screen-level3').scrollTop = 0;
+
+  const processing = document.getElementById('contour-processing');
+  const canvas     = document.getElementById('contour-canvas');
+  processing.style.display = 'flex';
+  canvas.style.display     = 'none';
+
+  // Try the server's OpenCV pipeline first; fall back to the JS Sobel
+  // implementation if the server isn't running.
+  try {
+    const refDataURL = await toDataURL(currentImageSrc);
+    const resp = await fetch('/contour', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ image: refDataURL }),
+    });
+    if (!resp.ok) throw new Error('contour endpoint error');
+    const { contour } = await resp.json();
+
+    // Paint the returned PNG onto the canvas
+    const img = new Image();
+    img.onload = () => {
+      canvas.width  = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+      processing.style.display = 'none';
+      canvas.style.display     = 'block';
+    };
+    img.src = contour;
+
+  } catch (_) {
+    // Server not running — fall back to the in-browser Sobel implementation
+    setTimeout(() => {
+      buildContourCanvas(currentImageSrc, (result) => {
+        canvas.width  = result.width;
+        canvas.height = result.height;
+        canvas.getContext('2d').drawImage(result, 0, 0);
+        processing.style.display = 'none';
+        canvas.style.display     = 'block';
+      });
+    }, 50);
+  }
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  Navigation helpers                                                  */
+/* ------------------------------------------------------------------ */
+
+function goHome() {
+  stopCamera();
+  clearStateOverlays();
+  // Reset identify screen for next use
+  document.getElementById('camera-wrap').style.display       = 'block';
+  document.getElementById('upload-preview').style.display    = 'none';
+  document.getElementById('identify-footer').style.display   = 'block';
+  showScreen('screen-home');
+}
+
+
+/* ------------------------------------------------------------------ */
+/*  Event listeners                                                    */
+/* ------------------------------------------------------------------ */
+
+// Home — camera
+document.getElementById('btn-camera').addEventListener('click', async () => {
+  mode = 'camera';
+  document.getElementById('identify-title').textContent   = 'Point at the artwork';
+  document.getElementById('camera-wrap').style.display    = 'block';
+  document.getElementById('upload-preview').style.display = 'none';
+  clearStateOverlays();
+  showScreen('screen-identify');
+  await startCamera();
+});
+
+// Home — upload (triggers hidden file input)
+document.getElementById('btn-upload').addEventListener('click', () => {
+  document.getElementById('file-input').click();
+});
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  mode = 'upload';
+  const url = URL.createObjectURL(file);
+  const img  = document.getElementById('preview-img');
+  img.src    = url;
+
+  document.getElementById('identify-title').textContent   = 'Review your image';
+  document.getElementById('camera-wrap').style.display    = 'none';
+  document.getElementById('upload-preview').style.display = 'flex';
+  clearStateOverlays();
+  showScreen('screen-identify');
+
+  // Reset file input so the same file can be re-selected
+  e.target.value = '';
+});
+
+// Identify button
+document.getElementById('btn-identify').addEventListener('click', runIdentify);
+
+// Try again button (error state)
+document.getElementById('btn-try-again').addEventListener('click', () => {
+  clearStateOverlays();
+  if (mode === 'camera') startCamera();
+});
+
+// Back from identify → home
+document.getElementById('identify-back').addEventListener('click', goHome);
+
+// Back from level 1 → home
+document.getElementById('l1-back').addEventListener('click', goHome);
+
+// Go Deeper → level 2
+document.getElementById('btn-go-deeper').addEventListener('click', () => {
+  showScreen('screen-level2');
+  document.getElementById('screen-level2').scrollTop = 0;
+});
+
+// Back from level 2 → level 1
+document.getElementById('l2-back').addEventListener('click', () => {
+  showScreen('screen-level1');
+  // Re-invalidate map in case it lost size during transition
+  setTimeout(() => { if (leafletMap) leafletMap.invalidateSize(); }, 100);
+});
+
+// Try Painting → level 3
+document.getElementById('btn-try-painting').addEventListener('click', showLevel3);
+
+// Back from level 3 → level 2
+document.getElementById('l3-back').addEventListener('click', () => {
+  showScreen('screen-level2');
+});
+
+
+/* ------------------------------------------------------------------ */
+/*  Level 3 — Upload & Compare                                         */
+/* ------------------------------------------------------------------ */
+
+const API_URL = '/compare';
+
+/**
+ * Guarantee a base64 data-URL regardless of what currentImageSrc holds.
+ * - data:  URLs are returned as-is (camera capture path)
+ * - blob:  URLs (upload path) are drawn onto a canvas first
+ */
+function toDataURL(src) {
+  if (src.startsWith('data:')) return Promise.resolve(src);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas');
+      c.width  = img.naturalWidth;
+      c.height = img.naturalHeight;
+      c.getContext('2d').drawImage(img, 0, 0);
+      resolve(c.toDataURL('image/jpeg', 0.92));
+    };
+    img.onerror = () => reject(new Error('Could not load reference image'));
+    img.src = src;
+  });
+}
+
+// Score labels by range
+function scoreLabel(score) {
+  if (score >= 90) return 'Near perfect!';
+  if (score >= 75) return 'Great work!';
+  if (score >= 55) return 'Well done!';
+  if (score >= 35) return 'Good start!';
+  return 'Keep practising!';
+}
+
+// Animate the SVG score ring (circumference = 2π × 50 ≈ 314)
+function animateScoreRing(score) {
+  const circle  = document.getElementById('score-ring-circle');
+  const offset  = 314 * (1 - score / 100);
+  circle.style.strokeDashoffset = offset;
+
+  // Colour the arc by score
+  if      (score >= 75) circle.style.stroke = 'var(--forest)';
+  else if (score >= 50) circle.style.stroke = 'var(--ochre)';
+  else                  circle.style.stroke = 'var(--terracotta)';
+}
+
+function showCompareResults(data) {
+  const { score, heatmap, zones } = data;
+
+  // Score ring
+  document.getElementById('score-number').textContent = Math.round(score);
+  document.getElementById('score-label').textContent  = scoreLabel(score);
+  // Trigger animation after a short delay so the transition fires
+  setTimeout(() => animateScoreRing(score), 60);
+
+  // Heatmap
+  document.getElementById('heatmap-img').src = heatmap;
+
+  // Zone feedback
+  const list = document.getElementById('zone-list');
+  list.innerHTML = '';
+  if (!zones || zones.length === 0) {
+    list.innerHTML = '<p class="zone-all-good">✦ No significant deviations — great tracing!</p>';
+  } else {
+    zones.forEach(z => {
+      const row = document.createElement('div');
+      row.className = 'zone-row';
+      row.innerHTML = `
+        <span class="zone-badge ${z.severity}">${z.severity}</span>
+        <span class="zone-name">${z.zone}</span>
+      `;
+      list.appendChild(row);
+    });
+  }
+
+  // Show panel
+  document.getElementById('compare-results').style.display = 'flex';
+}
+
+function resetCompareUI() {
+  document.getElementById('compare-results').style.display   = 'none';
+  document.getElementById('compare-loading').style.display   = 'none';
+  document.getElementById('score-ring-circle').style.strokeDashoffset = '314';
+  document.getElementById('score-number').textContent = '–';
+  document.getElementById('score-label').textContent  = '';
+  document.getElementById('heatmap-img').src = '';
+  document.getElementById('zone-list').innerHTML = '';
+}
+
+// Reset compare panel whenever level 3 is freshly entered
+document.getElementById('btn-try-painting').addEventListener('click', resetCompareUI, true);
+
+// Button click → open file picker
+document.getElementById('btn-compare').addEventListener('click', () => {
+  document.getElementById('compare-file-input').click();
+});
+
+// File selected → run comparison
+document.getElementById('compare-file-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  e.target.value = ''; // allow re-selecting same file
+
+  // Hide previous results, show spinner
+  document.getElementById('compare-results').style.display = 'none';
+  document.getElementById('compare-loading').style.display = 'flex';
+  document.getElementById('btn-compare').disabled = true;
+
+  // Read the child image as a data-URL
+  const childDataURL = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = ev => resolve(ev.target.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+  try {
+    // Convert blob: URLs to base64 data URLs the server can decode
+    const refDataURL = await toDataURL(currentImageSrc);
+
+    let resp;
+    try {
+      resp = await fetch(API_URL, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ reference: refDataURL, child: childDataURL }),
+      });
+    } catch (_networkErr) {
+      // fetch() itself threw — server is not reachable at all
+      throw { isNetwork: true };
+    }
+
+    if (!resp.ok) {
+      const body = await resp.json().catch(() => ({}));
+      throw new Error(body.error || `Server error ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    showCompareResults(data);
+
+  } catch (err) {
+    console.error('[Compare]', err);
+    document.getElementById('compare-results').style.display = 'flex';
+    document.getElementById('score-number').textContent = '–';
+
+    if (err.isNetwork) {
+      document.getElementById('score-label').textContent = '';
+      document.getElementById('zone-list').innerHTML =
+        `<p class="zone-all-good" style="color:var(--terracotta)">
+           Could not reach the comparison server.<br>
+           Make sure <code>python level3/server.py</code> is running.
+         </p>`;
+    } else {
+      document.getElementById('score-label').textContent = err.message || 'Something went wrong';
+      document.getElementById('zone-list').innerHTML = '';
+    }
+  } finally {
+    document.getElementById('compare-loading').style.display = 'none';
+    document.getElementById('btn-compare').disabled = false;
+  }
+});

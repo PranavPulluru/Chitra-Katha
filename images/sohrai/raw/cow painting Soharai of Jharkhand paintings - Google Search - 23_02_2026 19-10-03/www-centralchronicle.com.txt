@@ -1,0 +1,3 @@
+https://encrypted-tbn2.gstatic.com/faviconV2?url=https://www.centralchronicle.com&client=IMAGE_SEARCH&size=16&type=FAVICON&fallback_opts=TYPE,SIZE,URL
+
+Cannot download image; STATUS_CODE_404
