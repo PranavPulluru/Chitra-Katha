@@ -1,0 +1,41 @@
+# Model weights & checkpoints
+*.pth
+*.pt
+*.ckpt
+*.bin
+*.safetensors
+
+# Training data
+data/
+datasets/
+*.csv
+*.json
+level3/data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyd
+.venv/
+venv/
+*.egg-info/
+
+# Large image datasets
+*.zip
+*.tar
+*.tar.gz
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Images (except step images)
+*.png
+*.jpg
+*.jpeg
+!level3v2/step_images/
+!level3v2/step_images/**
+!level3v2/**/*.png
