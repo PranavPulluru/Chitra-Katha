@@ -1,0 +1,758 @@
+/* ============================================================
+   level3v2/style.css — Chitra Katha Level 3 v2
+   Extends (does not replace) the main style.css.
+   Palette variables are already declared in :root by style.css.
+   ============================================================ */
+
+
+/* ============================================================
+   SCREEN: screen-l3-select — Art Form Selection Grid
+   ============================================================ */
+
+#screen-l3-select {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.l3s-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 10px;
+  background: var(--white-warm);
+  border-bottom: 2px solid var(--parchment);
+  flex-shrink: 0;
+}
+
+.l3s-intro {
+  padding: 18px 20px 4px;
+  text-align: center;
+}
+
+.l3s-intro h2 {
+  font-family: 'Rozha One', serif;
+  color: var(--deep-brown);
+  font-size: 1.4rem;
+  margin-bottom: 6px;
+}
+
+.l3s-intro p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.l3s-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+  padding: 18px 16px 32px;
+}
+
+/* Art form tile */
+.l3s-tile {
+  background: var(--white-warm);
+  border: 2px solid var(--parchment);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+.l3s-tile:hover,
+.l3s-tile:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(58, 26, 2, 0.18);
+  border-color: var(--terracotta);
+}
+
+.l3s-tile:active {
+  transform: translateY(0);
+}
+
+/* Thumbnail area */
+.l3s-tile-img-wrap {
+  position: relative;
+  width: 100%;
+  padding-top: 75%;   /* 4:3 aspect ratio */
+  background: var(--parchment);
+  overflow: hidden;
+}
+
+.l3s-tile-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.l3s-tile-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--terracotta);
+  opacity: 0.5;
+}
+
+/* Show ornament fallback when image fails to load */
+.l3s-tile-img-wrap.l3s-no-img .l3s-tile-fallback {
+  display: flex;
+}
+
+/* Tile text */
+.l3s-tile-info {
+  padding: 10px 10px 12px;
+}
+
+.l3s-tile-name {
+  font-family: 'Rozha One', serif;
+  font-size: 0.9rem;
+  color: var(--deep-brown);
+  margin-bottom: 2px;
+}
+
+.l3s-tile-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  line-height: 1.35;
+}
+
+.l3s-tile-steps {
+  display: inline-block;
+  background: var(--terracotta);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+}
+
+
+/* ============================================================
+   SCREEN: screen-l3-tutorial — Step-by-step tutorial
+   ============================================================ */
+
+#screen-l3-tutorial {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding-bottom: 80px; /* space for fixed nav bar */
+}
+
+/* Header */
+.l3t-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px 10px;
+  background: var(--white-warm);
+  border-bottom: 2px solid var(--parchment);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.l3t-title {
+  flex: 1;
+  font-family: 'Rozha One', serif;
+  font-size: 1rem;
+  color: var(--deep-brown);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.l3t-counter {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--parchment);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+/* Progress bar */
+.l3t-progress-track {
+  height: 4px;
+  background: var(--parchment);
+  flex-shrink: 0;
+}
+
+.l3t-progress-bar {
+  height: 100%;
+  background: var(--terracotta);
+  transition: width 0.35s ease;
+  border-radius: 0 2px 2px 0;
+}
+
+/* Step reference image */
+.l3t-image-wrap {
+  width: 100%;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.l3t-image {
+  width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Placeholder styling when image fails */
+.l3t-image-error {
+  opacity: 0.35;
+  filter: sepia(0.4);
+}
+
+/* Instruction card */
+.l3t-instruction-card {
+  background: var(--white-warm);
+  border-top: 3px solid var(--terracotta);
+  padding: 16px 20px 20px;
+  flex: 1;
+}
+
+.l3t-step-badge {
+  display: inline-block;
+  background: var(--terracotta);
+  color: #fff;
+  font-family: 'Rozha One', serif;
+  font-size: 0.8rem;
+  padding: 3px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  letter-spacing: 0.04em;
+}
+
+.l3t-instruction {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+/* Fixed bottom navigation bar */
+.l3t-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 10px;
+  padding: 10px 16px 14px;
+  background: var(--white-warm);
+  border-top: 2px solid var(--parchment);
+  z-index: 20;
+}
+
+.l3t-nav-btn {
+  flex: 1;
+  padding: 13px 10px;
+  border: 2px solid var(--terracotta);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--terracotta);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.l3t-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* Next/Finish button — filled */
+.l3t-nav-next,
+.l3t-nav-finish {
+  background: var(--terracotta);
+  color: #fff;
+}
+
+.l3t-nav-next:hover:not(:disabled),
+.l3t-nav-finish:hover:not(:disabled) {
+  background: var(--mid-brown);
+  border-color: var(--mid-brown);
+}
+
+.l3t-nav-btn:not(.l3t-nav-next):not(.l3t-nav-finish):hover:not(:disabled) {
+  background: var(--parchment);
+}
+
+/* Step image placeholder message (shown under error image) */
+.l3t-no-image-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 6px 16px 0;
+}
+
+
+/* ============================================================
+   SCREEN: screen-l3-eval — Evaluation / Upload & Score
+   ============================================================ */
+
+#screen-l3-eval {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.l3e-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px 10px;
+  background: var(--white-warm);
+  border-bottom: 2px solid var(--parchment);
+  flex-shrink: 0;
+}
+
+.l3e-content {
+  padding: 24px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.l3e-title {
+  font-family: 'Rozha One', serif;
+  font-size: 1.5rem;
+  color: var(--deep-brown);
+  line-height: 1.2;
+}
+
+.l3e-artname {
+  font-size: 0.88rem;
+  color: var(--terracotta);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.l3e-intro {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 300px;
+}
+
+/* Upload button — reuses .btn-compare from main style.css */
+#l3e-file-input {
+  display: none;
+}
+
+/* Loading state — reuses .compare-loading from main style.css */
+
+/* Results panel — reuses .compare-results from main style.css */
+#l3e-results {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Retry button */
+.l3e-retry {
+  width: 100%;
+  margin-top: 4px;
+  padding: 14px;
+  border: 2px solid var(--terracotta);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--terracotta);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.l3e-retry:hover {
+  background: var(--parchment);
+}
+
+
+/* ============================================================
+   Shared small utilities
+   ============================================================ */
+
+/* Back button — same style as existing .btn-back in main CSS,
+   duplicated here for Android self-containment if needed. */
+.l3t-header .btn-back,
+.l3s-header .btn-back,
+.l3e-header .btn-back {
+  /* inherits from main style.css; no override needed */
+}
+
+/* ── Per-step check buttons ── */
+
+#l3t-check-input {
+  display: none;
+}
+
+.l3t-check-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.l3t-check-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 10px;
+  border: 2px dashed var(--ochre);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ochre);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.l3t-check-btn:hover {
+  background: rgba(201, 138, 26, 0.08);
+  border-color: var(--mid-brown);
+  color: var(--mid-brown);
+}
+
+/* Camera button — slightly different accent */
+.l3t-check-btn-cam {
+  border-color: var(--terracotta);
+  color: var(--terracotta);
+}
+
+.l3t-check-btn-cam:hover {
+  background: rgba(185, 64, 18, 0.07);
+  border-color: var(--mid-brown);
+  color: var(--mid-brown);
+}
+
+
+/* ── Camera modal ── */
+
+.l3t-cam-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.88);
+  display: flex;
+  align-items: flex-end;   /* sheet rises from bottom — natural on mobile */
+  justify-content: center;
+}
+
+.l3t-cam-inner {
+  width: 100%;
+  max-width: 480px;
+  background: #111;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* Animate up */
+  animation: camSlideUp 0.25s ease;
+}
+
+@keyframes camSlideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.l3t-cam-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  background: rgba(255,255,255,0.05);
+}
+
+.l3t-cam-title {
+  font-family: 'Hind', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--parchment);
+  opacity: 0.85;
+}
+
+.l3t-cam-cancel-x {
+  background: none;
+  border: none;
+  color: var(--parchment);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+.l3t-cam-cancel-x:hover { opacity: 1; }
+
+/* Video viewport */
+.l3t-cam-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  overflow: hidden;
+}
+
+.l3t-cam-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Corner guides — same style as main scan screen */
+.l3t-cam-corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-color: var(--ochre);
+  border-style: solid;
+  opacity: 0.85;
+}
+.l3t-cam-corner.tl { top: 12%;  left:  8%;  border-width: 3px 0 0 3px; }
+.l3t-cam-corner.tr { top: 12%;  right: 8%;  border-width: 3px 3px 0 0; }
+.l3t-cam-corner.bl { bottom: 12%; left:  8%;  border-width: 0 0 3px 3px; }
+.l3t-cam-corner.br { bottom: 12%; right: 8%;  border-width: 0 3px 3px 0; }
+
+/* Capture button row */
+.l3t-cam-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0 24px;
+  background: #111;
+}
+
+/* Shutter button */
+.l3t-cam-btn-capture {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 4px solid var(--ochre);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.l3t-cam-btn-capture:active {
+  transform: scale(0.92);
+  background: rgba(201, 138, 26, 0.2);
+}
+
+.l3t-cam-shutter {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--ochre);
+  display: block;
+  transition: background 0.15s;
+}
+
+.l3t-cam-btn-capture:active .l3t-cam-shutter {
+  background: var(--terracotta);
+}
+
+/* ── Inline step-check result panel ── */
+
+.l3t-check-loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.l3t-check-result {
+  margin-top: 14px;
+  border: 2px solid var(--parchment);
+  border-radius: 10px;
+  background: var(--white-warm);
+  overflow: hidden;
+}
+
+.l3t-check-error {
+  padding: 14px 16px;
+  font-size: 0.85rem;
+  color: var(--terracotta);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.l3t-check-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--parchment);
+}
+
+.l3t-check-title {
+  font-family: 'Rozha One', serif;
+  font-size: 0.9rem;
+  color: var(--deep-brown);
+}
+
+/* Large score block — shown first, before the heatmap */
+.l3t-check-score-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 16px 16px;
+  border-bottom: 1px solid var(--parchment);
+}
+
+.l3t-check-score-number {
+  font-family: 'Rozha One', serif;
+  font-size: 3.2rem;
+  line-height: 1;
+}
+
+.l3t-check-score-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.check-score-high { background: #d4edda; }
+.check-score-high .l3t-check-score-number,
+.check-score-high .l3t-check-score-label { color: #1a5c2a; }
+
+.check-score-mid  { background: #fff3cd; }
+.check-score-mid  .l3t-check-score-number,
+.check-score-mid  .l3t-check-score-label { color: #856404; }
+
+.check-score-low  { background: #f8d7da; }
+.check-score-low  .l3t-check-score-number,
+.check-score-low  .l3t-check-score-label { color: #721c24; }
+
+.l3t-check-heatmap {
+  /* Match the normalized heatmap size used in the final eval screen */
+  width: 260px;
+  height: 260px;
+  object-fit: contain;
+  display: block;
+  align-self: center;
+}
+
+.l3t-check-legend {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.l3t-check-legend-note {
+  font-style: italic;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+.l3t-check-zones {
+  padding: 6px 14px 4px;
+}
+
+.l3t-check-dismiss {
+  display: block;
+  width: calc(100% - 28px);
+  margin: 10px 14px 14px;
+  padding: 9px;
+  border: 1px solid var(--parchment);
+  border-radius: 6px;
+  background: var(--parchment);
+  color: var(--mid-brown);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.l3t-check-dismiss:hover {
+  background: var(--border);
+}
+
+/* Step image "no image yet" placeholder label */
+.l3t-image-wrap .l3t-placeholder-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 10px;
+  text-align: center;
+}
+
+
+/* ============================================================
+   Responsive tweaks — larger phones / tablets
+   ============================================================ */
+
+@media (min-width: 480px) {
+  .l3s-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+
+  .l3t-image {
+    max-height: 480px;
+  }
+
+  .l3t-instruction {
+    font-size: 1rem;
+  }
+
+  .l3e-title {
+    font-size: 1.7rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .l3t-nav {
+    max-width: 480px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 2px solid var(--parchment);
+    border-right: 2px solid var(--parchment);
+    border-radius: 0 0 12px 12px;
+  }
+}

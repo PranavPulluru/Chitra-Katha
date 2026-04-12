@@ -76,6 +76,18 @@ def health():
     return jsonify({"status": "ok"})
 
 
+@app.route("/level3v2/<path:filename>")
+def level3v2_static(filename):
+    """Serve level3v2 assets — JS, CSS, step images, placeholder SVG."""
+    return send_from_directory(str(_ROOT / "level3v2"), filename)
+
+
+@app.route("/level4/<path:filename>")
+def serve_level4(filename):
+    """Serve level4 assets — JS, CSS."""
+    return send_from_directory(str(_ROOT / "level4"), filename)
+
+
 @app.route("/contour", methods=["POST"])
 def contour():
     data = request.get_json(force=True)

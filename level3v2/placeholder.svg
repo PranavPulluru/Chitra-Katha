@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360">
+  <!-- Parchment background -->
+  <rect width="480" height="360" fill="#F7EDD0"/>
+  <!-- Subtle dot grid -->
+  <pattern id="dots" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+    <circle cx="11" cy="11" r="1.2" fill="#EDE0B5"/>
+  </pattern>
+  <rect width="480" height="360" fill="url(#dots)"/>
+
+  <!-- Decorative border -->
+  <rect x="18" y="18" width="444" height="324"
+        fill="none" stroke="#D4B880" stroke-width="2" rx="6"/>
+  <rect x="24" y="24" width="432" height="312"
+        fill="none" stroke="#D4B880" stroke-width="1" stroke-dasharray="6 4" rx="4"/>
+
+  <!-- Folk-art brush icon -->
+  <g transform="translate(200, 100)">
+    <!-- Brush handle -->
+    <rect x="34" y="0" width="12" height="70" rx="5"
+          fill="#C98A1A" opacity="0.7"/>
+    <!-- Brush ferrule -->
+    <rect x="30" y="68" width="20" height="10" rx="2"
+          fill="#7A4422" opacity="0.8"/>
+    <!-- Brush bristles -->
+    <ellipse cx="40" cy="100" rx="14" ry="24"
+             fill="#B94012" opacity="0.7"/>
+    <!-- Paint splash -->
+    <circle cx="72" cy="85" r="8" fill="#B94012" opacity="0.25"/>
+    <circle cx="16" cy="110" r="5" fill="#C98A1A" opacity="0.25"/>
+    <circle cx="68" cy="120" r="6" fill="#B94012" opacity="0.20"/>
+  </g>
+
+  <!-- Central ornament -->
+  <text x="240" y="195"
+        font-family="serif" font-size="36"
+        fill="#B94012" opacity="0.35"
+        text-anchor="middle" dominant-baseline="middle">✦</text>
+
+  <!-- Primary label -->
+  <text x="240" y="238"
+        font-family="'Rozha One', Georgia, serif" font-size="16"
+        fill="#7A4422"
+        text-anchor="middle" dominant-baseline="middle">Step Image Coming Soon</text>
+
+  <!-- Sub-label -->
+  <text x="240" y="265"
+        font-family="Arial, sans-serif" font-size="12"
+        fill="#A07050"
+        text-anchor="middle" dominant-baseline="middle">Place your step images in</text>
+  <text x="240" y="283"
+        font-family="'Courier New', monospace" font-size="11"
+        fill="#B94012" opacity="0.8"
+        text-anchor="middle" dominant-baseline="middle">level3v2/step_images/{artform}/step_N.jpg</text>
+
+  <!-- Corner ornaments -->
+  <text x="36" y="50"  font-size="18" fill="#D4B880" opacity="0.7" font-family="serif">✦</text>
+  <text x="432" y="50" font-size="18" fill="#D4B880" opacity="0.7" font-family="serif" text-anchor="end">✦</text>
+  <text x="36" y="334" font-size="18" fill="#D4B880" opacity="0.7" font-family="serif">✦</text>
+  <text x="432" y="334" font-size="18" fill="#D4B880" opacity="0.7" font-family="serif" text-anchor="end">✦</text>
+</svg>

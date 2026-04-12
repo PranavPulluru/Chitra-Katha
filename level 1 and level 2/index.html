@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="../level3v2/style.css" />
+  <link rel="stylesheet" href="level4/style.css" />
 </head>
 <body>
 
@@ -208,6 +210,8 @@
         <span class="try-painting-main">Try Painting This ✦</span>
         <span class="try-painting-sub">See the outlines and draw along</span>
       </button>
+
+      <button id="compare-art-btn" class="l4-entry-btn">Compare Art Forms 🔍</button>
     </div>
 
     <div class="folk-border"></div>
@@ -215,51 +219,119 @@
 
 
   <!-- ================================================================
-       SCREEN 5 — LEVEL 3 (Try Drawing This)
+       SCREEN 5a — LEVEL 3 · Art Form Selection
+       Shown when identified art form has no tutorial, or user
+       arrives directly at this screen.
   ================================================================ -->
-  <div id="screen-level3" class="screen">
+  <div id="screen-l3-select" class="screen">
     <div class="folk-border"></div>
 
-    <div class="l3-header">
-      <button class="btn-back" id="l3-back">← Back</button>
+    <div class="l3s-header">
+      <button class="btn-back" id="l3s-back">← Back</button>
     </div>
 
-    <div class="l3-content">
+    <div class="l3s-intro">
       <div class="home-ornament">✦</div>
-      <h2 class="l3-title">Try Drawing This!</h2>
-      <p class="l3-artname" id="l3-artname"></p>
-      <p class="l3-intro">
-        These are the outlines of the artwork you identified.
-        Print this page or trace along on your screen — then try to recreate the strokes yourself.
-      </p>
+      <h2>Learn to Draw</h2>
+      <p>Choose a traditional art form to begin your step-by-step guided drawing experience.</p>
+    </div>
 
-      <div class="contour-wrap">
-        <div class="contour-processing" id="contour-processing">
-          <div class="spinner"></div>
-          <p class="state-label" style="color: var(--mid-brown);">Extracting outlines…</p>
-        </div>
-        <canvas id="contour-canvas"></canvas>
+    <!-- Art form tiles injected by level3v2.js -->
+    <div class="l3s-grid" id="l3s-grid"></div>
+
+    <div class="folk-border"></div>
+  </div>
+
+
+  <!-- ================================================================
+       SCREEN 5b — LEVEL 3 · Step-by-step Tutorial
+  ================================================================ -->
+  <div id="screen-l3-tutorial" class="screen">
+
+    <!-- Sticky header -->
+    <div class="l3t-header">
+      <button class="btn-back" id="l3t-back">← Back</button>
+      <span class="l3t-title" id="l3t-title">Painting</span>
+      <span class="l3t-counter" id="l3t-counter">1 / 1</span>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="l3t-progress-track">
+      <div class="l3t-progress-bar" id="l3t-progress-bar" style="width:0%"></div>
+    </div>
+
+    <!-- Step reference image -->
+    <div class="l3t-image-wrap">
+      <img id="l3t-image" class="l3t-image"
+           src="../level3v2/placeholder.svg"
+           alt="Step reference image" />
+    </div>
+
+    <!-- Step instruction -->
+    <div class="l3t-instruction-card">
+      <div class="l3t-step-badge" id="l3t-step-badge">Step 1</div>
+      <p class="l3t-instruction" id="l3t-instruction"></p>
+
+      <!-- Optional per-step check — upload or camera -->
+      <div class="l3t-check-btns">
+        <button class="l3t-check-btn" id="l3t-check-btn-upload">
+          <span class="btn-icon">⬆</span> Upload Photo
+        </button>
+        <button class="l3t-check-btn l3t-check-btn-cam" id="l3t-check-btn-camera">
+          <span class="btn-icon">◉</span> Use Camera
+        </button>
       </div>
+      <input type="file" id="l3t-check-input" accept="image/*" />
 
-      <p class="l3-tip">
-        <span>✦</span> Focus on the big shapes first — outlines before details.
+      <!-- Inline result panel — injected by JS -->
+      <div id="l3t-check-panel" style="display:none"></div>
+    </div>
+
+    <!-- Fixed navigation bar (Prev / Next / Finish) -->
+    <div class="l3t-nav">
+      <button class="l3t-nav-btn" id="l3t-prev" disabled>← Prev</button>
+      <button class="l3t-nav-btn l3t-nav-next" id="l3t-next">Next →</button>
+      <button class="l3t-nav-btn l3t-nav-finish" id="l3t-finish"
+              style="display:none">Evaluate My Work ✦</button>
+    </div>
+
+  </div>
+
+
+  <!-- ================================================================
+       SCREEN 5c — LEVEL 3 · Evaluation (Upload + AI Score)
+  ================================================================ -->
+  <div id="screen-l3-eval" class="screen">
+    <div class="folk-border"></div>
+
+    <div class="l3e-header">
+      <button class="btn-back" id="l3e-back">← Back to Steps</button>
+    </div>
+
+    <div class="l3e-content">
+      <div class="home-ornament">✦</div>
+      <h2 class="l3e-title">Evaluate Your Artwork</h2>
+      <p class="l3e-artname" id="l3e-artname"></p>
+      <p class="l3e-intro">
+        Take a clear photo of your finished artwork and upload it here.
+        The AI will compare it against the master reference and give you detailed feedback.
       </p>
 
-      <!-- ── Upload & Compare ── -->
-      <button class="btn-compare" id="btn-compare">
+      <!-- Upload button -->
+      <button class="btn-compare" id="l3e-btn-upload">
         <span class="btn-icon">⬆</span>
-        Upload &amp; Compare!
+        Upload Your Artwork
       </button>
-      <input type="file" id="compare-file-input" accept="image/*" />
+      <input type="file" id="l3e-file-input" accept="image/*" />
 
-      <!-- Loading state (inline, shown while waiting for API) -->
-      <div class="compare-loading" id="compare-loading">
+      <!-- Loading state -->
+      <div class="compare-loading" id="l3e-loading" style="display:none">
         <div class="spinner"></div>
-        <p class="compare-loading-label">Comparing your tracing…</p>
+        <p class="compare-loading-label">Analysing your artwork…</p>
       </div>
 
-      <!-- Results (hidden until a comparison completes) -->
-      <div class="compare-results" id="compare-results">
+      <!-- Results panel (hidden until comparison completes) -->
+      <div id="l3e-results" style="display:none;flex-direction:column;gap:16px;width:100%">
 
         <!-- Score ring -->
         <div class="score-card">
@@ -271,36 +343,132 @@
               <circle cx="60" cy="60" r="50"
                 fill="none" stroke="var(--terracotta)" stroke-width="10"
                 stroke-dasharray="314" stroke-dashoffset="314"
-                id="score-ring-circle" stroke-linecap="round"
+                id="l3e-ring-circle" stroke-linecap="round"
                 transform="rotate(-90 60 60)"/>
             </svg>
-            <div class="score-number" id="score-number">–</div>
+            <div class="score-number" id="l3e-score">–</div>
           </div>
-          <p class="score-label" id="score-label"></p>
+          <p class="score-label" id="l3e-score-label"></p>
         </div>
 
         <!-- Heatmap -->
         <div class="heatmap-card">
           <h3 class="card-heading">Where you deviated</h3>
-          <img id="heatmap-img" class="heatmap-img" src="" alt="Deviation heatmap" />
+          <img id="l3e-heatmap" class="heatmap-img" src="" alt="Deviation heatmap" />
           <p class="heatmap-legend">
             <span class="legend-dot" style="background:#1a7a2e"></span>Good match &ensp;
             <span class="legend-dot" style="background:#C98A1A"></span>Some drift &ensp;
-            <span class="legend-dot" style="background:#B94012"></span>Most deviation
+            <span class="legend-dot" style="background:#B94012"></span>Most deviation &ensp;
+            <span style="font-style:italic;opacity:0.7">(your artwork overlaid)</span>
           </p>
         </div>
 
         <!-- Zone feedback -->
-        <div class="zone-card" id="zone-card">
+        <div class="zone-card">
           <h3 class="card-heading">Region Feedback</h3>
-          <div id="zone-list"></div>
+          <div id="l3e-zone-list"></div>
         </div>
 
-      </div><!-- /.compare-results -->
+        <!-- Try again -->
+        <button class="l3e-retry" id="l3e-retry">Upload Another Photo</button>
 
-    </div><!-- /.l3-content -->
+      </div><!-- /#l3e-results -->
+
+    </div><!-- /.l3e-content -->
 
     <div class="folk-border"></div>
+  </div>
+
+  <!-- ================================================================
+       SCREEN 6 — LEVEL 4 · Compare & Contrast
+  ================================================================ -->
+  <div id="screen-l4" class="screen">
+
+    <!-- Sticky header -->
+    <div class="l4-header">
+      <button id="l4-back-btn" aria-label="Back">← </button>
+      <span class="l4-header-title">Compare &amp; Contrast</span>
+    </div>
+
+    <!-- Two-panel row -->
+    <div class="l4-panels">
+
+      <!-- LEFT PANEL — Your Art Form -->
+      <div class="l4-panel l4-panel-left" id="l4-left-panel">
+        <p class="l4-panel-label">Your Art</p>
+        <p class="l4-panel-artname" id="l4-left-artname"></p>
+        <div class="l4-painting-wrap"></div>
+      </div>
+
+      <!-- RIGHT PANEL — Compare With -->
+      <div class="l4-panel l4-panel-right" id="l4-right-panel">
+        <p class="l4-panel-label">Compare With</p>
+        <p class="l4-panel-artname" id="l4-right-artname"></p>
+        <div class="l4-pill-row" id="l4-pill-row"></div>
+        <div class="l4-painting-wrap">
+          <div class="l4-placeholder">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 36 L16 20 L24 28 L32 16 L40 36 Z" stroke="#C98A1A" stroke-width="2" fill="none" stroke-linejoin="round"/>
+              <circle cx="34" cy="14" r="3" fill="#C98A1A"/>
+              <rect x="6" y="6" width="36" height="36" rx="4" stroke="#C98A1A" stroke-width="2" fill="none"/>
+              <path d="M6 32 Q12 28 18 32 Q24 36 30 32 Q36 28 42 32" stroke="#C98A1A" stroke-width="1.5" fill="none"/>
+            </svg>
+            <p class="l4-placeholder-text">Select an art form above to begin comparing</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.l4-panels -->
+
+    <!-- Comparison section (shown after right panel selected) -->
+    <div class="l4-compare-section" id="l4-compare-section" style="display:none"></div>
+
+    <!-- Footer CTA -->
+    <div class="l4-footer-cta">
+      <button class="l4-explore-btn" id="l4-explore-btn">Draw for Yourself ✦</button>
+    </div>
+
+  </div>
+
+
+  <!-- ================================================================
+       ANNOTATION POPUP MODAL — Level 4 bottom sheet
+  ================================================================ -->
+  <div id="l4-annotation-overlay" style="display:none">
+    <div id="l4-annotation-sheet">
+      <div class="l4-sheet-header">
+        <span class="l4-dot"></span>
+        <h3 id="l4-annotation-title"></h3>
+      </div>
+      <p id="l4-annotation-body"></p>
+      <button id="l4-annotation-close">Got it ✓</button>
+    </div>
+  </div>
+
+
+  <!-- ================================================================
+       CAMERA MODAL — per-step check (Level 3 v2)
+  ================================================================ -->
+  <div id="l3t-cam-modal" class="l3t-cam-modal" style="display:none">
+    <div class="l3t-cam-inner">
+      <div class="l3t-cam-header">
+        <span class="l3t-cam-title">Point at your drawing</span>
+        <button class="l3t-cam-cancel-x" id="l3t-cam-cancel">✕</button>
+      </div>
+      <div class="l3t-cam-viewport">
+        <video id="l3t-cam-video" class="l3t-cam-video" playsinline muted autoplay></video>
+        <!-- Corner guides -->
+        <span class="l3t-cam-corner tl"></span>
+        <span class="l3t-cam-corner tr"></span>
+        <span class="l3t-cam-corner bl"></span>
+        <span class="l3t-cam-corner br"></span>
+      </div>
+      <div class="l3t-cam-footer">
+        <button class="l3t-cam-btn-capture" id="l3t-cam-capture">
+          <span class="l3t-cam-shutter"></span>
+        </button>
+      </div>
+    </div>
   </div>
 
 </div><!-- /#app -->
@@ -315,6 +483,13 @@
 <script src="artforms.js"></script>
 <script src="classifier.js"></script>
 <script src="app.js"></script>
+
+<!-- Level 3 v2 — step-by-step tutorial & evaluation -->
+<script src="../level3v2/data.js"></script>
+<script src="../level3v2/level3v2.js"></script>
+
+<!-- Level 4 — Compare & Contrast -->
+<script src="level4/level4.js"></script>
 
 </body>
 </html>

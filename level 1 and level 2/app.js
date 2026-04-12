@@ -221,149 +221,13 @@ function initMap(key) {
 
 
 /* ------------------------------------------------------------------ */
-/*  Level 3 — contour extraction (Sobel edge detection in JS)          */
+/*  Level 3 v2 — delegates to Level3v2 module (level3v2/level3v2.js)  */
 /* ------------------------------------------------------------------ */
 
-/**
- * Mirrors the OpenCV preprocessing pipeline in the browser:
- *   grayscale → gaussian blur → sobel gradients → threshold → invert
- * Output: warm parchment background (#F7EDD0) with dark brown edges.
- */
-function buildContourCanvas(imageSrc, callback) {
-  const SIZE = 512;
-  const img  = new Image();
-  img.onload = () => {
-    // --- Draw source image centred into a square canvas ---
-    const srcCanvas = document.createElement('canvas');
-    srcCanvas.width = srcCanvas.height = SIZE;
-    const sCtx = srcCanvas.getContext('2d');
-
-    // Cream background so letterbox areas blend with the UI
-    sCtx.fillStyle = '#F7EDD0';
-    sCtx.fillRect(0, 0, SIZE, SIZE);
-
-    const ratio = img.naturalWidth / img.naturalHeight;
-    let dw = SIZE, dh = SIZE;
-    if (ratio > 1) dh = SIZE / ratio;
-    else           dw = SIZE * ratio;
-    sCtx.drawImage(img, (SIZE - dw) / 2, (SIZE - dh) / 2, dw, dh);
-
-    const pixels = sCtx.getImageData(0, 0, SIZE, SIZE).data;
-
-    // --- Grayscale ---
-    const gray = new Uint8Array(SIZE * SIZE);
-    for (let i = 0; i < SIZE * SIZE; i++) {
-      gray[i] = Math.round(
-        0.299 * pixels[i * 4] +
-        0.587 * pixels[i * 4 + 1] +
-        0.114 * pixels[i * 4 + 2]
-      );
-    }
-
-    // --- Gaussian blur (5×5 approximation) ---
-    const kernel5 = [
-      1,  4,  6,  4, 1,
-      4, 16, 24, 16, 4,
-      6, 24, 36, 24, 6,
-      4, 16, 24, 16, 4,
-      1,  4,  6,  4, 1,
-    ];
-    const k5sum = 256;
-    const blurred = new Uint8Array(SIZE * SIZE);
-    for (let y = 2; y < SIZE - 2; y++) {
-      for (let x = 2; x < SIZE - 2; x++) {
-        let sum = 0;
-        for (let ky = -2; ky <= 2; ky++)
-          for (let kx = -2; kx <= 2; kx++)
-            sum += gray[(y + ky) * SIZE + (x + kx)] * kernel5[(ky + 2) * 5 + (kx + 2)];
-        blurred[y * SIZE + x] = sum / k5sum;
-      }
-    }
-
-    // --- Sobel gradients ---
-    const mag = new Float32Array(SIZE * SIZE);
-    let maxMag = 0;
-    for (let y = 1; y < SIZE - 1; y++) {
-      for (let x = 1; x < SIZE - 1; x++) {
-        const gx =
-          -    blurred[(y - 1) * SIZE + (x - 1)] - 2 * blurred[y * SIZE + (x - 1)] -     blurred[(y + 1) * SIZE + (x - 1)] +
-               blurred[(y - 1) * SIZE + (x + 1)] + 2 * blurred[y * SIZE + (x + 1)] +     blurred[(y + 1) * SIZE + (x + 1)];
-        const gy =
-          -    blurred[(y - 1) * SIZE + (x - 1)] - 2 * blurred[(y - 1) * SIZE + x] -     blurred[(y - 1) * SIZE + (x + 1)] +
-               blurred[(y + 1) * SIZE + (x - 1)] + 2 * blurred[(y + 1) * SIZE + x] +     blurred[(y + 1) * SIZE + (x + 1)];
-        mag[y * SIZE + x] = Math.sqrt(gx * gx + gy * gy);
-        if (mag[y * SIZE + x] > maxMag) maxMag = mag[y * SIZE + x];
-      }
-    }
-
-    // --- Threshold + render (parchment bg, dark-brown edges) ---
-    const threshold = maxMag * 0.12;  // 12% of max gradient — adjust for finer/bolder lines
-    const outCanvas = document.createElement('canvas');
-    outCanvas.width = outCanvas.height = SIZE;
-    const oCtx   = outCanvas.getContext('2d');
-    const outImg  = oCtx.createImageData(SIZE, SIZE);
-    const d       = outImg.data;
-
-    for (let i = 0; i < SIZE * SIZE; i++) {
-      const isEdge = mag[i] > threshold;
-      // Parchment: rgb(247, 237, 208) | Deep brown: rgb(58, 26, 2)
-      d[i * 4]     = isEdge ? 58  : 247;
-      d[i * 4 + 1] = isEdge ? 26  : 237;
-      d[i * 4 + 2] = isEdge ? 2   : 208;
-      d[i * 4 + 3] = 255;
-    }
-    oCtx.putImageData(outImg, 0, 0);
-    callback(outCanvas);
-  };
-  img.src = imageSrc;
-}
-
-async function showLevel3() {
-  const art = ARTFORMS[currentArtKey];
-  document.getElementById('l3-artname').textContent = art.name;
-  showScreen('screen-level3');
-  document.getElementById('screen-level3').scrollTop = 0;
-
-  const processing = document.getElementById('contour-processing');
-  const canvas     = document.getElementById('contour-canvas');
-  processing.style.display = 'flex';
-  canvas.style.display     = 'none';
-
-  // Try the server's OpenCV pipeline first; fall back to the JS Sobel
-  // implementation if the server isn't running.
-  try {
-    const refDataURL = await toDataURL(currentImageSrc);
-    const resp = await fetch('/contour', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ image: refDataURL }),
-    });
-    if (!resp.ok) throw new Error('contour endpoint error');
-    const { contour } = await resp.json();
-
-    // Paint the returned PNG onto the canvas
-    const img = new Image();
-    img.onload = () => {
-      canvas.width  = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      canvas.getContext('2d').drawImage(img, 0, 0);
-      processing.style.display = 'none';
-      canvas.style.display     = 'block';
-    };
-    img.src = contour;
-
-  } catch (_) {
-    // Server not running — fall back to the in-browser Sobel implementation
-    setTimeout(() => {
-      buildContourCanvas(currentImageSrc, (result) => {
-        canvas.width  = result.width;
-        canvas.height = result.height;
-        canvas.getContext('2d').drawImage(result, 0, 0);
-        processing.style.display = 'none';
-        canvas.style.display     = 'block';
-      });
-    }, 50);
-  }
+function showLevel3() {
+  // Level3v2 module handles all three sub-screens:
+  //   screen-l3-select, screen-l3-tutorial, screen-l3-eval
+  Level3v2.start(currentArtKey, currentImageSrc);
 }
 
 
@@ -452,172 +316,20 @@ document.getElementById('l2-back').addEventListener('click', () => {
 // Try Painting → level 3
 document.getElementById('btn-try-painting').addEventListener('click', showLevel3);
 
-// Back from level 3 → level 2
-document.getElementById('l3-back').addEventListener('click', () => {
-  showScreen('screen-level2');
+// Compare Art Forms → level 4
+document.getElementById('compare-art-btn').addEventListener('click', () => {
+  Level4.start(currentArtKey);
 });
 
-
-/* ------------------------------------------------------------------ */
-/*  Level 3 — Upload & Compare                                         */
-/* ------------------------------------------------------------------ */
-
-const API_URL = '/compare';
-
-/**
- * Guarantee a base64 data-URL regardless of what currentImageSrc holds.
- * - data:  URLs are returned as-is (camera capture path)
- * - blob:  URLs (upload path) are drawn onto a canvas first
- */
-function toDataURL(src) {
-  if (src.startsWith('data:')) return Promise.resolve(src);
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement('canvas');
-      c.width  = img.naturalWidth;
-      c.height = img.naturalHeight;
-      c.getContext('2d').drawImage(img, 0, 0);
-      resolve(c.toDataURL('image/jpeg', 0.92));
-    };
-    img.onerror = () => reject(new Error('Could not load reference image'));
-    img.src = src;
-  });
-}
-
-// Score labels by range
-function scoreLabel(score) {
-  if (score >= 90) return 'Near perfect!';
-  if (score >= 75) return 'Great work!';
-  if (score >= 55) return 'Well done!';
-  if (score >= 35) return 'Good start!';
-  return 'Keep practising!';
-}
-
-// Animate the SVG score ring (circumference = 2π × 50 ≈ 314)
-function animateScoreRing(score) {
-  const circle  = document.getElementById('score-ring-circle');
-  const offset  = 314 * (1 - score / 100);
-  circle.style.strokeDashoffset = offset;
-
-  // Colour the arc by score
-  if      (score >= 75) circle.style.stroke = 'var(--forest)';
-  else if (score >= 50) circle.style.stroke = 'var(--ochre)';
-  else                  circle.style.stroke = 'var(--terracotta)';
-}
-
-function showCompareResults(data) {
-  const { score, heatmap, zones } = data;
-
-  // Score ring
-  document.getElementById('score-number').textContent = Math.round(score);
-  document.getElementById('score-label').textContent  = scoreLabel(score);
-  // Trigger animation after a short delay so the transition fires
-  setTimeout(() => animateScoreRing(score), 60);
-
-  // Heatmap
-  document.getElementById('heatmap-img').src = heatmap;
-
-  // Zone feedback
-  const list = document.getElementById('zone-list');
-  list.innerHTML = '';
-  if (!zones || zones.length === 0) {
-    list.innerHTML = '<p class="zone-all-good">✦ No significant deviations — great tracing!</p>';
-  } else {
-    zones.forEach(z => {
-      const row = document.createElement('div');
-      row.className = 'zone-row';
-      row.innerHTML = `
-        <span class="zone-badge ${z.severity}">${z.severity}</span>
-        <span class="zone-name">${z.zone}</span>
-      `;
-      list.appendChild(row);
-    });
-  }
-
-  // Show panel
-  document.getElementById('compare-results').style.display = 'flex';
-}
-
-function resetCompareUI() {
-  document.getElementById('compare-results').style.display   = 'none';
-  document.getElementById('compare-loading').style.display   = 'none';
-  document.getElementById('score-ring-circle').style.strokeDashoffset = '314';
-  document.getElementById('score-number').textContent = '–';
-  document.getElementById('score-label').textContent  = '';
-  document.getElementById('heatmap-img').src = '';
-  document.getElementById('zone-list').innerHTML = '';
-}
-
-// Reset compare panel whenever level 3 is freshly entered
-document.getElementById('btn-try-painting').addEventListener('click', resetCompareUI, true);
-
-// Button click → open file picker
-document.getElementById('btn-compare').addEventListener('click', () => {
-  document.getElementById('compare-file-input').click();
+// Level 4 — Draw for Yourself → Level 3 selection screen
+document.getElementById('l4-explore-btn').addEventListener('click', () => {
+  Level3v2.start(null, null);
 });
 
-// File selected → run comparison
-document.getElementById('compare-file-input').addEventListener('change', async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  e.target.value = ''; // allow re-selecting same file
-
-  // Hide previous results, show spinner
-  document.getElementById('compare-results').style.display = 'none';
-  document.getElementById('compare-loading').style.display = 'flex';
-  document.getElementById('btn-compare').disabled = true;
-
-  // Read the child image as a data-URL
-  const childDataURL = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload  = ev => resolve(ev.target.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-
-  try {
-    // Convert blob: URLs to base64 data URLs the server can decode
-    const refDataURL = await toDataURL(currentImageSrc);
-
-    let resp;
-    try {
-      resp = await fetch(API_URL, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ reference: refDataURL, child: childDataURL }),
-      });
-    } catch (_networkErr) {
-      // fetch() itself threw — server is not reachable at all
-      throw { isNetwork: true };
-    }
-
-    if (!resp.ok) {
-      const body = await resp.json().catch(() => ({}));
-      throw new Error(body.error || `Server error ${resp.status}`);
-    }
-
-    const data = await resp.json();
-    showCompareResults(data);
-
-  } catch (err) {
-    console.error('[Compare]', err);
-    document.getElementById('compare-results').style.display = 'flex';
-    document.getElementById('score-number').textContent = '–';
-
-    if (err.isNetwork) {
-      document.getElementById('score-label').textContent = '';
-      document.getElementById('zone-list').innerHTML =
-        `<p class="zone-all-good" style="color:var(--terracotta)">
-           Could not reach the comparison server.<br>
-           Make sure <code>python level3/server.py</code> is running.
-         </p>`;
-    } else {
-      document.getElementById('score-label').textContent = err.message || 'Something went wrong';
-      document.getElementById('zone-list').innerHTML = '';
-    }
-  } finally {
-    document.getElementById('compare-loading').style.display = 'none';
-    document.getElementById('btn-compare').disabled = false;
-  }
+// Level 4 back button
+document.getElementById('l4-back-btn').addEventListener('click', () => {
+  Level4.goBack();
 });
+
+// Level 3 navigation is handled entirely within level3v2/level3v2.js.
+// The btn-try-painting listener above is the only hook needed here.
