@@ -5,7 +5,6 @@ import base64
 import io
 import os
 import sys
-from pathlib import Path
 
 import cv2
 import numpy as np
@@ -13,15 +12,15 @@ from flask import Flask, jsonify, request, send_from_directory
 from PIL import Image
 
 # ── project imports ────────────────────────────────────────────────────────────
-_ROOT    = Path(__file__).resolve().parents[1]          # IIT_proj/
-_WEB_DIR = _ROOT / "level 1 and level 2"               # static website folder
-sys.path.insert(0, str(_ROOT))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # level3/
+_WEB_DIR = os.path.join(BASE_DIR, '..', 'level 1 and level 2')  # static website folder
+sys.path.insert(0, BASE_DIR)
 
-from level3.model.inference import infer, load_model
-from level3.data.preprocessing import ContourPreprocessor
+from model.inference import infer, load_model
+from data.preprocessing import ContourPreprocessor
 
 # ── Flask app — static files served from the website folder ───────────────────
-app = Flask(__name__, static_folder=str(_WEB_DIR), static_url_path="")
+app = Flask(__name__, static_folder=_WEB_DIR, static_url_path="")
 
 # ── globals loaded once at startup ────────────────────────────────────────────
 model        = None
@@ -80,13 +79,13 @@ def health():
 @app.route("/level3v2/<path:filename>")
 def level3v2_static(filename):
     """Serve level3v2 assets — JS, CSS, step images, placeholder SVG."""
-    return send_from_directory(str(_ROOT / "level3v2"), filename)
+    return send_from_directory(os.path.join(BASE_DIR, '..', 'level3v2'), filename)
 
 
 @app.route("/level4/<path:filename>")
 def serve_level4(filename):
     """Serve level4 assets — JS, CSS."""
-    return send_from_directory(str(_ROOT / "level4"), filename)
+    return send_from_directory(os.path.join(BASE_DIR, '..', 'level4'), filename)
 
 
 @app.route("/contour", methods=["POST"])
@@ -162,9 +161,9 @@ def main():
 
     ckpt = args.ckpt
     if ckpt is None:
-        auto = Path(__file__).parent / "checkpoints" / "best.pt"
-        if auto.exists():
-            ckpt = str(auto)
+        auto = os.path.join(BASE_DIR, 'checkpoints', 'best.pt')
+        if os.path.exists(auto):
+            ckpt = auto
             print(f"Auto-detected checkpoint: {ckpt}")
         else:
             print("No checkpoint found — using untrained projection head")
@@ -177,5 +176,5 @@ def main():
 
 
 if __name__ == '__main__':
-       port = int(os.environ.get('PORT', 5000))
-       app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
