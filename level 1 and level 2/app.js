@@ -15,6 +15,7 @@ let mode             = null;   // "camera" | "upload"
 let leafletMap       = null;   // Leaflet map instance
 let currentArtKey    = null;   // key into ARTFORMS for the identified piece
 let currentImageSrc  = null;   // data-URL of the image used for identification
+let currentLang      = 'en';   // active language code
 
 
 /* ------------------------------------------------------------------ */
@@ -153,25 +154,45 @@ async function runIdentify() {
 /*  Level 1 — populate content                                         */
 /* ------------------------------------------------------------------ */
 
-function populateLevel1(key, probability) {
-  const art = ARTFORMS[key];
+function getLangData(art, lang) {
+  if (lang === 'en' || !art.translations || !art.translations[lang]) return art;
+  const t = art.translations[lang];
+  return {
+    ...art,
+    tagline:   t.tagline   || art.tagline,
+    history:   t.history   || art.history,
+    community: t.community || art.community,
+    materials: t.materials || art.materials,
+    tools:     t.tools     || art.tools,
+  };
+}
 
-  document.getElementById('l1-region').textContent  = art.region.toUpperCase();
-  document.getElementById('l1-name').textContent    = art.name;
-  document.getElementById('l1-tagline').textContent = art.tagline;
-  document.getElementById('l1-history').textContent = art.history;
-  document.getElementById('l1-community').textContent = art.community;
+function populateLevel1(key, probability) {
+  // Reset to English whenever a new art form is loaded
+  currentLang = 'en';
+  document.querySelectorAll('#lang-row .lang-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === 'en')
+  );
+
+  const art  = ARTFORMS[key];
+  const data = getLangData(art, currentLang);
+
+  document.getElementById('l1-region').textContent    = art.region.toUpperCase();
+  document.getElementById('l1-name').textContent      = art.name;
+  document.getElementById('l1-tagline').textContent   = data.tagline;
+  document.getElementById('l1-history').textContent   = data.history;
+  document.getElementById('l1-community').textContent = data.community;
 
   const pct = Math.round(probability * 100);
   document.getElementById('confidence-pill').textContent = `${pct}% match`;
 
   // Materials list
   const matList = document.getElementById('l1-materials');
-  matList.innerHTML = art.materials.map(m => `<li>${m}</li>`).join('');
+  matList.innerHTML = data.materials.map(m => `<li>${m}</li>`).join('');
 
   // Tools list
   const toolList = document.getElementById('l1-tools');
-  toolList.innerHTML = art.tools.map(t => `<li>${t}</li>`).join('');
+  toolList.innerHTML = data.tools.map(t => `<li>${t}</li>`).join('');
 
   // Level 2 art name
   document.getElementById('l2-artname').textContent = art.name;
@@ -333,3 +354,16 @@ document.getElementById('l4-back-btn').addEventListener('click', () => {
 
 // Level 3 navigation is handled entirely within level3v2/level3v2.js.
 // The btn-try-painting listener above is the only hook needed here.
+
+// Language switcher
+document.getElementById('lang-row').addEventListener('click', (e) => {
+  const btn = e.target.closest('.lang-btn');
+  if (!btn || !currentArtKey) return;
+  const lang = btn.dataset.lang;
+  if (lang === currentLang) return;
+  currentLang = lang;
+  document.querySelectorAll('#lang-row .lang-btn').forEach(b => b.classList.toggle('active', b === btn));
+  // Re-render text fields with new language (probability not shown again, pass 0 to skip recalc)
+  const pct = parseInt(document.getElementById('confidence-pill').textContent);
+  populateLevel1(currentArtKey, (pct || 0) / 100);
+});
