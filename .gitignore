@@ -10,7 +10,10 @@ data/
 datasets/
 *.csv
 *.json
-level3/data/
+# Un-ignore level3/data/ so the Python source files are committed to git
+# (reference_contours images are still excluded by the *.png rule below)
+!level3/data/
+!level3/data/*.py
 
 # Python
 __pycache__/
