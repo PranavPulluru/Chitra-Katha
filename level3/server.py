@@ -1,6 +1,3 @@
-import sys
-import os
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from __future__ import annotations
 
 import argparse
@@ -17,7 +14,10 @@ from PIL import Image
 # ── project imports ────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # level3/
 _WEB_DIR = os.path.join(BASE_DIR, '..', 'level 1 and level 2')  # static website folder
-sys.path.insert(0, BASE_DIR)
+# Ensure level3/ is on sys.path so `data` and `model` packages are importable
+# regardless of where the process is launched from (e.g. Render's working dir).
+if BASE_DIR not in sys.path:
+    sys.path.insert(0, BASE_DIR)
 
 from model.inference import infer, load_model
 from data.preprocessing import ContourPreprocessor
