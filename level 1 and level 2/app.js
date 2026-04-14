@@ -167,11 +167,11 @@ function getLangData(art, lang) {
   };
 }
 
-function populateLevel1(key, probability) {
-  // Reset to English whenever a new art form is loaded
-  currentLang = 'en';
+function populateLevel1(key, probability, lang = 'en') {
+  // Reset to the requested language (defaults to English for new identifications)
+  currentLang = lang;
   document.querySelectorAll('#lang-row .lang-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.lang === 'en')
+    b.classList.toggle('active', b.dataset.lang === lang)
   );
 
   const art  = ARTFORMS[key];
@@ -365,5 +365,5 @@ document.getElementById('lang-row').addEventListener('click', (e) => {
   document.querySelectorAll('#lang-row .lang-btn').forEach(b => b.classList.toggle('active', b === btn));
   // Re-render text fields with new language (probability not shown again, pass 0 to skip recalc)
   const pct = parseInt(document.getElementById('confidence-pill').textContent);
-  populateLevel1(currentArtKey, (pct || 0) / 100);
+  populateLevel1(currentArtKey, (pct || 0) / 100, lang);
 });
