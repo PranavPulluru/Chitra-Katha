@@ -180,4 +180,18 @@ def main():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
+
+    ckpt = os.environ.get('CKPT_PATH')
+    if ckpt is None:
+        auto = os.path.join(BASE_DIR, 'checkpoints', 'best.pt')
+        if os.path.exists(auto):
+            ckpt = auto
+            print(f"Auto-detected checkpoint: {ckpt}")
+        else:
+            print("No checkpoint found — using untrained projection head")
+
+    print("Loading model…")
+    model = load_model(ckpt_path=ckpt, device='cpu')
+    print(f"Ready.  Open http://localhost:{port} in your browser.")
+
     app.run(host='0.0.0.0', port=port)
