@@ -1,11 +1,11 @@
 """
 model/model.py — ChitraKathaModel
 ==================================
-Dual-stream DINOv2 ViT-B/14 encoder for contour similarity evaluation.
+Dual-stream DINOv2 ViT-S/14 encoder for contour similarity evaluation.
 
 Architecture
 ------------
-  • Shared frozen DINOv2 backbone (facebook/dinov2-base)
+  • Shared frozen DINOv2 backbone (facebook/dinov2-small)
   • Lightweight trainable projection head on top of patch embeddings
   • Similarity score  : cosine distance between CLS tokens → 0–100
   • Spatial heatmap   : per-patch L2 distance → 16×16 grid
@@ -26,8 +26,8 @@ import torch.nn.functional as F
 from transformers import AutoModel
 
 # ── constants ──────────────────────────────────────────────────────────────────
-DINO_MODEL_ID  = "facebook/dinov2-base"
-DINO_HIDDEN    = 768     # hidden dimension of ViT-B
+DINO_MODEL_ID  = "facebook/dinov2-small"
+DINO_HIDDEN    = 384     # hidden dimension of ViT-S
 PATCH_GRID     = 16      # 224 / patch_size(14) = 16  →  16×16 = 256 patches
 N_PATCHES      = PATCH_GRID * PATCH_GRID  # 256
 PROJ_HIDDEN    = 256

@@ -24,6 +24,11 @@ if BASE_DIR not in sys.path:
 from model.inference import infer, load_model
 from data.preprocessing import ContourPreprocessor
 
+# Limit PyTorch to a single CPU thread — reduces per-thread memory overhead
+# significantly on memory-constrained hosts like Render's free tier.
+torch.set_num_threads(1)
+torch.set_num_interop_threads(1)
+
 # ── Flask app — static files served from the website folder ───────────────────
 app = Flask(__name__, static_folder=_WEB_DIR, static_url_path="")
 
@@ -196,6 +201,7 @@ if __name__ == '__main__':
 
     print("Loading model…")
     model = load_model(ckpt_path=ckpt, device='cpu')
+    gc.collect()  # Free any loader temporaries after model is fully resident
     print(f"Ready.  Open http://localhost:{port} in your browser.")
 
     app.run(host='0.0.0.0', port=port)

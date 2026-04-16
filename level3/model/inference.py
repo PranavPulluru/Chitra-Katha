@@ -25,6 +25,7 @@ Usage
 
 from __future__ import annotations
 
+import gc
 from pathlib import Path
 
 import cv2
@@ -186,6 +187,17 @@ def load_model(
         model.proj_head.load_state_dict(ckpt[key])
         print(f"Loaded projection head from {ckpt_path}")
 
+    # Quantize the frozen backbone to int8 — cuts its memory ~4x with negligible
+    # quality loss for contour comparison on CPU.
+    if dev.type == "cpu":
+        model.backbone = torch.quantization.quantize_dynamic(
+            model.backbone,
+            {torch.nn.Linear},
+            dtype=torch.qint8,
+        )
+        print("Backbone quantized to int8")
+
+    gc.collect()
     return model
 
 
