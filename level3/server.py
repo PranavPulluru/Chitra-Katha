@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import argparse
 import base64
+import gc
 import io
 import os
 import sys
 
 import cv2
 import numpy as np
+import torch
 from flask import Flask, jsonify, request, send_from_directory
 from PIL import Image
 
@@ -154,6 +156,7 @@ def compare():
 # ── entry point ────────────────────────────────────────────────────────────────
 
 def main():
+    torch.set_num_threads(1)
     global model
 
     p = argparse.ArgumentParser(description="Chitra Katha server")
@@ -173,6 +176,7 @@ def main():
 
     print("Loading model…")
     model = load_model(ckpt_path=ckpt, device=args.device)
+    gc.collect()
     print(f"Ready.  Open http://localhost:{args.port} in your browser.")
 
     app.run(host="0.0.0.0", port=args.port, debug=False)

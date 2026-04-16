@@ -78,7 +78,10 @@ class ChitraKathaModel(nn.Module):
 
         # ── Frozen backbone ──────────────────────────────────────────────────
         if pretrained:
-            self.backbone = AutoModel.from_pretrained(DINO_MODEL_ID)
+            self.backbone = AutoModel.from_pretrained(
+                DINO_MODEL_ID,
+                low_cpu_mem_usage=True,
+            )
         else:
             from transformers import AutoConfig
             cfg = AutoConfig.from_pretrained(DINO_MODEL_ID)
