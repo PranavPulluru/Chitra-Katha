@@ -32,8 +32,14 @@ import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
+from huggingface_hub import hf_hub_download
 
 from .model import ChitraKathaModel, PATCH_GRID
+
+# ── global model cache (loaded once, reused across all requests) ───────────────
+_MODEL: ChitraKathaModel | None = None
+_HF_REPO_ID = "pranavpul/chitra-katha-weights"
+_HF_FILENAME = "best.pt"
 
 # ── zone definitions ───────────────────────────────────────────────────────────
 # Each entry: (display_name, row_start, row_end, col_start, col_end)
@@ -169,23 +175,33 @@ def load_model(
     device:    str | torch.device = "cpu",
 ) -> ChitraKathaModel:
     """
-    Instantiate ChitraKathaModel and optionally load a trained projection head.
+    Instantiate ChitraKathaModel and load the trained projection head.
 
     Parameters
     ----------
-    ckpt_path : path to a checkpoint saved by train.py.
-                Pass None to use a freshly-initialised (untrained) model.
+    ckpt_path : path to a local checkpoint; if None the weights are downloaded
+                from the Hugging Face Hub (pranavpul/chitra-katha-weights).
     device    : 'cpu', 'cuda', or a torch.device object.
+
+    The loaded model is cached globally — subsequent calls return the same
+    instance without reloading weights.
     """
+    global _MODEL
+    if _MODEL is not None:
+        return _MODEL
+
     dev = torch.device(device) if isinstance(device, str) else device
     model = ChitraKathaModel(pretrained=True).to(dev)
     model.eval()
 
-    if ckpt_path is not None:
-        ckpt = torch.load(ckpt_path, map_location=dev)
-        key = "proj_head_state" if "proj_head_state" in ckpt else "state_dict"
-        model.proj_head.load_state_dict(ckpt[key])
-        print(f"Loaded projection head from {ckpt_path}")
+    if ckpt_path is None:
+        print(f"Downloading weights from HF Hub: {_HF_REPO_ID}/{_HF_FILENAME}")
+        ckpt_path = hf_hub_download(repo_id=_HF_REPO_ID, filename=_HF_FILENAME)
+
+    ckpt = torch.load(ckpt_path, map_location=dev)
+    key = "proj_head_state" if "proj_head_state" in ckpt else "state_dict"
+    model.proj_head.load_state_dict(ckpt[key])
+    print(f"Loaded projection head from {ckpt_path}")
 
     # Quantize the frozen backbone to int8 — cuts its memory ~4x with negligible
     # quality loss for contour comparison on CPU.
@@ -198,7 +214,8 @@ def load_model(
         print("Backbone quantized to int8")
 
     gc.collect()
-    return model
+    _MODEL = model
+    return _MODEL
 
 
 @torch.no_grad()

@@ -31,6 +31,10 @@ venv/
 # Jupyter
 .ipynb_checkpoints/
 
+# Dev / scratch and local tooling
+dev/
+.claude/
+
 # OS
 .DS_Store
 Thumbs.db
