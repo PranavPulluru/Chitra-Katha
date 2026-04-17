@@ -11,6 +11,7 @@ import cv2
 import numpy as np
 import torch
 from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import CORS
 from PIL import Image
 
 # ── project imports ────────────────────────────────────────────────────────────
@@ -31,6 +32,12 @@ torch.set_num_interop_threads(1)
 
 # ── Flask app — static files served from the website folder ───────────────────
 app = Flask(__name__, static_folder=_WEB_DIR, static_url_path="")
+
+# Allow cross-origin calls from the frontend (hosted on a different origin,
+# e.g. GitHub Pages) to the backend endpoints on this HF Space.
+# For a locked-down version, replace `"*"` with your frontend's origin, e.g.
+#   CORS(app, resources={r"/*": {"origins": "https://<you>.github.io"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ── globals loaded once at startup ────────────────────────────────────────────
 model        = None
@@ -188,7 +195,8 @@ def main():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
+    # Hugging Face Spaces Docker runtime exposes port 7860.
+    port = int(os.environ.get('PORT', 7860))
 
     ckpt = os.environ.get('CKPT_PATH')
     if ckpt is None:
@@ -204,4 +212,4 @@ if __name__ == '__main__':
     gc.collect()  # Free any loader temporaries after model is fully resident
     print(f"Ready.  Open http://localhost:{port} in your browser.")
 
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=7860)
