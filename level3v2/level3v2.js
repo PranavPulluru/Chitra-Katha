@@ -31,7 +31,10 @@ const Level3v2 = (() => {
   let _refImageSrc  = null;   // data-URL or blob-URL for evaluation reference
   let _fromSelect   = false;  // true if user navigated via art-select screen
 
-  const API_COMPARE = '/compare';
+  // Backend is hosted on Hugging Face Spaces. Replace the placeholder below
+  // with your actual Space URL (e.g. https://<user>-<space-name>.hf.space).
+  const BACKEND_URL = 'https://pranavpul-chitra-katha-backend.hf.space'; // TODO: fill in
+  const API_COMPARE = `${BACKEND_URL}/compare`;
   const IMG_BASE    = 'level3v2/step_images/';
   const PLACEHOLDER = 'level3v2/placeholder.svg';
 
