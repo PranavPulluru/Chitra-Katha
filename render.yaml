@@ -3,7 +3,7 @@ services:
     name: iit-proj
     runtime: python
     plan: free
-    buildCommand: git lfs install && git lfs pull && pip install -r requirements.txt
+    buildCommand: mkdir -p /tmp/git-lfs && curl -fsSL https://github.com/git-lfs/git-lfs/releases/download/v3.6.0/git-lfs-linux-amd64-v3.6.0.tar.gz | tar -xzC /tmp/git-lfs --strip-components=1 && export PATH="/tmp/git-lfs:$PATH" && git lfs install && git lfs pull && pip install -r requirements.txt
     startCommand: cd level3 && python server.py
     healthCheckPath: /health
     envVars:
