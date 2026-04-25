@@ -16,7 +16,7 @@ from PIL import Image
 
 # ── project imports ────────────────────────────────────────────────────────────
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))   # level3/
-_WEB_DIR = os.path.join(BASE_DIR, '..', 'level 1 and level 2')  # static website folder
+_WEB_DIR = os.path.join(BASE_DIR, '..')                 # project root (index.html lives here)
 # Ensure level3/ is on sys.path so `data` and `model` packages are importable
 # regardless of where the process is launched from (e.g. Render's working dir).
 if BASE_DIR not in sys.path:
@@ -54,6 +54,9 @@ preprocessor = ContourPreprocessor(
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 
+STEP_IMAGES_DIR = os.path.join(BASE_DIR, '..', 'level3v2', 'step_images')
+
+
 def _decode_image(data: str) -> np.ndarray:
     """
     Accept a data-URL (data:image/...;base64,...) or a plain base64 string.
@@ -62,12 +65,48 @@ def _decode_image(data: str) -> np.ndarray:
     if data.startswith("data:"):
         data = data.split(",", 1)[1]
 
+    # Strip whitespace and fix padding (some browsers omit trailing '=')
+    data = data.strip()
+    pad = len(data) % 4
+    if pad:
+        data += '=' * (4 - pad)
+
     raw = base64.b64decode(data)
-    pil = Image.open(io.BytesIO(raw)).convert("RGB")
-    bgr = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
+
+    # Try PIL first; if PIL can't identify the format, fall back to OpenCV.
+    # Keep cv2.cvtColor outside the except so its errors surface naturally.
+    try:
+        pil = Image.open(io.BytesIO(raw)).convert("RGB")
+    except Exception as pil_err:
+        print(f"[decode] PIL failed ({type(pil_err).__name__}: {pil_err}), trying cv2")
+        arr = np.frombuffer(raw, dtype=np.uint8)
+        bgr = cv2.imdecode(arr, cv2.IMREAD_COLOR)
+        if bgr is None:
+            raise ValueError("Could not decode image — unsupported format or corrupted data")
+    else:
+        bgr = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
     contour = preprocessor.process(bgr)   # white-bg, black-stroke
     contour = cv2.bitwise_not(contour)    # → white-on-black (model convention)
+    return contour
+
+
+def _load_ref_from_disk(tutorial_id: str, step: int | None) -> np.ndarray:
+    """
+    Load a reference contour directly from disk.
+    step=None  → reference.png (final evaluation)
+    step=N     → N.png (per-step check)
+    """
+    filename = 'reference.png' if step is None else f'{step}.png'
+    path = os.path.join(STEP_IMAGES_DIR, tutorial_id, filename)
+
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Reference image not found: {tutorial_id}/{filename}")
+
+    pil = Image.open(path).convert("RGB")
+    bgr = cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
+    contour = preprocessor.process(bgr)
+    contour = cv2.bitwise_not(contour)
     return contour
 
 
@@ -138,14 +177,22 @@ def contour():
 def compare():
     data = request.get_json(force=True)
 
-    if "reference" not in data or "child" not in data:
-        return jsonify({"error": "Both 'reference' and 'child' fields are required"}), 400
+    if "tutorial_id" not in data or "child" not in data:
+        return jsonify({"error": "Both 'tutorial_id' and 'child' fields are required"}), 400
+
+    step = data.get("step")  # int for per-step check, None for final evaluation
 
     try:
-        ref_img   = _decode_image(data["reference"])
+        ref_img = _load_ref_from_disk(data["tutorial_id"], step)
+    except FileNotFoundError as exc:
+        return jsonify({"error": str(exc)}), 404
+    except Exception as exc:
+        return jsonify({"error": f"Reference image load failed: {exc}"}), 400
+
+    try:
         child_img = _decode_image(data["child"])
     except Exception as exc:
-        return jsonify({"error": f"Image decode failed: {exc}"}), 400
+        return jsonify({"error": f"Child image decode failed: {exc}"}), 400
 
     try:
         score, heatmap_bgr, zones = infer(
@@ -212,4 +259,4 @@ if __name__ == '__main__':
     gc.collect()  # Free any loader temporaries after model is fully resident
     print(f"Ready.  Open http://localhost:{port} in your browser.")
 
-    app.run(host='0.0.0.0', port=7860)
+    app.run(host='0.0.0.0', port=port)

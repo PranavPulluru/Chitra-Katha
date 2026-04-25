@@ -149,71 +149,110 @@
   padding-bottom: 80px; /* space for fixed nav bar */
 }
 
-/* Header */
-.l3t-header {
-  display: flex;
+/* Dark hero header */
+.l3t-hero {
+  background: #7a1e0a;
+  padding: 18px 16px 20px;
+  flex-shrink: 0;
+}
+
+.l3t-hero-back {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px 10px;
-  background: var(--white-warm);
-  border-bottom: 2px solid var(--parchment);
-  flex-shrink: 0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.l3t-title {
-  flex: 1;
-  font-family: 'Rozha One', serif;
-  font-size: 1rem;
-  color: var(--deep-brown);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.l3t-counter {
+  gap: 6px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.55);
+  color: rgba(255,255,255,0.9);
+  font-family: 'Hind', sans-serif;
   font-size: 0.78rem;
-  color: var(--text-muted);
   font-weight: 600;
-  white-space: nowrap;
-  background: var(--parchment);
-  padding: 3px 10px;
-  border-radius: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 14px;
+  transition: background 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Progress bar */
-.l3t-progress-track {
-  height: 4px;
+.l3t-hero-back:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.8);
+}
+
+.l3t-hero-title {
+  font-family: 'Rozha One', serif;
+  font-size: 1.3rem;
+  color: #fff;
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.l3t-hero-subtitle {
+  font-family: 'Hind', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+}
+
+/* Step label + progress bar */
+.l3t-progress-section {
+  padding: 10px 16px 0;
   background: var(--parchment);
   flex-shrink: 0;
+}
+
+.l3t-step-label {
+  display: block;
+  font-family: 'Hind', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 6px;
+}
+
+.l3t-progress-track {
+  height: 6px;
+  background: rgba(58,26,2,0.12);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .l3t-progress-bar {
   height: 100%;
-  background: var(--terracotta);
+  background: linear-gradient(to right, var(--terracotta), var(--ochre));
   transition: width 0.35s ease;
-  border-radius: 0 2px 2px 0;
+  border-radius: 3px;
 }
 
 /* Step reference image */
 .l3t-image-wrap {
   width: 100%;
-  background: var(--cream);
+  background: var(--parchment);
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 220px;
   flex-shrink: 0;
   overflow: hidden;
+  padding: 16px;
 }
 
 .l3t-image {
   width: 100%;
-  max-height: 380px;
+  max-height: 460px;
   object-fit: contain;
   display: block;
+  border-radius: 8px;
+  border: 1.5px solid rgba(58,26,2,0.15);
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(58,26,2,0.08);
 }
 
 /* Placeholder styling when image fails */
@@ -224,22 +263,23 @@
 
 /* Instruction card */
 .l3t-instruction-card {
+  margin: 12px 16px 0;
   background: var(--white-warm);
-  border-top: 3px solid var(--terracotta);
-  padding: 16px 20px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px 20px;
   flex: 1;
 }
 
 .l3t-step-badge {
-  display: inline-block;
-  background: var(--terracotta);
-  color: #fff;
-  font-family: 'Rozha One', serif;
-  font-size: 0.8rem;
-  padding: 3px 12px;
-  border-radius: 20px;
-  margin-bottom: 10px;
-  letter-spacing: 0.04em;
+  display: block;
+  font-family: 'Hind', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 8px;
 }
 
 .l3t-instruction {
@@ -255,48 +295,81 @@
   left: 0;
   right: 0;
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
   padding: 10px 16px 14px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   background: var(--white-warm);
-  border-top: 2px solid var(--parchment);
+  border-top: 1px solid var(--parchment);
   z-index: 20;
 }
 
-.l3t-nav-btn {
-  flex: 1;
-  padding: 13px 10px;
+/* Back button — outlined */
+.l3t-nav-back-btn {
+  flex: 0 0 auto;
+  padding: 12px 18px;
   border: 2px solid var(--terracotta);
-  border-radius: 8px;
+  border-radius: 6px;
   background: transparent;
   color: var(--terracotta);
   font-family: 'Hind', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.l3t-nav-back-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.l3t-nav-back-btn:hover:not(:disabled) {
+  background: rgba(185,64,18,0.07);
+}
+
+/* Center counter */
+.l3t-nav-counter {
+  flex: 1;
+  text-align: center;
+  font-family: 'Hind', sans-serif;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Next / Finish button — filled */
+.l3t-nav-btn {
+  padding: 13px 20px;
+  border: 2px solid var(--terracotta);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--terracotta);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, opacity 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 
-.l3t-nav-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
-/* Next/Finish button — filled */
 .l3t-nav-next,
 .l3t-nav-finish {
-  background: var(--terracotta);
+  flex: 0 0 auto;
+  background: #7a1e0a;
+  border-color: #7a1e0a;
   color: #fff;
 }
 
 .l3t-nav-next:hover:not(:disabled),
 .l3t-nav-finish:hover:not(:disabled) {
-  background: var(--mid-brown);
-  border-color: var(--mid-brown);
-}
-
-.l3t-nav-btn:not(.l3t-nav-next):not(.l3t-nav-finish):hover:not(:disabled) {
-  background: var(--parchment);
+  background: #5c1507;
+  border-color: #5c1507;
 }
 
 /* Step image placeholder message (shown under error image) */
@@ -721,6 +794,193 @@
   color: var(--text-muted);
   padding: 10px;
   text-align: center;
+}
+
+/* Zone improvement tip */
+.zone-row {
+  flex-wrap: wrap;
+}
+.zone-tip {
+  width: 100%;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-top: 4px;
+  padding-left: 0.2rem;
+  line-height: 1.45;
+}
+
+
+/* ============================================================
+   QUIZ SECTION — screen-l3-eval
+   ============================================================ */
+
+#l3e-quiz {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding-bottom: 24px;
+}
+
+.l3e-quiz-divider {
+  margin: 24px 0 4px;
+  text-align: center;
+}
+
+.l3e-quiz-title {
+  font-family: 'Rozha One', serif;
+  font-size: 1.3rem;
+  color: var(--deep-brown);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.l3e-quiz-intro {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  text-align: center;
+  max-width: 300px;
+  margin: 0 auto 20px;
+}
+
+#l3e-quiz-cards {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Individual quiz card */
+.l3e-quiz-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ochre);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: left;
+  width: 100%;
+}
+
+.l3e-quiz-question {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.55;
+  margin-bottom: 12px;
+}
+
+.l3e-quiz-qnum {
+  font-family: 'Rozha One', serif;
+  color: var(--terracotta);
+  font-size: 0.88rem;
+  margin-right: 6px;
+}
+
+.l3e-quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Quiz answer option button */
+.l3e-quiz-option {
+  width: 100%;
+  padding: 11px 14px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--white-warm);
+  color: var(--text);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  line-height: 1.4;
+}
+
+.l3e-quiz-option:hover:not(:disabled) {
+  background: var(--parchment);
+  border-color: var(--terracotta);
+  color: var(--deep-brown);
+}
+
+.l3e-quiz-option:disabled {
+  cursor: default;
+}
+
+.l3e-quiz-option.correct {
+  background: #d4edda;
+  border-color: #3B6741;
+  color: #1a5e2a;
+  font-weight: 600;
+}
+
+.l3e-quiz-option.wrong {
+  background: #f8d7d0;
+  border-color: #B94012;
+  color: #8b1e0a;
+}
+
+/* Explanation text revealed after answer */
+.l3e-quiz-explanation {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-style: italic;
+  line-height: 1.55;
+  padding: 10px 12px;
+  background: var(--parchment);
+  border-radius: 6px;
+  border-left: 3px solid var(--ochre);
+  animation: fadeInExplain 0.3s ease;
+}
+
+@keyframes fadeInExplain {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Final score block */
+#l3e-quiz-score {
+  margin-top: 20px;
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--terracotta);
+  border-radius: 8px;
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.l3e-quiz-final {
+  font-family: 'Rozha One', serif;
+  font-size: 1.1rem;
+  color: var(--deep-brown);
+  line-height: 1.45;
+  margin-bottom: 16px;
+}
+
+.l3e-quiz-retry-btn {
+  padding: 12px 24px;
+  border: 2px solid var(--terracotta);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--terracotta);
+  font-family: 'Hind', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.l3e-quiz-retry-btn:hover {
+  background: var(--terracotta);
+  color: #fff;
 }
 
 

@@ -1,11 +1,11 @@
 """
 model/model.py — ChitraKathaModel
 ==================================
-Dual-stream DINOv2 ViT-S/14 encoder for contour similarity evaluation.
+Dual-stream DINOv2 ViT-B/14 encoder for contour similarity evaluation.
 
 Architecture
 ------------
-  • Shared frozen DINOv2 backbone (facebook/dinov2-small)
+  • Shared frozen DINOv2 backbone (facebook/dinov2-base)
   • Lightweight trainable projection head on top of patch embeddings
   • Similarity score  : cosine distance between CLS tokens → 0–100
   • Spatial heatmap   : per-patch L2 distance → 16×16 grid
@@ -26,8 +26,8 @@ import torch.nn.functional as F
 from transformers import AutoModel
 
 # ── constants ──────────────────────────────────────────────────────────────────
-DINO_MODEL_ID  = "facebook/dinov2-small"
-DINO_HIDDEN    = 384     # hidden dimension of ViT-S
+DINO_MODEL_ID  = "facebook/dinov2-base"
+DINO_HIDDEN    = 768     # hidden dimension of ViT-B
 PATCH_GRID     = 16      # 224 / patch_size(14) = 16  →  16×16 = 256 patches
 N_PATCHES      = PATCH_GRID * PATCH_GRID  # 256
 PROJ_HIDDEN    = 256
@@ -132,9 +132,9 @@ class ChitraKathaModel(nn.Module):
         with torch.no_grad():
             out = self.backbone(pixel_values=x)
 
-        # last_hidden_state: (B, 257, 768)  →  [CLS] + 256 patch tokens
-        cls_token     = out.last_hidden_state[:, 0, :]       # (B, 768)
-        patch_tokens  = out.last_hidden_state[:, 1:, :]      # (B, 256, 768)
+        # last_hidden_state: (B, 257, DINO_HIDDEN)  →  [CLS] + 256 patch tokens
+        cls_token     = out.last_hidden_state[:, 0, :]       # (B, DINO_HIDDEN)
+        patch_tokens  = out.last_hidden_state[:, 1:, :]      # (B, 256, DINO_HIDDEN)
 
         patch_proj = self.proj_head(patch_tokens)            # (B, 256, PROJ_OUT)
         return cls_token, patch_proj

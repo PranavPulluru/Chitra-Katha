@@ -31,12 +31,118 @@ const Level3v2 = (() => {
   let _refImageSrc  = null;   // data-URL or blob-URL for evaluation reference
   let _fromSelect   = false;  // true if user navigated via art-select screen
 
+  // ── Improvement tips per art form + zone ────────────────────────────────
+  const IMPROVEMENT_TIPS = {
+    kalighat: {
+      "top":          "Try drawing the head outline in one confident sweeping stroke — load your brush fully and don't lift it.",
+      "top-left":     "The flowing outer contour of the shoulder and arm should be a single connected curve.",
+      "top-right":    "Extend the eyes further horizontally and keep the strokes brisk — they should feel almost fish-like.",
+      "center":       "Apply the colour wash in one quick flat pass — avoid going back over wet paint.",
+      "center-left":  "The left silhouette edge should flow from shoulder to hip as one sweeping stroke.",
+      "center-right": "The thick black outline on garment edges (the 'pad') needs to be bolder — load your brush more.",
+      "bottom":       "The lower-body and skirt hem should be outlined with the same bold black line as the rest of the garment.",
+      "bottom-left":  "Keep the foot/hem outline continuous — Kalighat feet are simplified into a single confident curve.",
+      "bottom-right": "Ensure the garment border lines are clearly separated from the body outline.",
+    },
+    sohrai: {
+      "top":          "Your two red ancestor lines at the top should be thick, parallel, and span the full width.",
+      "top-left":     "Ensure the left side has the same density of motifs as the right — Sohrai is symmetrically balanced.",
+      "top-right":    "Check the black Shiva line — it should run all the way across just below the red lines.",
+      "center":       "The main animal should dominate the centre — make it larger and bolder.",
+      "center-left":  "Add X-ray detail inside the animal outline — a spine or rib lines in a contrasting colour.",
+      "center-right": "Add the comb sgraffito texture — scored parallel lines give Sohrai its distinctive rhythmic feel.",
+      "bottom":       "The lower register needs its own border — a lotus band or simple repeated leaf motif.",
+      "bottom-left":  "Add leaf or geometric fill in the lower left to balance the composition.",
+      "bottom-right": "Mirror the lower-left motif on the right for compositional balance.",
+    },
+    warli: {
+      "top":          "The top often shows trees — add small triangular tree shapes made of stacked triangles.",
+      "top-left":     "Upper-left figures should use the standard two-triangle body — check torso and pelvis proportions.",
+      "top-right":    "The Tarpa musician is often placed at the top right — a circle with radiating figures.",
+      "center":       "The Chauk (sacred square) should be centred and symmetrical — all four quadrants need equal patterning.",
+      "center-left":  "Left figures should be dancing — arms raised and legs bent into the classic triangle shape.",
+      "center-right": "Right figures should mirror those on the left in the circular Tarpa dance formation.",
+      "bottom":       "The ground register typically shows animals — elongated oval bodies with four stick legs.",
+      "bottom-left":  "Add small grouped figure clusters in the lower left for hunting or agricultural scenes.",
+      "bottom-right": "Lower right often shows cattle — oval body, four lines for legs, two lines for horns.",
+    },
+    madhubani: {
+      "top":          "The upper border should be densely filled — add a row of lotus flowers or peacocks.",
+      "top-left":     "Fill any white space in the upper left with small fish, birds, or diamond patterns.",
+      "top-right":    "Upper right: mirror the motif on the left — Madhubani uses symmetrical panel borders.",
+      "center":       "The main deity should be in the exact centre — check alignment and make the figure taller.",
+      "center-left":  "Left of the deity: add attendant figures or blossoming trees with birds on the branches.",
+      "center-right": "Right of the deity: add a mirror-image attendant or a peacock with its tail spread.",
+      "bottom":       "The lower border should echo the upper — fish, turtles, or a geometric zigzag is traditional.",
+      "bottom-left":  "Bottom left gap: fill with a creeper vine motif or a row of small repeating flower petals.",
+      "bottom-right": "Bottom right gap: add a conch shell or ceremonial water pot as a finishing motif.",
+    },
+    talapatra: {
+      "top":          "The top register should have a decorative border — a row of repeated geometric diamonds or dots.",
+      "top-left":     "Upper-left outlines should be confident single-line incisions — press the stylus firmly.",
+      "top-right":    "Add more cross-hatching inside robes and architectural backgrounds in the upper right.",
+      "center":       "The central deity needs a clear aura or mandorla around it — etch concentric oval lines.",
+      "center-left":  "Left panel: add a secondary character or devotee kneeling in a smaller scale.",
+      "center-right": "Right panel: add a narrative element — a vehicle (vahana) or a symbolic weapon.",
+      "bottom":       "The bottom register should show earth or water — horizontal wavy lines represent water.",
+      "bottom-left":  "Bottom-left corner: add a row of incised dots or a small lotus rosette as a filler.",
+      "bottom-right": "Bottom-right corner: a simple maker's mark — a triangle or a row of dots — is traditional.",
+    },
+  };
+
   // Backend is hosted on Hugging Face Spaces. Replace the placeholder below
   // with your actual Space URL (e.g. https://<user>-<space-name>.hf.space).
-  const BACKEND_URL = 'https://pranavpul-chitra-katha-backend.hf.space'; // TODO: fill in
-  const API_COMPARE = `${BACKEND_URL}/compare`;
+  // Use a relative path so requests go to whatever server is currently hosting
+  // the frontend — local Flask dev server OR the deployed HF Space backend.
+  // For Netlify (static-only hosting), swap to the absolute HF Space URL:
+  //   const API_COMPARE = 'https://pranavpul-chitra-katha-backend.hf.space/compare';
+  const API_COMPARE = '/compare';
   const IMG_BASE    = 'level3v2/step_images/';
   const PLACEHOLDER = 'level3v2/placeholder.svg';
+
+  // Convert any browser-decodable image file (AVIF, WebP, HEIC, BMP, GIF…)
+  // to a JPEG data-URL via canvas so the server always receives a known format.
+  function _toJpegDataURL(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = ev => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Browser could not decode image'));
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Normalize any uploaded file (HEIC, WebP, etc.) to a JPEG data-URL via canvas.
+  // This ensures the server always receives a format PIL/OpenCV can decode.
+  function _normalizeToJpeg(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = ev => {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          resolve(canvas.toDataURL('image/jpeg', 0.92));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 
   // ── Public entry point ──────────────────────────────────────────────────
 
@@ -110,7 +216,10 @@ const Level3v2 = (() => {
     _tutorial    = TUTORIAL_DATA[id];
     _currentStep = 0;
 
+    const total = _tutorial.steps.length;
     document.getElementById('l3t-title').textContent = _tutorial.name;
+    document.getElementById('l3t-hero-subtitle').textContent =
+      `Follow ${total} rhythmic steps to create your painting`;
     _renderStep();
     showScreen('screen-l3-tutorial');
     document.getElementById('screen-l3-tutorial').scrollTop = 0;
@@ -121,8 +230,9 @@ const Level3v2 = (() => {
     const total     = _tutorial.steps.length;
     const stepNum   = _currentStep + 1;          // 1-based display
 
-    // Header counter
-    document.getElementById('l3t-counter').textContent = `${stepNum} / ${total}`;
+    // Step label above progress bar + nav counter
+    document.getElementById('l3t-step-label').textContent = `Step ${stepNum} of ${total}`;
+    document.getElementById('l3t-counter').textContent    = `${stepNum} / ${total}`;
     document.getElementById('l3t-step-badge').textContent = `Step ${stepNum}`;
 
     // Progress bar
@@ -180,7 +290,7 @@ const Level3v2 = (() => {
       if (_fromSelect) {
         showScreen('screen-l3-select');
       } else {
-        showScreen('screen-level2');
+        showScreen('screen-level1');
       }
     } else {
       _prevStep();
@@ -282,14 +392,12 @@ const Level3v2 = (() => {
       </div>`;
 
     try {
-      const refDataURL = await _pathToDataURL(`${IMG_BASE}${_tutorialId}/${stepNum}.png`);
-
       let resp;
       try {
         resp = await fetch(API_COMPARE, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ reference: refDataURL, child: childDataURL }),
+          body:    JSON.stringify({ tutorial_id: _tutorialId, step: stepNum, child: childDataURL }),
         });
       } catch (_) {
         throw { isNetwork: true };
@@ -379,9 +487,11 @@ const Level3v2 = (() => {
     document.getElementById('l3e-ring-circle').style.strokeDashoffset = '314';
     document.getElementById('l3e-ring-circle').style.stroke = 'var(--terracotta)';
     document.getElementById('l3e-score').textContent        = '–';
+    document.getElementById('l3e-score-tier').textContent   = '';
     document.getElementById('l3e-score-label').textContent  = '';
     document.getElementById('l3e-heatmap').src              = '';
     document.getElementById('l3e-zone-list').innerHTML      = '';
+    document.getElementById('l3e-quiz').style.display       = 'none';
   }
 
   async function _runComparison(childDataURL) {
@@ -390,16 +500,12 @@ const Level3v2 = (() => {
     document.getElementById('l3e-btn-upload').disabled   = true;
 
     try {
-      // Always compare against the canonical master reference for this art form,
-      // NOT the user's Level-1 identification image.
-      const refDataURL = await _pathToDataURL(`${IMG_BASE}${_tutorialId}/reference.png`);
-
       let resp;
       try {
         resp = await fetch(API_COMPARE, {
           method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ reference: refDataURL, child: childDataURL }),
+          body:    JSON.stringify({ tutorial_id: _tutorialId, child: childDataURL }),
         });
       } catch (_networkErr) {
         throw { isNetwork: true };
@@ -425,8 +531,10 @@ const Level3v2 = (() => {
 
   async function _showResults(data, childDataURL) {
     const { score, heatmap, zones } = data;
+    const rounded = Math.round(score);
 
-    document.getElementById('l3e-score').textContent       = Math.round(score);
+    document.getElementById('l3e-score').textContent      = rounded;
+    document.getElementById('l3e-score-tier').textContent = _scoreTier(score);
     document.getElementById('l3e-score-label').textContent = _scoreLabel(score);
     setTimeout(() => _animateRing(score), 60);
 
@@ -440,19 +548,25 @@ const Level3v2 = (() => {
     if (!zones || zones.length === 0) {
       list.innerHTML = '<p class="zone-all-good">✦ No significant deviations — great work!</p>';
     } else {
+      const artTips = (IMPROVEMENT_TIPS[_tutorialId] || {});
       zones.forEach(z => {
+        const tip = artTips[z.zone] || null;
         const row = document.createElement('div');
         row.className = 'zone-row';
         row.innerHTML = `
           <span class="zone-badge ${z.severity}">${z.severity}</span>
           <span class="zone-name">${z.zone}</span>
+          ${tip ? `<p class="zone-tip">💡 ${tip}</p>` : ''}
         `;
         list.appendChild(row);
       });
     }
 
     document.getElementById('l3e-results').style.display = 'flex';
-    document.getElementById('screen-l3-eval').scrollTop  = 500; // scroll down to results
+    document.getElementById('screen-l3-eval').scrollTop  = 500;
+
+    // Show quiz after a short delay so user can absorb the score first
+    setTimeout(() => _renderQuiz(_tutorialId), 800);
   }
 
   function _showErrorResults(err) {
@@ -528,6 +642,99 @@ const Level3v2 = (() => {
     return 'Keep practising!';
   }
 
+  function _scoreTier(score) {
+    if (score >= 80) return 'Master';
+    if (score >= 60) return 'Journeyman';
+    if (score >= 40) return 'Apprentice';
+    return 'Beginner';
+  }
+
+  function _renderQuiz(tutorialId) {
+    const quizEl = document.getElementById('l3e-quiz');
+    const questions = (typeof QUIZ_DATA !== 'undefined' && QUIZ_DATA[tutorialId]) || [];
+
+    if (!questions.length) {
+      quizEl.style.display = 'none';
+      return;
+    }
+
+    const cardsEl = document.getElementById('l3e-quiz-cards');
+    const scoreEl = document.getElementById('l3e-quiz-score');
+    const finalEl = document.getElementById('l3e-quiz-final-text');
+
+    cardsEl.innerHTML = '';
+    scoreEl.style.display = 'none';
+
+    let answered = 0;
+    let correct  = 0;
+
+    questions.forEach((q, qi) => {
+      const card = document.createElement('div');
+      card.className = 'l3e-quiz-card';
+
+      const optionsHtml = q.options.map((opt, oi) =>
+        `<button class="l3e-quiz-option" data-oi="${oi}">${opt}</button>`
+      ).join('');
+
+      card.innerHTML = `
+        <p class="l3e-quiz-question">
+          <span class="l3e-quiz-qnum">Q${qi + 1}</span>${q.q}
+        </p>
+        <div class="l3e-quiz-options">${optionsHtml}</div>
+        <p class="l3e-quiz-explanation" style="display:none">${q.explanation}</p>
+      `;
+
+      card.querySelectorAll('.l3e-quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (btn.disabled) return;
+
+          const oi = parseInt(btn.dataset.oi);
+          const isCorrect = oi === q.answer;
+
+          // Disable all options in this question and reveal correct/wrong
+          card.querySelectorAll('.l3e-quiz-option').forEach(b => {
+            b.disabled = true;
+            const boi = parseInt(b.dataset.oi);
+            if (boi === q.answer) b.classList.add('correct');
+            else if (b === btn && !isCorrect) b.classList.add('wrong');
+          });
+
+          // Show explanation
+          card.querySelector('.l3e-quiz-explanation').style.display = 'block';
+
+          answered++;
+          if (isCorrect) correct++;
+
+          // Show final score after all questions answered
+          if (answered === questions.length) {
+            const pct = Math.round((correct / questions.length) * 100);
+            let msg;
+            if (pct === 100)    msg = `Perfect — ${correct}/${questions.length}! You've truly mastered the eye of a critic.`;
+            else if (pct >= 75) msg = `${correct}/${questions.length} — Great eye! You're picking up the style well.`;
+            else if (pct >= 50) msg = `${correct}/${questions.length} — Good effort! Revisit the tutorial to sharpen your eye.`;
+            else                msg = `${correct}/${questions.length} — Keep exploring — every master starts as a student.`;
+
+            finalEl.textContent = msg;
+            scoreEl.style.display = 'block';
+            setTimeout(() => scoreEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+          }
+        });
+      });
+
+      cardsEl.appendChild(card);
+    });
+
+    // Retry resets all cards
+    document.getElementById('l3e-quiz-retry').onclick = () => {
+      answered = 0;
+      correct  = 0;
+      _renderQuiz(tutorialId);
+    };
+
+    quizEl.style.display = 'block';
+    setTimeout(() => quizEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+  }
+
   function _animateRing(score) {
     const circle = document.getElementById('l3e-ring-circle');
     circle.style.strokeDashoffset = String(314 * (1 - score / 100));
@@ -579,11 +786,13 @@ const Level3v2 = (() => {
   function _init() {
     // ── Art-select screen ──────────────────────────────────────────────────
     document.getElementById('l3s-back').addEventListener('click', () => {
-      showScreen('screen-level2');
+      showScreen('screen-level1');
     });
 
     // ── Tutorial screen ────────────────────────────────────────────────────
-    document.getElementById('l3t-back').addEventListener('click', _tutorialBack);
+    document.getElementById('l3t-back').addEventListener('click', () => {
+      showScreen(_fromSelect ? 'screen-l3-select' : 'screen-level1');
+    });
     document.getElementById('l3t-prev').addEventListener('click', _prevStep);
     document.getElementById('l3t-next').addEventListener('click', _nextStep);
     document.getElementById('l3t-finish').addEventListener('click', _showEvaluation);
@@ -601,14 +810,14 @@ const Level3v2 = (() => {
     document.getElementById('l3t-cam-capture').addEventListener('click', _captureFrame);
     document.getElementById('l3t-cam-cancel').addEventListener('click',  _closeCamera);
 
-    document.getElementById('l3t-check-input').addEventListener('change', (e) => {
+    document.getElementById('l3t-check-input').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       e.target.value = '';
-      const reader = new FileReader();
-      reader.onload  = ev => _runStepCheck(ev.target.result);
-      reader.onerror = ()  => alert('Could not read the selected file.');
-      reader.readAsDataURL(file);
+      try {
+        const dataURL = await _toJpegDataURL(file);
+        _runStepCheck(dataURL);
+      } catch { alert('Could not read the selected file.'); }
     });
 
     // Touch/swipe support for step navigation
@@ -637,12 +846,11 @@ const Level3v2 = (() => {
     document.getElementById('l3e-file-input').addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
-      e.target.value = '';   // allow re-selecting the same file
-
-      const reader = new FileReader();
-      reader.onload  = ev => _runComparison(ev.target.result);
-      reader.onerror = ()  => alert('Could not read the selected file.');
-      reader.readAsDataURL(file);
+      e.target.value = '';
+      try {
+        const dataURL = await _toJpegDataURL(file);
+        _runComparison(dataURL);
+      } catch { alert('Could not read the selected file.'); }
     });
 
     document.getElementById('l3e-retry').addEventListener('click', _resetEvalUI);
