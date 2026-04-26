@@ -1,6 +1,7 @@
 # Model weights & checkpoints
 *.pth
 *.pt
+!level3/checkpoints/best.pt
 *.ckpt
 *.bin
 *.safetensors
