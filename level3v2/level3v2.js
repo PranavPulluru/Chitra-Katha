@@ -263,6 +263,17 @@ const Level3v2 = (() => {
         </div>`;
       }).join('')}
     `;
+
+    rail.addEventListener('click', (e) => {
+      const item = e.target.closest('.l3t-rail-item');
+      if (!item) return;
+      const idx = parseInt(item.dataset.idx, 10);
+      if (isNaN(idx) || idx === _currentStep) return;
+      _currentStep = idx;
+      const panel = document.getElementById('l3t-check-panel');
+      if (panel) { panel.style.display = 'none'; panel.innerHTML = ''; }
+      _renderStep();
+    });
   }
 
   function _renderStep() {

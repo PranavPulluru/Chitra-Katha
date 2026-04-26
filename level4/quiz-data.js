@@ -172,6 +172,194 @@ const QUIZ_DATA = {
     }
   ],
 
+  gond: [
+    {
+      q: "What fills the interior of every shape — body, leaf, branch — in Gond art?",
+      options: [
+        "Intricate patterns of dots, dashes, and short lines",
+        "Solid flat colour with no interior texture",
+        "Cross-hatched pencil shading",
+        "Watercolour gradient washes"
+      ],
+      answer: 0,
+      explanation: "In Gond art every form is filled with a personal 'pattern vocabulary' of dots, dashes, short curves, and scales — creating the sense that the figure is vibrating with inner life."
+    },
+    {
+      q: "Gond art depicts the natural world with which special quality?",
+      options: [
+        "Every creature and tree holds equal spiritual importance",
+        "A strict hierarchy placing humans above all animals",
+        "Only mythological creatures, never ordinary wildlife",
+        "Landscapes without any animal figures"
+      ],
+      answer: 0,
+      explanation: "In Gondi cosmology every living thing — a deer, a tree, a bird — holds a spirit. Gond paintings celebrate this equality by giving the same visual richness to a background leaf as to the central figure."
+    },
+    {
+      q: "The dominant subjects in Gond painting are:",
+      options: [
+        "Forest animals, sacred trees, and nature spirits",
+        "Mughal court scenes and battles",
+        "Portraits of tribal chiefs and elders",
+        "Abstract geometric mandalas"
+      ],
+      answer: 0,
+      explanation: "Gond art draws from the Gondi community's deep relationship with the forest. Deer, peacocks, fish, and the Tree of Life are among the most frequent subjects."
+    },
+    {
+      q: "What gives Gond paintings their characteristic sense of visual energy?",
+      options: [
+        "Rhythmic repetition of micro-patterns filling every form",
+        "Bold diagonal lines sweeping across the canvas",
+        "Photorealistic shading and perspective",
+        "Large areas of unpainted white space"
+      ],
+      answer: 0,
+      explanation: "The dense dot and line patterning that fills every shape creates a visual vibration — the entire surface appears to hum with life and motion, which is the signature quality of Gond art."
+    }
+  ],
+
+  kalamkari: [
+    {
+      q: "What does the word 'Kalamkari' literally mean?",
+      options: [
+        "Work of the pen (kalam = pen, kari = work)",
+        "Woven flower (kalam = flower, kari = weave)",
+        "Sacred cloth painting (kala = art, kari = holy)",
+        "Coloured earth (kala = black, mari = soil)"
+      ],
+      answer: 0,
+      explanation: "'Kalam' is the Persian word for pen or reed, and 'kari' means work or craft. Kalamkari literally means 'work done with a pen' — referring to the hand-drawn outlines made with a bamboo kalam dipped in natural ink."
+    },
+    {
+      q: "Kalamkari paintings are traditionally made on which material?",
+      options: [
+        "Cotton or silk fabric treated with natural mordants",
+        "Dried mango-wood panels",
+        "Fired terracotta tiles",
+        "Pressed lotus-leaf paper"
+      ],
+      answer: 0,
+      explanation: "Kalamkari is painted on cotton (or sometimes silk) fabric. The cloth is first treated with myrobalan mordant so the natural dyes bond permanently — without this step the colours would wash out."
+    },
+    {
+      q: "Which stories most commonly appear in Kalamkari?",
+      options: [
+        "Scenes from the Ramayana, Mahabharata, and Puranas",
+        "Historical battles of the Vijayanagara empire",
+        "Abstract spiritual yantras and geometric mandalas",
+        "Portraits of Nayaka kings and their courts"
+      ],
+      answer: 0,
+      explanation: "The temple-towns of Andhra Pradesh made Kalamkari for temple use — so the art is overwhelmingly devotional, depicting the stories of Vishnu, Shiva, and the great epics."
+    },
+    {
+      q: "What creates the flowing black outlines that define Kalamkari?",
+      options: [
+        "A bamboo kalam dipped in iron-and-myrobalan fermented ink",
+        "Carved wooden printing blocks inked in carbon black",
+        "Stencilling through cut-out paper templates",
+        "A fine mongoose-hair brush loaded with soot"
+      ],
+      answer: 0,
+      explanation: "The kalam (pen) is a sharpened bamboo or date-palm stick dipped in a solution of iron-water fermented with jaggery and myrobalan, which produces the rich natural black line that gives Kalamkari its hand-drawn quality."
+    }
+  ],
+
+  phad: [
+    {
+      q: "Phad paintings primarily tell the stories of:",
+      options: [
+        "Rajasthani folk heroes such as Pabuji and Devnarayan",
+        "Gods of the Mughal court pantheon",
+        "Buddhist monks travelling the Silk Road",
+        "Village goddesses of the Deccan plateau"
+      ],
+      answer: 0,
+      explanation: "Phad is a narrative scroll painting made to tell the epic stories of Rajasthani folk heroes — especially Pabuji (the camel herder-deity) and Devnarayan (the folk warrior-god). These stories were sung by Bhopa priests through the night as they lit the Phad."
+    },
+    {
+      q: "How was the Phad traditionally used in performance?",
+      options: [
+        "Bhopa priests carried and unrolled it for night-long sung performances",
+        "It was hung in a palace throne room as a royal genealogy scroll",
+        "It was floated in rivers during monsoon festivals as an offering",
+        "Women wrapped the Phad around their bodies at weddings as a blessing garment"
+      ],
+      answer: 0,
+      explanation: "Bhopa priests (and their wives, who held the lamp) used the Phad as a mobile shrine — unrolling the cloth scroll and singing the entire epic overnight while illuminating each scene. This tradition is still alive in rural Rajasthan."
+    },
+    {
+      q: "What is the most characteristic colour palette of Phad painting?",
+      options: [
+        "Bold flat primary colours — especially red, yellow, and green",
+        "Subtle monochrome ink washes on cream-coloured cloth",
+        "Cool turquoise and silver against a midnight-blue ground",
+        "Earthy terracotta and ochre on a white lime-plaster ground"
+      ],
+      answer: 0,
+      explanation: "Phad is painted in bright, flat, opaque colours — vivid red, strong yellow, bold green, and orange. No shading is used. The palette is designed for legibility in lamplight during night performances."
+    },
+    {
+      q: "Which community both creates and performs with Phad paintings?",
+      options: [
+        "Chitrakar painters and Bhopa priests",
+        "Mewar Royal Academy artists and Rajput nobles",
+        "Warli women of tribal Maharashtra",
+        "Nath yogis travelling between temples"
+      ],
+      answer: 0,
+      explanation: "The Chitrakar caste (professional painters) created the Phad, while the Bhopa and Bhopi (hereditary folk priests) performed with it. This artist-performer partnership was a living ecosystem that kept the tradition alive."
+    }
+  ],
+
+  pitchwai: [
+    {
+      q: "Pitchwai paintings are primarily hung in temples dedicated to which deity?",
+      options: [
+        "Shrinathji — a child form of Krishna",
+        "Durga during the Navratri festival",
+        "Lord Shiva at the time of Mahashivaratri",
+        "Goddess Lakshmi during Diwali"
+      ],
+      answer: 0,
+      explanation: "'Pitchwai' means 'that which hangs at the back' — these large cloth paintings were created as devotional backdrops hung behind the idol of Shrinathji (a seven-year-old form of Krishna) in the Nathdwara temple in Rajasthan."
+    },
+    {
+      q: "Which colour dominates the background of many classic Pitchwai paintings?",
+      options: [
+        "Deep midnight blue or black",
+        "Bright vermilion red",
+        "Forest green",
+        "Turmeric yellow"
+      ],
+      answer: 0,
+      explanation: "The deep midnight blue or black background of Pitchwai paintings evokes the devotional atmosphere of night-time rituals and the divine darkness of Krishna's complexion — it makes the richly coloured figures and flowers seem to glow."
+    },
+    {
+      q: "Which tree is almost always depicted in Pitchwai paintings, and why?",
+      options: [
+        "The kadamba tree — it blooms in monsoon when Krishna danced with the gopis",
+        "The peepal tree — because the Buddha attained enlightenment under it",
+        "The banyan tree — because Shiva meditated in its shade",
+        "The ashoka tree — because Sita sat under it in Lanka"
+      ],
+      answer: 0,
+      explanation: "The kadamba (Neolamarckia cadamba) blooms during the monsoon and fills the Braj region with fragrance. In Vaishnava tradition it is Krishna's tree — the one under which he played his flute and called the gopis to dance."
+    },
+    {
+      q: "The central figure in a Pitchwai painting is always shown with one arm raised. What does this gesture signify?",
+      options: [
+        "He is lifting Mount Govardhan to shelter the villagers from rain",
+        "He is blessing the devotee looking at the painting",
+        "He is throwing his discus at a demon",
+        "He is reaching for the butter pot his mother has hung above him"
+      ],
+      answer: 0,
+      explanation: "The Shrinathji form depicts the moment Krishna lifted Mount Govardhan on his little finger to protect the Braj villagers from Indra's floods. The raised arm is the defining attribute — Shrinathji is always shown in this exact pose."
+    }
+  ],
+
   talapatra: [
     {
       q: "Talapatra Chitra is painted or etched on which unusual natural surface?",

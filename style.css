@@ -47,6 +47,7 @@
 
 /* ---- Reset ---- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
 
 html, body {
   height: 100%;
@@ -71,7 +72,10 @@ html, body {
   background-color: var(--cream);
   background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
   background-size: 22px 22px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.screen::-webkit-scrollbar { display: none; }
 
 .screen.active {
   opacity: 1;
@@ -182,11 +186,38 @@ html, body {
     transition: background 0.15s;
   }
 
-  .wn-signin {
-    background: var(--terracotta);
-    color: #fff;
-    border-color: var(--terracotta);
+  .wn-lang-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--paper-warm);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(58,26,2,0.14);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 150px;
+    z-index: 200;
+    animation: fadeUp 0.15s ease;
   }
+
+  .wn-lang-opt {
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brown-mid);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s;
+  }
+  .wn-lang-opt:hover { background: var(--parchment); }
+  .wn-lang-opt.active { color: var(--terracotta); }
 }
 
 
@@ -356,6 +387,8 @@ html, body {
   padding: 3px 7px;
   border-radius: 4px;
   transition: opacity 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 #file-input { display: none; }
@@ -1919,4 +1952,119 @@ h3.card-heading {
   .atlas-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+
+/* ============================================================
+   ART CARD & ATLAS IMAGES
+   ============================================================ */
+
+.home-art-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.3s ease;
+}
+
+.atlas-card-thumb {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.atlas-steps-pill { position: relative; z-index: 1; }
+
+
+/* ============================================================
+   COMING SOON — disabled buttons with smooth hover text swap
+   ============================================================ */
+
+.btn-coming-soon {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+  position: relative;
+  overflow: hidden;
+}
+.btn-coming-soon:active {
+  transform: none !important;
+  box-shadow: 0 4px 0 var(--forest-dark) !important;
+}
+.btn-coming-soon > * {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  pointer-events: none;
+}
+.btn-coming-soon:hover > * {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+.btn-coming-soon::after {
+  content: 'Coming Soon';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: var(--white-warm);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.btn-coming-soon:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* l4-entry-btn (level 2 compare button) — text is not in child spans */
+.l4-entry-btn.btn-coming-soon::after {
+  color: var(--terracotta);
+}
+
+/* Nav tab — coming soon variant */
+.wn-tab--coming-soon {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+  position: relative;
+  overflow: hidden;
+}
+.wn-tab--coming-soon:hover,
+.wn-tab--coming-soon.active {
+  background: transparent !important;
+  color: var(--brown-mid) !important;
+}
+.wn-tab--coming-soon > span {
+  display: inline-block;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.wn-tab--coming-soon:hover > span {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+.wn-tab--coming-soon::after {
+  content: 'Coming Soon';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--brown-mid);
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+.wn-tab--coming-soon:hover::after {
+  opacity: 1;
+  transform: translateY(0);
 }

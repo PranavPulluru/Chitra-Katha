@@ -45,12 +45,19 @@
       <button class="wn-tab" data-screen="screen-home">Home</button>
       <button class="wn-tab" data-screen="screen-identify">Identify</button>
       <button class="wn-tab" data-screen="screen-l3-select">Learn</button>
-      <button class="wn-tab" data-screen="screen-l4">Compare</button>
+      <button class="wn-tab wn-tab--coming-soon" data-screen="screen-l4"><span>Compare</span></button>
       <button class="wn-tab" data-screen="screen-atlas">Atlas</button>
     </div>
-    <div class="wn-right">
-      <button class="wn-pill">EN ⌄</button>
-      <button class="wn-pill wn-signin">Sign in</button>
+    <div class="wn-right" style="position:relative">
+      <button class="wn-pill" id="wn-lang-btn">EN ⌄</button>
+      <div class="wn-lang-dropdown" id="wn-lang-dropdown" hidden>
+        <button class="wn-lang-opt active" data-lang="en">EN · English</button>
+        <button class="wn-lang-opt" data-lang="hi">हि · Hindi</button>
+        <button class="wn-lang-opt" data-lang="bn">বা · Bengali</button>
+        <button class="wn-lang-opt" data-lang="ta">த · Tamil</button>
+        <button class="wn-lang-opt" data-lang="gu">ગુ · Gujarati</button>
+        <button class="wn-lang-opt" data-lang="mr">मर · Marathi</button>
+      </div>
     </div>
   </nav>
 
@@ -92,15 +99,19 @@
         <div class="home-hand-tip">tap to begin ✦</div>
         <div class="home-art-grid">
           <div class="home-art-card home-art-card--terracotta">
+            <img class="home-art-img" src="level3v2/step_images/warli/reference.png" alt="" />
             <span class="home-art-label">WARLI</span>
           </div>
           <div class="home-art-card home-art-card--ochre home-art-card--stagger">
+            <img class="home-art-img" src="level3v2/step_images/gond/reference.png" alt="" />
             <span class="home-art-label">GOND</span>
           </div>
           <div class="home-art-card home-art-card--forest">
+            <img class="home-art-img" src="level3v2/step_images/madhubani/reference.png" alt="" />
             <span class="home-art-label">MADHUBANI</span>
           </div>
           <div class="home-art-card home-art-card--rose home-art-card--stagger">
+            <img class="home-art-img" src="level3v2/step_images/kalighat/reference.png" alt="" />
             <span class="home-art-label">KALIGHAT</span>
           </div>
         </div>
@@ -239,7 +250,7 @@
         <span class="go-deeper-main">Try Drawing This ✦</span>
         <span class="go-deeper-sub">Step-by-step guided tutorial</span>
       </button>
-      <button class="btn-go-deeper btn-go-deeper-secondary" id="btn-compare">
+      <button class="btn-go-deeper btn-go-deeper-secondary btn-coming-soon" id="btn-compare">
         <span class="go-deeper-main">Compare &amp; Contrast 🔍</span>
         <span class="go-deeper-sub">See how this art form differs</span>
       </button>
@@ -295,7 +306,7 @@
         <span class="try-painting-sub">See the outlines and draw along</span>
       </button>
 
-      <button id="compare-art-btn" class="l4-entry-btn">Compare Art Forms 🔍</button>
+      <button id="compare-art-btn" class="l4-entry-btn btn-coming-soon"><span>Compare Art Forms 🔍</span></button>
     </div>
 
     <div class="folk-border"></div>
@@ -590,13 +601,6 @@
       <div class="atlas-kicker">BROWSE · 14 TRADITIONS</div>
       <h1 class="atlas-title">The Folk Atlas</h1>
       <p class="atlas-sub">Fourteen living traditions from across the subcontinent. Pick one and learn its language.</p>
-      <div class="atlas-filters">
-        <button class="atlas-filter atlas-filter--active">All</button>
-        <button class="atlas-filter">Tribal</button>
-        <button class="atlas-filter">Court</button>
-        <button class="atlas-filter">Devotional</button>
-        <button class="atlas-filter">Domestic</button>
-      </div>
     </div>
     <div class="atlas-grid" id="atlas-grid"></div>
   </div>

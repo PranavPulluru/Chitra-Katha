@@ -318,6 +318,269 @@ const TUTORIAL_DATA = {
     ]
   },
 
+  // ── Kalamkari Painting (15 steps) ────────────────────────────────────────
+  kalamkari: {
+    name: "Kalamkari Painting",
+    subtitle: "Pen on Fabric — Andhra Pradesh",
+    artformKeys: ["Kalamkari Of Tamil Nadu"],
+    totalSteps: 15,
+    driveUrl: "",
+    steps: [
+      {
+        instruction: "Prepare your canvas by washing the cotton cloth with a solution of myrobalan powder and water to mordant the surface. This ensures the natural dyes will bond permanently to the fabric."
+      },
+      {
+        instruction: "Once dry, use a fine brush dipped in black outline ink to sketch the large central deity figure — a standing figure of Rama, Krishna, or a goddess. Draw just the outer silhouette and head position."
+      },
+      {
+        instruction: "Define the face with almond-shaped eyes, a long curved nose, and full lips. Add the headdress or crown — a tall kirita or peacock-feathered mukuta that identifies the deity."
+      },
+      {
+        instruction: "Sketch the flowing torso, drawing the arms in their characteristic mudra positions — one raised in blessing, one holding an attribute such as a lotus, conch, or bow."
+      },
+      {
+        instruction: "Add the lower garments — a dhoti or pattu pavadai — with sweeping curved lines that suggest the weight and flow of silk. Kalamkari garments fall generously from the waist downward."
+      },
+      {
+        instruction: "Draw the decorative jewellery — layered necklaces, heavy earrings, armlets, and anklets — using small repeated geometric motifs. These ornamental details are a Kalamkari hallmark."
+      },
+      {
+        instruction: "Frame the central figure with a large arch or temple canopy formed of layered lotus petals and scrolling foliage. This creates the sacred space around the deity."
+      },
+      {
+        instruction: "Add companion figures — attendants, musicians, or smaller deities — flanking the central figure in the lower registers of the composition."
+      },
+      {
+        instruction: "Fill the background with scrolling floral creepers, lotus ponds, and narrative vignettes. Every inch of the border area should be richly patterned with plant and animal motifs."
+      },
+      {
+        instruction: "Begin applying colour with natural dyes, starting with warm tones. Fill skin areas with a golden-ochre wash and clothing areas with a soft first pass of their base colour."
+      },
+      {
+        instruction: "Apply deep red (pomegranate rind dye) to the main garments and the border archway. Let this layer dry fully before continuing to the next colour."
+      },
+      {
+        instruction: "Fill the foliage and creepers with indigo or natural green. Apply yellow (turmeric) to jewellery and gold accents. Keep colour washes transparent and even — Kalamkari colour is never opaque."
+      },
+      {
+        instruction: "Add a second, deeper layer of each colour to the shadow areas — beneath the arms, in the folds of fabric, and around the face — to give the figure warmth and volume."
+      },
+      {
+        instruction: "Use the fine kalam pen to reinforce all outlines in strong black, clarifying every contour, jewellery edge, and facial feature. Add fine interior line details to garment patterns."
+      },
+      {
+        instruction: "Complete the painting by drawing a framing border of repeating lotus buds and creeper scrolls around the entire composition. This final border ties the picture together and echoes Kalamkari's temple-art origins."
+      }
+    ]
+  },
+
+  // ── Madhubani Painting (18 steps) ────────────────────────────────────────
+  madhubani: {
+    name: "Madhubani Painting",
+    subtitle: "Radha Krishna — Bihar",
+    artformKeys: ["Madhubani of Bihar"],
+    totalSteps: 18,
+    driveUrl: "",
+    steps: [
+      {
+        instruction: "Prepare a sheet of handmade paper by applying a thin wash of white to create a smooth, even base. Let it dry fully before beginning."
+      },
+      {
+        instruction: "Draw a double-line rectangular border close to the edges of the paper — two parallel black lines about 5mm apart. This outer frame is the first mark in every Madhubani composition."
+      },
+      {
+        instruction: "Inside the border, draw a second smaller rectangle, then fill the band between the two borders with repeating geometric motifs — small diamonds, zigzags, or short parallel dashes."
+      },
+      {
+        instruction: "Lightly sketch the central figure in pencil — typically Krishna with his flute or Radha. Position the figure centrally with the head at upper-centre of the composition."
+      },
+      {
+        instruction: "Draw the large, characteristic wide eyes — the irises are filled solidly and pupils clearly marked. Add the long, sweeping eyebrows that nearly meet at the bridge of the nose."
+      },
+      {
+        instruction: "Define the face outline: a broad forehead, a straight nose, and full lips. Add the elaborate tilaka mark on the forehead. The face in Madhubani is frontal and perfectly symmetrical."
+      },
+      {
+        instruction: "Sketch the torso in a slightly three-quarter pose, with arms positioned holding a flute or garland. Draw elaborate necklaces, earrings, and bangles using simple ring-and-dot shorthand."
+      },
+      {
+        instruction: "Add the lower half of the figure — the dhoti or ghagra falling in gentle curves. Extend lotus flowers or peacock feathers into the space around the feet."
+      },
+      {
+        instruction: "Draw a large lotus plant or kadamba tree beside the figure to fill the vertical space. Lotus pads, buds, and blooms are the single most common space-filler in Madhubani."
+      },
+      {
+        instruction: "Scatter fish motifs in pairs throughout the background — fish (machha) are the most auspicious symbol in Mithila art. Add birds, parrots, and stylised suns in the remaining gaps."
+      },
+      {
+        instruction: "Begin applying colour with flat brushes, starting with the figure's skin in a warm golden tone. Fill solidly inside the outlines, keeping colours flat and even."
+      },
+      {
+        instruction: "Paint the main garment in red or deep pink. Apply blue to the background sky areas, and green to the lotus leaves. Madhubani colour fields are bold and unshaded."
+      },
+      {
+        instruction: "Fill secondary motifs — fish in silver-white, lotus blooms in pink and yellow, birds in bright contrasting colours. Keep every colour field flat and decisive."
+      },
+      {
+        instruction: "Apply a background colour to fill any remaining white paper — often yellow-ochre or pale terracotta — so the surface is completely covered, following the horror vacui principle of Madhubani."
+      },
+      {
+        instruction: "Now reinforce all outlines using a fine brush dipped in strong black ink. Trace every contour with a double-line stroke — the characteristic twin outline of Madhubani."
+      },
+      {
+        instruction: "Add fine pattern details inside each colour field — parallel lines on garments, dot clusters on lotus petals, scale patterns on fish bodies. The density of interior mark-making gives Madhubani its richness."
+      },
+      {
+        instruction: "Paint the border band with a repeating pattern in a contrasting colour — rows of dots, triangles, or stylised mango (kalka) forms. The border should feel as intricate as the central image."
+      },
+      {
+        instruction: "Make final adjustments — strengthen any outlines that need sharpening, fill any remaining white gaps, and confirm that every inch of the surface carries pattern or colour. Your Madhubani painting is complete."
+      }
+    ]
+  },
+
+  // ── Phad Painting (20 steps) ──────────────────────────────────────────────
+  phad: {
+    name: "Phad Painting",
+    subtitle: "Epic Scroll — Rajasthan",
+    artformKeys: ["Phad of Rajasthan"],
+    totalSteps: 20,
+    driveUrl: "",
+    steps: [
+      {
+        instruction: "Prepare a long horizontal canvas by stretching natural cotton cloth on a frame. Coat it with a paste of chalk or starch to create a smooth, receptive painting ground."
+      },
+      {
+        instruction: "Sketch the overall layout in pencil. Phad is a narrative scroll — divide the horizontal space into multiple registers (horizontal bands), each containing a scene from the folk hero's story."
+      },
+      {
+        instruction: "In the central register, draw the large hero figure — Pabuji or Devnarayan — on horseback. The hero is always the largest figure in the composition, shown in bold profile."
+      },
+      {
+        instruction: "Draw the hero's horse with a curved neck, arched tail, and four hooves clearly shown. Decorate the horse with a patterned saddle and ornamental headgear."
+      },
+      {
+        instruction: "Add a canopy (chatri) above the hero's head to signify royal or divine status. Draw banner-carrying attendants flanking the mounted hero on either side."
+      },
+      {
+        instruction: "Sketch the upper register: draw a row of female figures — the hero's wives or attendant goddesses — standing in graceful profile. Their saris flow behind them in long, sweeping curves."
+      },
+      {
+        instruction: "In the lower register, sketch the dramatic action scenes — a battle with enemies, a cattle rescue episode, or a demon-slaying sequence. Use dynamic diagonal poses for the fighting figures."
+      },
+      {
+        instruction: "Add the animals of the narrative: camels, cows, peacocks, and snakes winding through the background space. All animals are depicted in clear side profile."
+      },
+      {
+        instruction: "Draw the architectural elements — a palace with arched doorways, a temple with a shikhara spire, or a village well with women gathering. These ground the narrative in a recognisable landscape."
+      },
+      {
+        instruction: "Sketch the trees and vegetation — stylised trees with round canopies and straight trunks, always with birds perched in the branches. Tree tops divide the sky area from the narrative below."
+      },
+      {
+        instruction: "Begin applying colour. Fill the background sky area with a flat deep red — red oxide or bright vermilion is the dominant background colour of Phad painting."
+      },
+      {
+        instruction: "Apply yellow ochre to the architectural forms (palace walls, temple towers) and fill the ground plane with a warm tan tone."
+      },
+      {
+        instruction: "Paint the hero's costume and horse decoration in bright green and yellow. Apply bold geometric patterns to garments — Phad figures wear ornately decorated dhotis and angarkhas."
+      },
+      {
+        instruction: "Colour the female figures in pink, orange, and saffron. Use flat, unshaded colour fills — Phad colour is opaque and decisive, never graduated or blended."
+      },
+      {
+        instruction: "Fill the battle scenes with contrasting hues — blue for enemy figures, green for the hero's allies — to help the viewer follow the narrative across the scroll."
+      },
+      {
+        instruction: "Paint the animals with characteristic Phad body decoration — painted spots, saddlecloths, and ornamental trappings on every animal, making each one visually distinct."
+      },
+      {
+        instruction: "Begin the detailed black outline pass. Using a fine brush loaded with carbon black, trace every contour of every figure, from the topmost register to the bottom."
+      },
+      {
+        instruction: "Add fine interior detailing lines — the feathers of peacocks, the scales of snakes, the woven patterns of garments, the veins of leaves. The bold black line holds the entire Phad composition together."
+      },
+      {
+        instruction: "Draw the outer border of the scroll: a decorative edge of repeating floral or geometric motifs frames the entire painting on all four sides."
+      },
+      {
+        instruction: "Review the scroll and complete any remaining fill areas — sharpen outlines, fill white gaps, and confirm all narrative scenes read clearly from end to end. Your Phad painting is complete."
+      }
+    ]
+  },
+
+  // ── Pitchwai Painting (20 steps) ──────────────────────────────────────────
+  pitchwai: {
+    name: "Pitchwai Painting",
+    subtitle: "Shrinathji & Cows — Nathdwara, Rajasthan",
+    artformKeys: ["Pichhwai of Rajasthan"],
+    totalSteps: 20,
+    driveUrl: "",
+    steps: [
+      {
+        instruction: "Prepare a fine-weave cotton cloth by coating it with starch paste, then polishing the dried surface with a smooth stone to create an even, semi-luminous ground for painting."
+      },
+      {
+        instruction: "Lightly sketch the full composition in chalk or pencil. Pitchwai is a radial composition — all elements radiate outward from the central figure of Shrinathji standing with his left arm raised."
+      },
+      {
+        instruction: "Draw the central figure of Shrinathji: a slightly stocky figure with the raised left arm, the characteristic flat-topped hairdo, and the divine peacock-feather crown."
+      },
+      {
+        instruction: "Draw the cow herd around Shrinathji — cows stand on either side, their heads turned toward the deity in devotion. Cows are always depicted in graceful profile with large, expressive eyes."
+      },
+      {
+        instruction: "Sketch the gopis (cowherd maidens) — rows of slim female figures flanking the cows, standing with hands raised in prayer or holding offerings of flowers and butter."
+      },
+      {
+        instruction: "Draw kadamba trees rising symmetrically on both sides of the composition. Depict them with round leafy canopies and hanging strands of orange blooms — the signature tree of Krishna's Vrindavan."
+      },
+      {
+        instruction: "At the base of the composition, draw a lotus pond — large circular blooms and pads fill the lower section, with ducks and fish swimming between them."
+      },
+      {
+        instruction: "Across the top of the painting, sketch an elaborate garland of flowers suspended in arcs between the tree tops — marigolds and chameli blossoms strung on looping chains."
+      },
+      {
+        instruction: "Add celestial elements in the sky: a large moon with a face (chandra), a radiant sun, and small deer or peacocks perched among the tree branches."
+      },
+      {
+        instruction: "Sketch a decorative border around the entire canvas — an outer frame of repeating lotus-bud chains or scrolling vine that contains and completes the whole composition."
+      },
+      {
+        instruction: "Begin painting the deep background. Fill the entire sky and all empty areas with a rich midnight blue or black — this dark ground is the most immediately recognisable feature of classic Pitchwai."
+      },
+      {
+        instruction: "Apply deep green to the tree canopies and lotus leaves. Leave the flower outlines unpainted for now — they will be filled with contrasting colours in a later step."
+      },
+      {
+        instruction: "Paint Shrinathji's body using a deep blue-black tone (Krishna's divine complexion). Fill his pitamba (dhoti) with a flat bright yellow — the contrast of blue body and yellow cloth is iconic."
+      },
+      {
+        instruction: "Fill the gopis' garments in a range of jewel tones — deep red, saffron, pink, and olive green. Each gopi wears a slightly different colour to individualise her within the devotional group."
+      },
+      {
+        instruction: "Paint the cows in white with subtle pink detailing around the eyes and muzzle. Decorate their bodies with small painted flower garlands in red and orange."
+      },
+      {
+        instruction: "Fill the lotus blooms in pink and deep red, and the pads in green. Paint the marigold garland across the top in golden yellow and the chameli blossoms in white."
+      },
+      {
+        instruction: "Add Shrinathji's elaborate jewellery — layered ratna necklaces, kundan earrings, and the ornamental waistband — using a fine brush to paint each ornament in delicate gold lines."
+      },
+      {
+        instruction: "Paint the intricate pattern on Shrinathji's yellow pitamba — typically a geometric grid of small diamonds or floral medallions in a slightly darker gold tone."
+      },
+      {
+        instruction: "Begin the final outline reinforcement: using a very fine brush loaded with carbon black, sharpen every figure contour, facial feature, jewellery edge, and leaf outline across the entire composition."
+      },
+      {
+        instruction: "Complete the border decoration with repeating floral motifs in contrasting colours against the dark ground. Add final white dot accents — stars, dewdrops, and eye highlights — to bring the painting to life. Your Pitchwai painting is complete."
+      }
+    ]
+  },
+
   // ── Talapatra Chitra (13 steps) ───────────────────────────────────────────
   talapatra: {
     name: "Talapatra Chitra",
@@ -377,5 +640,9 @@ const ARTFORM_TO_TUTORIAL = {
   "Soharai of Jharkhand":       "sohrai",
   "Warli oh Maharashtra":       "warli",
   "Gond Art of Madhya Pradesh": "gond",
-  "Talpatra Chittar of Odisha": "talapatra"
+  "Talpatra Chittar of Odisha": "talapatra",
+  "Kalamkari Of Tamil Nadu":    "kalamkari",
+  "Madhubani of Bihar":         "madhubani",
+  "Phad of Rajasthan":          "phad",
+  "Pichhwai of Rajasthan":      "pitchwai"
 };

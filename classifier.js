@@ -46,6 +46,10 @@ const Classifier = (() => {
 
   /* —— Start Webcam ——————————————————————————————————————————— */
   async function startWebcam(containerEl) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Camera not supported in this browser. Please use Chrome or Safari over HTTPS.");
+    }
+
     const attempts = [
       { label: "rear (exact)", constraints: { video: { facingMode: { exact: "environment" }, width: { ideal: 640 }, height: { ideal: 480 } } } },
       { label: "rear (ideal)", constraints: { video: { facingMode: { ideal: "environment" }, width: { ideal: 640 }, height: { ideal: 480 } } } },
@@ -81,17 +85,19 @@ const Classifier = (() => {
     const videoEl = document.createElement("video");
     videoEl.setAttribute("playsinline", "");
     videoEl.setAttribute("muted", "");
-    videoEl.autoplay   = true;
-    videoEl.srcObject  = stream;
+    videoEl.muted     = true;
+    videoEl.autoplay  = true;
+    videoEl.srcObject = stream;
     videoEl.style.cssText = "width:100%;height:100%;object-fit:cover;display:block;";
+
+    // Append to DOM before play() — required for iOS Safari
+    if (containerEl) containerEl.appendChild(videoEl);
 
     await new Promise((res, rej) => {
       videoEl.onloadedmetadata = res;
       setTimeout(() => rej(new Error("Camera metadata timeout.")), 8000);
     });
     await videoEl.play();
-
-    if (containerEl) containerEl.appendChild(videoEl);
 
     const size      = 480;
     const offCanvas = document.createElement("canvas");

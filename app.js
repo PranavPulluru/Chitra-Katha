@@ -17,6 +17,18 @@ let currentArtKey    = null;   // key into ARTFORMS for the identified piece
 let currentImageSrc  = null;   // data-URL of the image used for identification
 let currentLang      = 'en';   // active language code
 
+const ART_IMAGE_FOLDERS = {
+  "Gond Art of Madhya Pradesh": "gond",
+  "Kalamkari Of Tamil Nadu":    "kalamkari",
+  "Kalighat of Bengal":         "kalighat",
+  "Madhubani of Bihar":         "madhubani",
+  "Phad of Rajasthan":          "phad",
+  "Pichhwai of Rajasthan":      "pitchwai",
+  "Soharai of Jharkhand":       "sohrai",
+  "Talpatra Chittar of Odisha": "talapatra",
+  "Warli oh Maharashtra":       "warli",
+};
+
 
 /* ------------------------------------------------------------------ */
 /*  Screen transitions                                                  */
@@ -197,9 +209,23 @@ function populateLevel1(key, probability, lang = 'en') {
   const toolList = document.getElementById('l1-tools');
   toolList.innerHTML = data.tools.map(t => `<li>${t}</li>`).join('');
 
-  // Show user's image in the desktop ref card
+  // Show user's image in the ref card, or reference.png when browsing from atlas
   const refImg = document.getElementById('l1-ref-img');
-  if (refImg && currentImageSrc) refImg.src = currentImageSrc;
+  if (refImg) {
+    if (currentImageSrc) {
+      refImg.src = currentImageSrc;
+      refImg.style.display = 'block';
+    } else {
+      const folder = ART_IMAGE_FOLDERS[key];
+      if (folder) {
+        refImg.src = `level3v2/step_images/${folder}/reference.png`;
+        refImg.style.display = 'block';
+      } else {
+        refImg.src = '';
+        refImg.style.display = 'none';
+      }
+    }
+  }
 
   // Scroll to top of level 1
   document.getElementById('screen-level1').scrollTop = 0;
@@ -319,9 +345,9 @@ document.getElementById('btn-try-tutorial').addEventListener('click', () => {
   Level3v2.start(currentArtKey, currentImageSrc);
 });
 
-// Compare & Contrast → Level 4
-document.getElementById('btn-compare').addEventListener('click', () => {
-  Level4.start(currentArtKey);
+// Compare & Contrast — coming soon, no-op
+document.getElementById('btn-compare').addEventListener('click', (e) => {
+  e.preventDefault();
 });
 
 // Level 2 legacy handlers (screen unreachable but keep listeners to avoid errors)
@@ -332,8 +358,8 @@ document.getElementById('l2-back').addEventListener('click', () => {
 document.getElementById('btn-try-painting').addEventListener('click', () => {
   Level3v2.start(currentArtKey, currentImageSrc);
 });
-document.getElementById('compare-art-btn').addEventListener('click', () => {
-  Level4.start(currentArtKey);
+document.getElementById('compare-art-btn').addEventListener('click', (e) => {
+  e.preventDefault();
 });
 
 // Level 4 — Draw for Yourself → Level 3 selection screen
@@ -358,10 +384,43 @@ function _handleLangClick(e) {
 document.getElementById('lang-row').addEventListener('click', _handleLangClick);
 document.getElementById('l1-hero-langs').addEventListener('click', _handleLangClick);
 
+// Language pill dropdown (desktop nav)
+const langBtn      = document.getElementById('wn-lang-btn');
+const langDropdown = document.getElementById('wn-lang-dropdown');
+const LANG_LABELS  = { en: 'EN', hi: 'हि', bn: 'বা', ta: 'த', gu: 'ગુ', mr: 'मर' };
+
+langBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  langDropdown.hidden = !langDropdown.hidden;
+});
+
+langDropdown.addEventListener('click', (e) => {
+  const opt = e.target.closest('.wn-lang-opt');
+  if (!opt) return;
+  const lang = opt.dataset.lang;
+  langDropdown.hidden = true;
+
+  langBtn.textContent = LANG_LABELS[lang] + ' ⌄';
+
+  langDropdown.querySelectorAll('.wn-lang-opt').forEach(b =>
+    b.classList.toggle('active', b.dataset.lang === lang)
+  );
+
+  if (currentArtKey) {
+    const pct = parseInt(document.getElementById('confidence-pill').textContent) || 100;
+    populateLevel1(currentArtKey, pct / 100, lang);
+  } else {
+    currentLang = lang;
+  }
+});
+
+document.addEventListener('click', () => { langDropdown.hidden = true; });
+
 // WebNav tab handlers (desktop only — nav is hidden on mobile via CSS)
 document.querySelectorAll('.wn-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     const screenId = tab.dataset.screen;
+    if (screenId === 'screen-l4') return; // coming soon
     stopCamera();
     clearStateOverlays();
     if (screenId === 'screen-atlas') {
@@ -385,22 +444,42 @@ function initArtCardCycling() {
   if (!cards.length) return;
 
   const cycleNames = [
-    ['WARLI', 'SOHRAI', 'PATTACHITRA', 'KALAMKARI', 'GOND'],
+    ['WARLI', 'SOHRAI', 'PHAD', 'KALAMKARI', 'GOND'],
     ['GOND', 'MADHUBANI', 'WARLI', 'KALIGHAT', 'TALAPATRA'],
-    ['MADHUBANI', 'WARLI', 'GOND', 'SOHRAI', 'PATTACHITRA'],
+    ['MADHUBANI', 'WARLI', 'GOND', 'SOHRAI', 'PITCHWAI'],
     ['KALIGHAT', 'TALAPATRA', 'MADHUBANI', 'GOND', 'WARLI'],
   ];
-  const intervals = [2500, 2900, 3300, 3700];
+  const intervals = [5000, 5600, 6300, 7100];
+
+  const CYCLE_IMAGES = {
+    'WARLI':     'level3v2/step_images/warli/reference.png',
+    'SOHRAI':    'level3v2/step_images/sohrai/reference.png',
+    'KALAMKARI': 'level3v2/step_images/kalamkari/reference.png',
+    'GOND':      'level3v2/step_images/gond/reference.png',
+    'MADHUBANI': 'level3v2/step_images/madhubani/reference.png',
+    'KALIGHAT':  'level3v2/step_images/kalighat/reference.png',
+    'TALAPATRA': 'level3v2/step_images/talapatra/reference.png',
+    'PHAD':      'level3v2/step_images/phad/reference.png',
+    'PITCHWAI':  'level3v2/step_images/pitchwai/reference.png',
+  };
 
   cards.forEach((card, i) => {
     const label = card.querySelector('.home-art-label');
+    const img   = card.querySelector('.home-art-img');
     if (!label || !cycleNames[i]) return;
     let idx = 0;
     setInterval(() => {
       label.style.opacity = '0';
+      if (img) img.style.opacity = '0';
       setTimeout(() => {
         idx = (idx + 1) % cycleNames[i].length;
-        label.textContent = cycleNames[i][idx];
+        const name = cycleNames[i][idx];
+        label.textContent = name;
+        if (img) {
+          const src = CYCLE_IMAGES[name];
+          if (src) { img.src = src; img.style.opacity = '1'; }
+          else      { img.style.opacity = '0'; }
+        }
         label.style.opacity = '1';
       }, 300);
     }, intervals[i]);
@@ -435,10 +514,17 @@ function initAtlas() {
       return '–';
     })();
 
+    const folder  = ART_IMAGE_FOLDERS[key];
+    const imgHtml = folder
+      ? `<img class="atlas-card-thumb" src="level3v2/step_images/${folder}/reference.png"
+             alt="${art.name}" loading="lazy" onerror="this.style.display='none'" />`
+      : '';
+
     const card = document.createElement('div');
     card.className = 'atlas-card';
     card.innerHTML = `
       <div class="atlas-card-img atlas-tone-${tone}">
+        ${imgHtml}
         <span class="atlas-steps-pill">${stepsCount} STEPS</span>
       </div>
       <div class="atlas-card-body">
@@ -448,6 +534,7 @@ function initAtlas() {
     `;
     card.addEventListener('click', () => {
       currentArtKey = key;
+      currentImageSrc = null;
       populateLevel1(key, 1.0);
       showScreen('screen-level1');
       setTimeout(() => {
