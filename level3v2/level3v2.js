@@ -171,9 +171,13 @@ const Level3v2 = (() => {
     const grid = document.getElementById('l3s-grid');
     grid.innerHTML = '';
 
+    let isFirst = true;
     Object.entries(TUTORIAL_DATA).forEach(([id, data]) => {
+      const featured = isFirst;
+      isFirst = false;
+
       const tile = document.createElement('div');
-      tile.className = 'l3s-tile';
+      tile.className = featured ? 'l3s-tile l3s-tile-featured' : 'l3s-tile';
       tile.setAttribute('role', 'button');
       tile.setAttribute('tabindex', '0');
 
@@ -187,11 +191,12 @@ const Level3v2 = (() => {
             onerror="this.closest('.l3s-tile-img-wrap').classList.add('l3s-no-img');this.remove()"
           />
           <div class="l3s-tile-fallback">✦</div>
+          <div class="l3s-tile-chip">${data.totalSteps} STEPS</div>
+          ${featured ? `<div class="l3s-tile-popular">Most popular ✦</div>` : ''}
         </div>
         <div class="l3s-tile-info">
           <p class="l3s-tile-name">${data.name}</p>
           <p class="l3s-tile-sub">${data.subtitle}</p>
-          <span class="l3s-tile-steps">${data.totalSteps} steps</span>
         </div>
       `;
 
@@ -205,6 +210,18 @@ const Level3v2 = (() => {
       grid.appendChild(tile);
     });
 
+    // Beginner hint card
+    const hint = document.createElement('div');
+    hint.className = 'l3s-hint-card';
+    hint.innerHTML = `
+      <div class="l3s-hint-icon">★</div>
+      <div>
+        <div class="l3s-hint-title">Beginner-friendly path</div>
+        <div class="l3s-hint-sub">Start with Warli — fewer steps, simple shapes.</div>
+      </div>
+    `;
+    grid.appendChild(hint);
+
     showScreen('screen-l3-select');
     document.getElementById('screen-l3-select').scrollTop = 0;
   }
@@ -216,13 +233,36 @@ const Level3v2 = (() => {
     _tutorial    = TUTORIAL_DATA[id];
     _currentStep = 0;
 
-    const total = _tutorial.steps.length;
-    document.getElementById('l3t-title').textContent = _tutorial.name;
-    document.getElementById('l3t-hero-subtitle').textContent =
-      `Follow ${total} rhythmic steps to create your painting`;
+    // Set tradition kicker (short name for the hero header center)
+    const shortName = _tutorial.name.replace(/ Painting$/, '').replace(/ Art$/, '').toUpperCase();
+    document.getElementById('l3t-title').textContent = shortName;
+    document.getElementById('l3t-hero-subtitle').textContent = '';
+    _buildRail();
     _renderStep();
     showScreen('screen-l3-tutorial');
     document.getElementById('screen-l3-tutorial').scrollTop = 0;
+  }
+
+  // ── Desktop step rail ────────────────────────────────────────────────────
+
+  function _buildRail() {
+    const rail = document.getElementById('l3t-rail');
+    if (!rail) return;
+    rail.innerHTML = `
+      <div class="l3t-rail-count">${_tutorial.totalSteps} STEPS</div>
+      <div class="l3t-rail-title">${_tutorial.name}</div>
+      <div class="l3t-rail-prog">
+        <div class="l3t-rail-bar" id="l3t-rail-bar"></div>
+      </div>
+      ${_tutorial.steps.map((s, i) => {
+        const lbl = s.instruction.split(/[.!?]/)[0].trim().substring(0, 36);
+        return `<div class="l3t-rail-item" data-idx="${i}">
+          <span class="l3t-rail-num">${String(i + 1).padStart(2, '0')}</span>
+          <span class="l3t-rail-lbl">${lbl}…</span>
+          <span class="l3t-rail-chk">✓</span>
+        </div>`;
+      }).join('')}
+    `;
   }
 
   function _renderStep() {
@@ -230,14 +270,22 @@ const Level3v2 = (() => {
     const total     = _tutorial.steps.length;
     const stepNum   = _currentStep + 1;          // 1-based display
 
-    // Step label above progress bar + nav counter
-    document.getElementById('l3t-step-label').textContent = `Step ${stepNum} of ${total}`;
+    // Step label + nav counter
+    document.getElementById('l3t-step-label').textContent =
+      `STEP ${String(stepNum).padStart(2,'0')} OF ${String(total).padStart(2,'0')}`;
     document.getElementById('l3t-counter').textContent    = `${stepNum} / ${total}`;
     document.getElementById('l3t-step-badge').textContent = `Step ${stepNum}`;
 
     // Progress bar
     const pct = (stepNum / total) * 100;
     document.getElementById('l3t-progress-bar').style.width = pct + '%';
+
+    // "halfway there ✦" — show around 40–65% progress
+    const halfwayEl = document.getElementById('l3t-halfway');
+    if (halfwayEl) {
+      const showHalfway = pct >= 40 && pct <= 65;
+      halfwayEl.textContent = showHalfway ? 'halfway there ✦' : '';
+    }
 
     // Step reference image
     const imgEl  = document.getElementById('l3t-image');
@@ -252,6 +300,19 @@ const Level3v2 = (() => {
 
     // Instruction text
     document.getElementById('l3t-instruction').textContent = step.instruction;
+
+    // Desktop rail updates
+    document.querySelectorAll('.l3t-rail-item').forEach((el, i) => {
+      el.classList.toggle('l3t-rail-item--active', i === _currentStep);
+      el.classList.toggle('l3t-rail-item--done', i < _currentStep);
+    });
+    const railBar = document.getElementById('l3t-rail-bar');
+    if (railBar) railBar.style.width = pct + '%';
+    const kicker = document.getElementById('l3t-center-kicker');
+    if (kicker) kicker.textContent =
+      `STEP ${String(stepNum).padStart(2, '0')} OF ${String(total).padStart(2, '0')}`;
+    const halfDesk = document.getElementById('l3t-halfway-desk');
+    if (halfDesk) halfDesk.textContent = (pct >= 40 && pct <= 65) ? 'halfway there ✦' : '';
 
     // Clear any step-check result from the previous step
     _clearStepCheck();
@@ -537,6 +598,7 @@ const Level3v2 = (() => {
     document.getElementById('l3e-score-tier').textContent = _scoreTier(score);
     document.getElementById('l3e-score-label').textContent = _scoreLabel(score);
     setTimeout(() => _animateRing(score), 60);
+    _updateTierDots(score);
 
     // Composite child image over heatmap
     const overlayDataURL = await _compositeOverlay(heatmap, childDataURL, 260);
@@ -634,6 +696,15 @@ const Level3v2 = (() => {
 
   // ── Helpers ─────────────────────────────────────────────────────────────
 
+  function _shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   function _scoreLabel(score) {
     if (score >= 90) return 'Near perfect!';
     if (score >= 75) return 'Great work!';
@@ -647,6 +718,16 @@ const Level3v2 = (() => {
     if (score >= 60) return 'Journeyman';
     if (score >= 40) return 'Apprentice';
     return 'Beginner';
+  }
+
+  function _updateTierDots(score) {
+    // tier indices: 0=Beginner 1=Apprentice 2=Journeyman 3=Master
+    const tierIndex = score >= 80 ? 3 : score >= 60 ? 2 : score >= 40 ? 1 : 0;
+    document.querySelectorAll('.score-tier-step').forEach(el => {
+      const t = parseInt(el.dataset.tier, 10);
+      el.classList.toggle('active', t === tierIndex);
+      el.classList.toggle('reached', t < tierIndex);
+    });
   }
 
   function _renderQuiz(tutorialId) {
@@ -672,7 +753,12 @@ const Level3v2 = (() => {
       const card = document.createElement('div');
       card.className = 'l3e-quiz-card';
 
-      const optionsHtml = q.options.map((opt, oi) =>
+      // Shuffle options; track where the correct answer landed
+      const correctText    = q.options[q.answer];
+      const shuffled       = _shuffle(q.options);
+      const shuffledAnswer = shuffled.indexOf(correctText);
+
+      const optionsHtml = shuffled.map((opt, oi) =>
         `<button class="l3e-quiz-option" data-oi="${oi}">${opt}</button>`
       ).join('');
 
@@ -689,13 +775,13 @@ const Level3v2 = (() => {
           if (btn.disabled) return;
 
           const oi = parseInt(btn.dataset.oi);
-          const isCorrect = oi === q.answer;
+          const isCorrect = oi === shuffledAnswer;
 
           // Disable all options in this question and reveal correct/wrong
           card.querySelectorAll('.l3e-quiz-option').forEach(b => {
             b.disabled = true;
             const boi = parseInt(b.dataset.oi);
-            if (boi === q.answer) b.classList.add('correct');
+            if (boi === shuffledAnswer) b.classList.add('correct');
             else if (b === btn && !isCorrect) b.classList.add('wrong');
           });
 

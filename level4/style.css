@@ -1,20 +1,19 @@
 /* ============================================================
-   level4/style.css — Chitra Katha Level 4: Compare & Contrast
-   Extends (does not replace) the main style.css.
-   Palette variables declared in :root by style.css.
+   level4/style.css — Chitra Katha Level 4: Compare & Contrast (Redesigned)
+   Extends main style.css. Palette vars declared in :root by style.css.
    ============================================================ */
 
-/* ── Screen wrapper ─────────────────────────────────────────── */
+/* ── Screen wrapper ──────────────────────────────────────────── */
 
 #screen-l4 {
   display: flex;
   flex-direction: column;
   min-height: 100%;
-  background: var(--parchment);
+  background-color: var(--cream);
   overflow-y: auto;
 }
 
-/* ── Sticky header ──────────────────────────────────────────── */
+/* ── Sticky header ───────────────────────────────────────────── */
 
 .l4-header {
   position: sticky;
@@ -23,52 +22,74 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px 12px;
-  background: var(--white-warm);
-  border-bottom: 3px solid var(--terracotta);
+  padding: 12px 16px 10px;
+  background: var(--paper-warm);
+  border-bottom: 1px solid var(--border);
 }
 
 #l4-back-btn {
   background: none;
   border: none;
-  font-size: 1.25rem;
-  color: var(--terracotta);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--brown-mid);
   cursor: pointer;
-  padding: 4px 8px 4px 2px;
+  padding: 4px 2px;
   border-radius: 4px;
   -webkit-tap-highlight-color: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   flex-shrink: 0;
+  transition: color 0.15s;
 }
-
-#l4-back-btn:hover {
-  background: rgba(185, 64, 18, 0.08);
-}
+#l4-back-btn:hover { color: var(--terracotta); }
 
 .l4-header-title {
-  font-family: 'Rozha One', serif;
-  font-size: 1.15rem;
-  color: var(--deep-brown);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--brown);
   line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
-/* ── Two-panel row ──────────────────────────────────────────── */
+/* ── "Tap dots to learn" hint ──────────────────────────────────── */
+
+.l4-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.l4-tap-hint {
+  font-family: var(--font-hand);
+  font-size: 0.85rem;
+  color: var(--terracotta);
+  opacity: 0.82;
+  white-space: nowrap;
+}
+
+/* ── Two-panel row ───────────────────────────────────────────── */
 
 .l4-panels {
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding: 16px 14px;
+  gap: 12px;
+  padding: 14px 14px 0;
 }
 
 @media (min-width: 600px) {
   .l4-panels {
     flex-direction: row;
     align-items: flex-start;
-    gap: 0;
+    gap: 14px;
   }
 }
 
-/* ── Individual panel ───────────────────────────────────────── */
+/* ── Individual panel ────────────────────────────────────────── */
 
 .l4-panel {
   flex: 1;
@@ -76,54 +97,51 @@
   flex-direction: column;
   gap: 10px;
   min-width: 0;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 14px;
 }
 
-/* Ochre divider between panels on desktop */
-@media (min-width: 600px) {
-  .l4-panel-left {
-    padding-right: 12px;
-    border-right: 2px solid var(--ochre);
-  }
-  .l4-panel-right {
-    padding-left: 12px;
-  }
+/* Terracotta left accent on "Your Art" panel */
+.l4-panel-left {
+  border-left: 4px solid var(--terracotta);
 }
 
-/* Horizontal rule between panels on mobile */
-@media (max-width: 599px) {
-  .l4-panel-left {
-    padding-bottom: 16px;
-    border-bottom: 2px solid var(--ochre);
-    margin-bottom: 4px;
-  }
+/* Forest left accent on "Compare With" panel */
+.l4-panel-right {
+  border-left: 4px solid var(--forest);
 }
 
 /* Panel header */
 .l4-panel-label {
-  font-family: 'Rozha One', serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--ochre);
   margin: 0 0 2px;
 }
 
 .l4-panel-artname {
-  font-family: 'Rozha One', serif;
-  font-size: 1rem;
-  color: var(--deep-brown);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--brown);
   margin: 0 0 8px;
+  letter-spacing: -0.01em;
 }
 
-/* ── Painting container with annotation boxes ───────────────── */
+/* ── Painting container with annotation hotspots ─────────────── */
 
 .l4-painting-wrap {
   position: relative;
   width: 100%;
-  background: #e8d8c0;
-  border-radius: 8px;
+  background: var(--parchment);
+  border-radius: 10px;
   overflow: hidden;
-  border: 2px solid rgba(58, 26, 2, 0.15);
+  border: 1px solid var(--border);
 }
 
 .l4-painting-wrap img {
@@ -133,126 +151,135 @@
   object-fit: contain;
 }
 
-/* Annotation overlay boxes */
+/* Annotation hotspot — pulsing dot with label (design Hotspot component) */
 .l4-annotation-box {
   position: absolute;
-  background: rgba(185, 64, 18, 0.25);
-  border: 2px dashed rgba(185, 64, 18, 0.6);
-  border-radius: 4px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
   cursor: pointer;
-  transition: background 0.15s ease;
   -webkit-tap-highlight-color: transparent;
-  box-sizing: border-box;
 }
 
-.l4-annotation-box:hover,
-.l4-annotation-box:focus-visible {
-  background: rgba(185, 64, 18, 0.42);
-  outline: none;
+/* Pulsing circle */
+.l4-annotation-box::before {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(185,64,18,0.8);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(185,64,18,0.2);
+  flex-shrink: 0;
+  animation: ck-pulse 1.8s ease-in-out infinite;
 }
 
-.l4-annotation-box:active {
-  background: rgba(185, 64, 18, 0.55);
-}
-
-/* Label tag at the top of each annotation box */
+/* Label chip */
 .l4-ann-label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: rgba(185, 64, 18, 0.85);
-  color: #fff;
-  font-family: 'Rozha One', serif;
-  font-size: 0.55rem;
-  line-height: 1;
-  padding: 2px 5px;
-  border-radius: 0 0 3px 0;
+  background: #fff;
+  color: var(--terracotta);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  border: 1px solid rgba(185,64,18,0.35);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 95%;
   pointer-events: none;
+  letter-spacing: 0.01em;
 }
 
-/* ── Right panel: pill selector ─────────────────────────────── */
+/* Forest variant annotation (right panel) */
+.l4-panel-right .l4-annotation-box::before {
+  background: rgba(59,103,65,0.8);
+  box-shadow: 0 0 0 3px rgba(59,103,65,0.2);
+}
+.l4-panel-right .l4-ann-label {
+  color: var(--forest);
+  border-color: rgba(59,103,65,0.35);
+}
+
+/* ── Right panel: pill selector ──────────────────────────────── */
 
 .l4-pill-row {
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  padding-bottom: 6px;
+  padding-bottom: 2px;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  flex-wrap: wrap;
 }
-
-.l4-pill-row::-webkit-scrollbar {
-  display: none;
-}
+.l4-pill-row::-webkit-scrollbar { display: none; }
 
 .l4-pill {
   flex-shrink: 0;
   padding: 6px 14px;
-  border-radius: 999px;
-  border: 2px solid var(--terracotta);
-  background: var(--parchment);
-  color: var(--terracotta);
-  font-family: 'Hind', sans-serif;
-  font-size: 0.82rem;
-  font-weight: 500;
+  border-radius: 9999px;
+  border: 1.5px solid var(--border);
+  background: var(--paper-warm);
+  color: var(--brown-mid);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
 }
-
 .l4-pill.selected,
 .l4-pill:hover {
-  background: var(--terracotta);
+  background: var(--forest);
   color: #fff;
+  border-color: var(--forest);
 }
 
-/* ── Placeholder (before art form selected) ─────────────────── */
+/* ── Placeholder (before art form selected) ──────────────────── */
 
 .l4-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  padding: 36px 20px;
-  border-radius: 8px;
-  border: 2px dashed rgba(185, 64, 18, 0.3);
-  background-image:
-    radial-gradient(circle, rgba(201, 138, 26, 0.18) 1.5px, transparent 1.5px);
+  gap: 10px;
+  padding: 32px 20px;
+  border-radius: 10px;
+  border: 1.5px dashed rgba(185,64,18,0.28);
+  background-image: radial-gradient(circle, rgba(201,138,26,0.15) 1.5px, transparent 1.5px);
   background-size: 18px 18px;
   text-align: center;
 }
-
-.l4-placeholder svg {
-  opacity: 0.55;
-}
-
+.l4-placeholder svg { opacity: 0.5; }
 .l4-placeholder-text {
-  font-family: 'Rozha One', serif;
-  font-size: 0.88rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.9rem;
   color: var(--terracotta);
   line-height: 1.5;
   max-width: 220px;
+  font-weight: 400;
+  opacity: 0.85;
 }
 
-/* ── Comparison section ─────────────────────────────────────── */
+/* ── Comparison section ──────────────────────────────────────── */
 
 .l4-compare-section {
-  padding: 8px 14px 24px;
+  padding: 14px 14px 20px;
 }
 
 .l4-compare-title {
-  font-family: 'Rozha One', serif;
-  font-size: 1.2rem;
-  color: var(--terracotta);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--brown);
   margin: 0 0 4px;
-  padding-bottom: 8px;
+  letter-spacing: -0.01em;
+  padding-bottom: 10px;
   position: relative;
 }
 
@@ -262,7 +289,7 @@
   display: block;
   height: 8px;
   margin-top: 6px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='8'%3E%3Cpolyline points='0,8 5,0 10,8 15,0 20,8' fill='none' stroke='%23B94012' stroke-width='2'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='8'%3E%3Cpolyline points='0,8 5,0 10,8 15,0 20,8' fill='none' stroke='%23B94012' stroke-width='1.8'/%3E%3C/svg%3E");
   background-repeat: repeat-x;
   background-size: 20px 8px;
 }
@@ -270,86 +297,95 @@
 .l4-cards-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 14px;
 }
 
-/* Comparison card */
+/* Comparison card — two cols (terracotta left | forest left) */
 .l4-compare-card {
-  background: var(--white-warm);
-  border-radius: 8px;
-  padding: 14px 14px 14px 18px;
-  border-left: 4px solid var(--terracotta);
-  position: relative;
-  /* Subtle dot-grid texture */
-  background-image:
-    radial-gradient(circle, rgba(201, 138, 26, 0.12) 1px, transparent 1px);
-  background-size: 16px 16px;
-  background-color: var(--white-warm);
-  /* Fade + slide-up animation (staggered via JS inline style) */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  /* Staggered fade-up animation */
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(14px);
   animation: l4CardIn 0.35s ease-out forwards;
 }
 
 @keyframes l4CardIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  to { opacity: 1; transform: translateY(0); }
 }
 
+/* Each half of the comparison card */
 .l4-compare-card-category {
-  font-family: 'Rozha One', serif;
-  font-size: 0.88rem;
-  color: var(--deep-brown);
-  margin: 0 0 6px;
+  /* This is used as a container class by JS — split into two inner divs */
+  display: contents;
 }
 
-.l4-compare-card-text {
-  font-family: 'Hind', sans-serif;
-  font-size: 0.88rem;
-  color: var(--deep-brown);
-  line-height: 1.65;
+/* When JS injects .l4-compare-card with .l4-compare-card-category + .l4-compare-card-text,
+   we apply the two-col style directly on .l4-compare-card. */
+.l4-compare-card .l4-compare-card-category {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  margin-bottom: 4px;
+  display: block;
+}
+
+.l4-compare-card .l4-compare-card-text {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--text);
+  line-height: 1.55;
   margin: 0;
 }
 
-/* ── Footer CTA ─────────────────────────────────────────────── */
+/* JS generates .l4-compare-card as a single card with category + text.
+   Apply two-column layout at the card level (each card spans left/right). */
+.l4-cards-list .l4-compare-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--terracotta);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: block; /* single card, not two-col */
+}
+
+/* ── Footer CTA ──────────────────────────────────────────────── */
 
 .l4-footer-cta {
-  padding: 0 14px 32px;
+  padding: 0 14px 36px;
 }
 
 .l4-explore-btn {
   display: block;
   width: 100%;
-  padding: 16px;
+  padding: 15px;
   background: var(--terracotta);
   color: #fff;
-  font-family: 'Rozha One', serif;
-  font-size: 1.05rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 14px;
   cursor: pointer;
   text-align: center;
-  transition: background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 4px 0 var(--terra-dark);
+  transition: background 0.15s, transform 0.1s, box-shadow 0.1s;
   -webkit-tap-highlight-color: transparent;
+  letter-spacing: 0.01em;
 }
+.l4-explore-btn:hover  { background: var(--terra-dark); }
+.l4-explore-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--terra-dark); }
 
-.l4-explore-btn:hover {
-  background: #9e3610;
-}
-
-.l4-explore-btn:active {
-  transform: scale(0.98);
-}
-
-/* ── Annotation popup overlay & bottom sheet ────────────────── */
+/* ── Annotation popup overlay & bottom sheet ─────────────────── */
 
 #l4-annotation-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(58,26,2,0.52);
   z-index: 500;
   display: flex;
   align-items: flex-end;
@@ -359,18 +395,27 @@
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  background: var(--parchment);
-  border-radius: 12px 12px 0 0;
-  padding: 14px 16px 20px;
+  background: var(--paper-warm);
+  border-radius: 24px 24px 0 0;
+  padding: 0 22px 36px;
   transform: translateY(100%);
   transition: transform 0.3s ease-out;
-  max-height: 42vh;
+  max-height: 58vh;
   overflow-y: auto;
-  box-shadow: 0 -4px 24px rgba(58, 26, 2, 0.22);
+  box-shadow: 0 -10px 32px rgba(0,0,0,0.25);
 }
 
-#l4-annotation-sheet.open {
-  transform: translateY(0);
+#l4-annotation-sheet.open { transform: translateY(0); }
+
+/* Drag handle */
+#l4-annotation-sheet::before {
+  content: '';
+  display: block;
+  width: 42px;
+  height: 5px;
+  background: var(--border);
+  border-radius: 9999px;
+  margin: 14px auto 16px;
 }
 
 .l4-sheet-header {
@@ -381,66 +426,46 @@
 }
 
 .l4-dot {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: var(--terracotta);
   flex-shrink: 0;
 }
 
 #l4-annotation-title {
-  font-family: 'Rozha One', serif;
-  font-size: 0.95rem;
-  color: var(--deep-brown);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 1.35rem;
+  color: var(--brown);
   margin: 0;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
 #l4-annotation-body {
-  font-family: 'Hind', sans-serif;
-  font-size: 0.82rem;
-  line-height: 1.55;
-  color: var(--deep-brown);
-  margin: 0 0 12px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0 0 16px;
 }
 
 #l4-annotation-close {
   display: block;
   width: 100%;
-  padding: 9px;
+  padding: 12px;
   background: var(--terracotta);
   color: #fff;
-  font-family: 'Rozha One', serif;
-  font-size: 0.88rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 14px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease;
+  transition: background 0.15s;
+  box-shadow: 0 3px 0 var(--terra-dark);
 }
-
-#l4-annotation-close:hover {
-  background: #9e3610;
-}
-
-/* ── Level 2 entry button ───────────────────────────────────── */
-
-.l4-entry-btn {
-  display: block;
-  width: 100%;
-  padding: 14px;
-  background: transparent;
-  color: var(--terracotta);
-  border: 2px solid var(--terracotta);
-  border-radius: 8px;
-  font-family: 'Rozha One', serif;
-  font-size: 1rem;
-  cursor: pointer;
-  margin-top: 12px;
-  text-align: center;
-  -webkit-tap-highlight-color: transparent;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.l4-entry-btn:hover {
-  background: rgba(185, 64, 18, 0.08);
-}
+#l4-annotation-close:hover { background: var(--terra-dark); }

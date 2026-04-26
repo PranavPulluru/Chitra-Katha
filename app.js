@@ -25,6 +25,9 @@ let currentLang      = 'en';   // active language code
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.wn-tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.screen === id)
+  );
 }
 
 
@@ -170,14 +173,14 @@ function getLangData(art, lang) {
 function populateLevel1(key, probability, lang = 'en') {
   // Reset to the requested language (defaults to English for new identifications)
   currentLang = lang;
-  document.querySelectorAll('#lang-row .lang-btn').forEach(b =>
+  document.querySelectorAll('.lang-btn[data-lang]').forEach(b =>
     b.classList.toggle('active', b.dataset.lang === lang)
   );
 
   const art  = ARTFORMS[key];
   const data = getLangData(art, currentLang);
 
-  document.getElementById('l1-region').textContent    = art.region.toUpperCase();
+  document.getElementById('l1-region').textContent    = '✦ ' + art.region.toUpperCase();
   document.getElementById('l1-name').textContent      = art.name;
   document.getElementById('l1-tagline').textContent   = data.tagline;
   document.getElementById('l1-history').textContent   = data.history;
@@ -193,6 +196,10 @@ function populateLevel1(key, probability, lang = 'en') {
   // Tools list
   const toolList = document.getElementById('l1-tools');
   toolList.innerHTML = data.tools.map(t => `<li>${t}</li>`).join('');
+
+  // Show user's image in the desktop ref card
+  const refImg = document.getElementById('l1-ref-img');
+  if (refImg && currentImageSrc) refImg.src = currentImageSrc;
 
   // Scroll to top of level 1
   document.getElementById('screen-level1').scrollTop = 0;
@@ -339,15 +346,114 @@ document.getElementById('l4-back-btn').addEventListener('click', () => {
   Level4.goBack();
 });
 
-// Language switcher
-document.getElementById('lang-row').addEventListener('click', (e) => {
+// Language switcher — handles both mobile (#lang-row) and desktop (#l1-hero-langs)
+function _handleLangClick(e) {
   const btn = e.target.closest('.lang-btn');
   if (!btn || !currentArtKey) return;
   const lang = btn.dataset.lang;
   if (lang === currentLang) return;
-  currentLang = lang;
-  document.querySelectorAll('#lang-row .lang-btn').forEach(b => b.classList.toggle('active', b === btn));
-  // Re-render text fields with new language
   const pct = parseInt(document.getElementById('confidence-pill').textContent);
   populateLevel1(currentArtKey, (pct || 0) / 100, lang);
+}
+document.getElementById('lang-row').addEventListener('click', _handleLangClick);
+document.getElementById('l1-hero-langs').addEventListener('click', _handleLangClick);
+
+// WebNav tab handlers (desktop only — nav is hidden on mobile via CSS)
+document.querySelectorAll('.wn-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const screenId = tab.dataset.screen;
+    stopCamera();
+    clearStateOverlays();
+    if (screenId === 'screen-atlas') {
+      initAtlas();
+      showScreen(screenId);
+    } else if (screenId === 'screen-l3-select') {
+      Level3v2.start(null, null);
+    } else {
+      showScreen(screenId);
+    }
+  });
 });
+
+
+/* ------------------------------------------------------------------ */
+/*  Art card cycling (home screen)                                      */
+/* ------------------------------------------------------------------ */
+
+function initArtCardCycling() {
+  const cards = document.querySelectorAll('.home-art-card');
+  if (!cards.length) return;
+
+  const cycleNames = [
+    ['WARLI', 'SOHRAI', 'PATTACHITRA', 'KALAMKARI', 'GOND'],
+    ['GOND', 'MADHUBANI', 'WARLI', 'KALIGHAT', 'TALAPATRA'],
+    ['MADHUBANI', 'WARLI', 'GOND', 'SOHRAI', 'PATTACHITRA'],
+    ['KALIGHAT', 'TALAPATRA', 'MADHUBANI', 'GOND', 'WARLI'],
+  ];
+  const intervals = [2500, 2900, 3300, 3700];
+
+  cards.forEach((card, i) => {
+    const label = card.querySelector('.home-art-label');
+    if (!label || !cycleNames[i]) return;
+    let idx = 0;
+    setInterval(() => {
+      label.style.opacity = '0';
+      setTimeout(() => {
+        idx = (idx + 1) % cycleNames[i].length;
+        label.textContent = cycleNames[i][idx];
+        label.style.opacity = '1';
+      }, 300);
+    }, intervals[i]);
+  });
+}
+
+initArtCardCycling();
+
+
+/* ------------------------------------------------------------------ */
+/*  Atlas screen                                                        */
+/* ------------------------------------------------------------------ */
+
+function initAtlas() {
+  const grid = document.getElementById('atlas-grid');
+  if (!grid || grid.dataset.built) return;
+  grid.dataset.built = '1';
+
+  const tones = ['terracotta', 'ochre', 'forest', 'rose', 'indigo', 'parchment'];
+  let toneIdx = 0;
+
+  Object.entries(ARTFORMS).forEach(([key, art]) => {
+    const tone = tones[toneIdx % tones.length];
+    toneIdx++;
+
+    const stepsCount = (() => {
+      if (typeof ARTFORM_TO_TUTORIAL === 'undefined') return '–';
+      const tutId = ARTFORM_TO_TUTORIAL[key];
+      if (tutId && typeof TUTORIAL_DATA !== 'undefined' && TUTORIAL_DATA[tutId]) {
+        return TUTORIAL_DATA[tutId].totalSteps;
+      }
+      return '–';
+    })();
+
+    const card = document.createElement('div');
+    card.className = 'atlas-card';
+    card.innerHTML = `
+      <div class="atlas-card-img atlas-tone-${tone}">
+        <span class="atlas-steps-pill">${stepsCount} STEPS</span>
+      </div>
+      <div class="atlas-card-body">
+        <p class="atlas-card-name">${art.name}</p>
+        <p class="atlas-card-region">${art.region}</p>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      currentArtKey = key;
+      populateLevel1(key, 1.0);
+      showScreen('screen-level1');
+      setTimeout(() => {
+        try { initMap(key); } catch (_) {}
+      }, 150);
+    });
+    grid.appendChild(card);
+  });
+}

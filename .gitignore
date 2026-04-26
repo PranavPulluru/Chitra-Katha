@@ -35,6 +35,7 @@ venv/
 # Dev / scratch and local tooling
 dev/
 .claude/
+projectUI/
 
 # OS
 .DS_Store

@@ -8,7 +8,11 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Hind:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    @keyframes ck-rot   { to { transform: rotate(360deg); } }
+    @keyframes ck-pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.2);opacity:.65} }
+  </style>
 
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="level3v2/style.css" />
@@ -19,28 +23,87 @@
 <div id="app">
 
   <!-- ================================================================
+       PERSISTENT WEB NAV (desktop ≥900px only)
+  ================================================================ -->
+  <nav class="web-nav" id="web-nav">
+    <div class="wn-logo">
+      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="var(--terracotta)"/>
+        <circle cx="16"   cy="4"    r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="24.5" cy="7.5"  r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="28"   cy="16"   r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="24.5" cy="24.5" r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="16"   cy="28"   r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="7.5"  cy="24.5" r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="4"    cy="16"   r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="7.5"  cy="7.5"  r="1.5" fill="var(--paper-warm)"/>
+        <circle cx="16"   cy="16"   r="2.5" fill="var(--ochre)"/>
+      </svg>
+      <span class="wn-wordmark">Chitra Katha</span>
+    </div>
+    <div class="wn-tabs">
+      <button class="wn-tab" data-screen="screen-home">Home</button>
+      <button class="wn-tab" data-screen="screen-identify">Identify</button>
+      <button class="wn-tab" data-screen="screen-l3-select">Learn</button>
+      <button class="wn-tab" data-screen="screen-l4">Compare</button>
+      <button class="wn-tab" data-screen="screen-atlas">Atlas</button>
+    </div>
+    <div class="wn-right">
+      <button class="wn-pill">EN ⌄</button>
+      <button class="wn-pill wn-signin">Sign in</button>
+    </div>
+  </nav>
+
+
+  <!-- ================================================================
        SCREEN 1 — HOME
   ================================================================ -->
   <div id="screen-home" class="screen active">
     <div class="folk-border"></div>
 
     <div class="home-content">
-      <div class="home-ornament">✦ ✦ ✦</div>
-      <h1 class="home-title">Chitra<br>Katha</h1>
-      <p class="home-subtitle">Discover the living art traditions of India</p>
+      <!-- Left column: text + CTAs -->
+      <div class="home-left">
+        <div class="home-ornament">चित्र · कथा &nbsp;✦&nbsp; Picture · Story</div>
+        <h1 class="home-title">Chitra<br><span class="home-title-line2">Katha</span></h1>
+        <div class="home-divider"><span class="home-divider-diamond"></span></div>
+        <p class="home-subtitle">Discover the living art traditions of India. Scan a painting, read its story, and learn to draw it — line by line.</p>
 
-      <div class="home-divider"></div>
+        <div class="home-actions">
+          <button class="btn-primary" id="btn-camera">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/><path d="M8 6L9.5 4H14.5L16 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+            Scan a Painting
+          </button>
+          <button class="btn-secondary" id="btn-upload">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17V19a2 2 0 002 2h12a2 2 0 002-2V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Upload an Image
+          </button>
+          <input type="file" id="file-input" accept="image/*" />
+        </div>
 
-      <div class="home-actions">
-        <button class="btn-primary" id="btn-camera">
-          <span class="btn-icon">◉</span>
-          Scan a Painting
-        </button>
-        <button class="btn-secondary" id="btn-upload">
-          <span class="btn-icon">↑</span>
-          Upload an Image
-        </button>
-        <input type="file" id="file-input" accept="image/*" />
+        <div class="home-meta">
+          <span>14 TRADITIONS</span><span>·</span><span>165 STEPS</span><span>·</span><span>6 LANGUAGES</span>
+        </div>
+        <div class="home-tagline">a folk art companion ✦</div>
+      </div>
+
+      <!-- Right column: 2×2 art card grid -->
+      <div class="home-right">
+        <div class="home-hand-tip">tap to begin ✦</div>
+        <div class="home-art-grid">
+          <div class="home-art-card home-art-card--terracotta">
+            <span class="home-art-label">WARLI</span>
+          </div>
+          <div class="home-art-card home-art-card--ochre home-art-card--stagger">
+            <span class="home-art-label">GOND</span>
+          </div>
+          <div class="home-art-card home-art-card--forest">
+            <span class="home-art-label">MADHUBANI</span>
+          </div>
+          <div class="home-art-card home-art-card--rose home-art-card--stagger">
+            <span class="home-art-label">KALIGHAT</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -101,19 +164,33 @@
     <div class="l1-header">
       <button class="btn-back" id="l1-back">← Back</button>
       <span class="confidence-pill" id="confidence-pill"></span>
+      <button class="l1-menu-btn" aria-label="More options">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 7H19M5 12H19M5 17H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
 
     <div class="l1-hero">
-      <p class="l1-region" id="l1-region"></p>
-      <h1 class="l1-name"  id="l1-name"></h1>
-      <p class="l1-tagline" id="l1-tagline"></p>
+      <div class="l1-hero-text">
+        <p class="l1-region" id="l1-region"></p>
+        <h1 class="l1-name"  id="l1-name"></h1>
+        <p class="l1-tagline" id="l1-tagline"></p>
+      </div>
+      <!-- Language pills — shown in hero on desktop, in lang-card on mobile -->
+      <div class="l1-hero-langs" id="l1-hero-langs">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="hi">हि</button>
+        <button class="lang-btn" data-lang="bn">বা</button>
+        <button class="lang-btn" data-lang="ta">த</button>
+        <button class="lang-btn" data-lang="gu">ગુ</button>
+        <button class="lang-btn" data-lang="mr">मर</button>
+      </div>
     </div>
 
     <div class="l1-body">
 
-      <div class="info-card">
-        <h3 class="card-heading">History &amp; Tradition</h3>
-        <p id="l1-history"></p>
+      <!-- Uploaded artwork — top-left, in normal document flow -->
+      <div class="l1-ref-card">
+        <img id="l1-ref-img" class="l1-ref-img" src="" alt="Your uploaded artwork" />
       </div>
 
       <div class="map-card">
@@ -133,11 +210,16 @@
       </div>
 
       <div class="info-card">
+        <h3 class="card-heading">History &amp; Tradition</h3>
+        <p id="l1-history"></p>
+      </div>
+
+      <div class="info-card">
         <h3 class="card-heading">Artist Community</h3>
         <p id="l1-community"></p>
       </div>
 
-      <!-- Language switcher placeholder -->
+      <!-- Language switcher — mobile only (desktop uses hero-langs) -->
       <div class="lang-card">
         <p class="lang-label">Read in your language</p>
         <div class="lang-row" id="lang-row">
@@ -184,7 +266,6 @@
         the meaning behind each symbol, and what it means to keep this art alive.
       </p>
 
-      <!-- Placeholder video card -->
       <div class="video-card">
         <div class="video-thumb">
           <div class="video-play">▶</div>
@@ -232,9 +313,15 @@
     </div>
 
     <div class="l3s-intro">
-      <div class="home-ornament">✦</div>
-      <h2>Learn to Draw</h2>
-      <p>Choose a traditional art form to begin your step-by-step guided drawing experience.</p>
+      <h2>Learn to draw</h2>
+      <p>Pick a tradition and follow each step in your own time. The AI will guide you, line by line.</p>
+      <svg class="l3s-folk-divider" width="70" height="14" viewBox="0 0 80 14" aria-hidden="true">
+        <line x1="0" y1="7" x2="26" y2="7" stroke="var(--terracotta)" stroke-width="1.2"/>
+        <line x1="54" y1="7" x2="80" y2="7" stroke="var(--terracotta)" stroke-width="1.2"/>
+        <path d="M30 7 L34 3 L38 7 L34 11 Z" fill="var(--ochre)"/>
+        <path d="M40 7 L44 2 L48 7 L44 12 Z" fill="var(--terracotta)"/>
+        <path d="M50 7 L54 3 L58 7 L54 11 Z" fill="var(--ochre)"/>
+      </svg>
     </div>
 
     <!-- Art form tiles injected by level3v2.js -->
@@ -249,19 +336,34 @@
   ================================================================ -->
   <div id="screen-l3-tutorial" class="screen">
 
-    <!-- Dark hero header -->
+    <!-- Dark hero header (mobile only; hidden on desktop) -->
     <div class="l3t-hero">
-      <button class="l3t-hero-back" id="l3t-back">△ Back to Home</button>
-      <h2 class="l3t-hero-title" id="l3t-title">Painting</h2>
-      <p class="l3t-hero-subtitle" id="l3t-hero-subtitle"></p>
-    </div>
-
-    <!-- Step label + progress bar -->
-    <div class="l3t-progress-section">
-      <span class="l3t-step-label" id="l3t-step-label">STEP 1 OF 1</span>
+      <div class="l3t-hero-row">
+        <button class="l3t-hero-back" id="l3t-back">← Steps</button>
+        <span class="l3t-hero-kicker" id="l3t-title"></span>
+        <button class="l3t-hero-menu" aria-label="More options">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="5" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="19" r="2" fill="currentColor"/></svg>
+        </button>
+      </div>
+      <div class="l3t-step-row">
+        <span class="l3t-step-label" id="l3t-step-label">STEP 1 OF 1</span>
+        <span class="l3t-halfway" id="l3t-halfway"></span>
+      </div>
       <div class="l3t-progress-track">
         <div class="l3t-progress-bar" id="l3t-progress-bar" style="width:0%"></div>
       </div>
+      <p id="l3t-hero-subtitle" style="display:none"></p>
+    </div>
+
+    <!-- Desktop step rail (hidden on mobile, populated by JS) -->
+    <nav class="l3t-rail" id="l3t-rail"></nav>
+
+    <!-- Desktop center step header (hidden on mobile, updated by JS) -->
+    <div class="l3t-center-hdr" id="l3t-center-hdr">
+      <div>
+        <div class="l3t-center-kicker" id="l3t-center-kicker">STEP 01 OF –</div>
+      </div>
+      <div class="l3t-halfway-desk" id="l3t-halfway-desk"></div>
     </div>
 
     <!-- Step reference image -->
@@ -276,7 +378,6 @@
       <div class="l3t-step-badge" id="l3t-step-badge">Step 1</div>
       <p class="l3t-instruction" id="l3t-instruction"></p>
 
-      <!-- Optional per-step check — upload or camera -->
       <div class="l3t-check-btns">
         <button class="l3t-check-btn" id="l3t-check-btn-upload">
           <span class="btn-icon">⬆</span> Upload Photo
@@ -310,7 +411,7 @@
     <div class="folk-border"></div>
 
     <div class="l3e-header">
-      <button class="btn-back" id="l3e-back">← Back to Steps</button>
+      <button class="btn-back" id="l3e-back">← Steps</button>
     </div>
 
     <div class="l3e-content">
@@ -322,44 +423,62 @@
         The AI will compare it against the master reference and give you detailed feedback.
       </p>
 
-      <!-- Upload button -->
       <button class="btn-compare" id="l3e-btn-upload">
         <span class="btn-icon">⬆</span>
         Upload Your Artwork
       </button>
       <input type="file" id="l3e-file-input" accept="image/*" />
 
-      <!-- Loading state -->
       <div class="compare-loading" id="l3e-loading" style="display:none">
         <div class="spinner"></div>
         <p class="compare-loading-label">Analysing your artwork…</p>
       </div>
 
-      <!-- Results panel (hidden until comparison completes) -->
       <div id="l3e-results" style="display:none;flex-direction:column;gap:16px;width:100%">
 
-        <!-- Score ring -->
         <div class="score-card">
-          <p class="score-title">Your Similarity Score</p>
-          <div class="score-ring-wrap">
-            <svg class="score-ring" viewBox="0 0 120 120" aria-hidden="true">
-              <circle cx="60" cy="60" r="50"
-                fill="none" stroke="var(--parchment)" stroke-width="10"/>
-              <circle cx="60" cy="60" r="50"
-                fill="none" stroke="var(--terracotta)" stroke-width="10"
-                stroke-dasharray="314" stroke-dashoffset="314"
-                id="l3e-ring-circle" stroke-linecap="round"
-                transform="rotate(-90 60 60)"/>
-            </svg>
-            <div class="score-number" id="l3e-score">–</div>
+          <div class="score-main">
+            <div class="score-ring-wrap">
+              <svg class="score-ring" viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="50"
+                  fill="none" stroke="rgba(237,224,181,0.25)" stroke-width="10"/>
+                <circle cx="60" cy="60" r="50"
+                  fill="none" stroke="white" stroke-width="10"
+                  stroke-dasharray="314" stroke-dashoffset="314"
+                  id="l3e-ring-circle" stroke-linecap="round"
+                  transform="rotate(-90 60 60)"/>
+              </svg>
+              <div class="score-number" id="l3e-score">–</div>
+            </div>
+            <div class="score-right">
+              <p class="score-you-are">YOU ARE A</p>
+              <p class="score-tier" id="l3e-score-tier"></p>
+              <p class="score-label" id="l3e-score-label"></p>
+            </div>
           </div>
-          <p class="score-tier" id="l3e-score-tier"></p>
-          <p class="score-label" id="l3e-score-label"></p>
+          <div class="score-tier-track">
+            <div class="score-tier-step" data-tier="0">
+              <div class="score-tier-dot"></div>
+              <div class="score-tier-name">BEGINNER</div>
+            </div>
+            <div class="score-tier-step" data-tier="1">
+              <div class="score-tier-dot"></div>
+              <div class="score-tier-name">APPRENTICE</div>
+            </div>
+            <div class="score-tier-step" data-tier="2">
+              <div class="score-tier-dot"></div>
+              <div class="score-tier-name">JOURNEYMAN</div>
+            </div>
+            <div class="score-tier-step" data-tier="3">
+              <div class="score-tier-dot"></div>
+              <div class="score-tier-name">MASTER</div>
+            </div>
+          </div>
         </div>
 
-        <!-- Heatmap -->
         <div class="heatmap-card">
-          <h3 class="card-heading">Where you deviated</h3>
+          <p class="card-kicker">WHERE IT DRIFTED</p>
+          <h3 class="card-heading">Heatmap</h3>
           <img id="l3e-heatmap" class="heatmap-img" src="" alt="Deviation heatmap" />
           <p class="heatmap-legend">
             <span class="legend-dot" style="background:#1a7a2e"></span>Good match &ensp;
@@ -369,18 +488,16 @@
           </p>
         </div>
 
-        <!-- Zone feedback -->
         <div class="zone-card">
-          <h3 class="card-heading">Region Feedback</h3>
+          <p class="card-kicker">REGION BY REGION</p>
+          <h3 class="card-heading">Zone Feedback</h3>
           <div id="l3e-zone-list"></div>
         </div>
 
-        <!-- Try again -->
         <button class="l3e-retry" id="l3e-retry">Upload Another Photo</button>
 
       </div><!-- /#l3e-results -->
 
-      <!-- ── Quiz Section (shown after results) ── -->
       <div id="l3e-quiz" style="display:none">
         <div class="l3e-quiz-divider">
           <div class="home-ornament">✦</div>
@@ -399,28 +516,44 @@
     <div class="folk-border"></div>
   </div>
 
+
   <!-- ================================================================
        SCREEN 6 — LEVEL 4 · Compare & Contrast
   ================================================================ -->
   <div id="screen-l4" class="screen">
 
-    <!-- Sticky header -->
+    <!-- Sticky header (mobile) -->
     <div class="l4-header">
       <button id="l4-back-btn" aria-label="Back">← </button>
       <span class="l4-header-title">Compare &amp; Contrast</span>
     </div>
 
+    <!-- Desktop header (visible ≥900px) -->
+    <div class="l4-desktop-header">
+      <div class="l4-desktop-kicker">LEVEL · 04</div>
+      <h1 class="l4-desktop-title">Compare &amp; Contrast</h1>
+      <p class="l4-desktop-sub">See how your art form holds its ground beside its sisters across India. Tap any dot to learn the detail.</p>
+      <svg class="l4-desktop-divider" width="120" height="14" viewBox="0 0 120 14" aria-hidden="true">
+        <line x1="0" y1="7" x2="46" y2="7" stroke="var(--terracotta)" stroke-width="1.2"/>
+        <line x1="74" y1="7" x2="120" y2="7" stroke="var(--terracotta)" stroke-width="1.2"/>
+        <path d="M50 7 L54 3 L58 7 L54 11 Z" fill="var(--ochre)"/>
+        <path d="M60 7 L64 2 L68 7 L64 12 Z" fill="var(--terracotta)"/>
+        <path d="M70 7 L74 3 L78 7 L74 11 Z" fill="var(--ochre)"/>
+      </svg>
+    </div>
+
     <!-- Two-panel row -->
     <div class="l4-panels">
 
-      <!-- LEFT PANEL — Your Art Form -->
       <div class="l4-panel l4-panel-left" id="l4-left-panel">
-        <p class="l4-panel-label">Your Art</p>
+        <div class="l4-panel-header">
+          <p class="l4-panel-label">Your Art</p>
+          <span class="l4-tap-hint">tap dots to learn ✦</span>
+        </div>
         <p class="l4-panel-artname" id="l4-left-artname"></p>
         <div class="l4-painting-wrap"></div>
       </div>
 
-      <!-- RIGHT PANEL — Compare With -->
       <div class="l4-panel l4-panel-right" id="l4-right-panel">
         <p class="l4-panel-label">Compare With</p>
         <p class="l4-panel-artname" id="l4-right-artname"></p>
@@ -440,14 +573,32 @@
 
     </div><!-- /.l4-panels -->
 
-    <!-- Comparison section (shown after right panel selected) -->
     <div class="l4-compare-section" id="l4-compare-section" style="display:none"></div>
 
-    <!-- Footer CTA -->
     <div class="l4-footer-cta">
       <button class="l4-explore-btn" id="l4-explore-btn">Draw for Yourself ✦</button>
     </div>
 
+  </div>
+
+
+  <!-- ================================================================
+       SCREEN 7 — ATLAS · Browse All Art Forms
+  ================================================================ -->
+  <div id="screen-atlas" class="screen">
+    <div class="atlas-header">
+      <div class="atlas-kicker">BROWSE · 14 TRADITIONS</div>
+      <h1 class="atlas-title">The Folk Atlas</h1>
+      <p class="atlas-sub">Fourteen living traditions from across the subcontinent. Pick one and learn its language.</p>
+      <div class="atlas-filters">
+        <button class="atlas-filter atlas-filter--active">All</button>
+        <button class="atlas-filter">Tribal</button>
+        <button class="atlas-filter">Court</button>
+        <button class="atlas-filter">Devotional</button>
+        <button class="atlas-filter">Domestic</button>
+      </div>
+    </div>
+    <div class="atlas-grid" id="atlas-grid"></div>
   </div>
 
 
@@ -477,7 +628,6 @@
       </div>
       <div class="l3t-cam-viewport">
         <video id="l3t-cam-video" class="l3t-cam-video" playsinline muted autoplay></video>
-        <!-- Corner guides -->
         <span class="l3t-cam-corner tl"></span>
         <span class="l3t-cam-corner tr"></span>
         <span class="l3t-cam-corner bl"></span>
