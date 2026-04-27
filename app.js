@@ -480,7 +480,7 @@ function initArtCardCycling() {
           else      { img.style.opacity = '0'; }
         }
         label.style.opacity = '1';
-      }, 300);
+      }, 700);
     }, intervals[i]);
   });
 }
