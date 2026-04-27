@@ -1337,11 +1337,13 @@ h3.card-heading {
   font-size: 0.5rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.65;
+  opacity: 0;
   text-align: center;
   white-space: nowrap;
+  transition: opacity 0.3s;
 }
-.score-tier-step.active .score-tier-name { opacity: 1; }
+.score-tier-step.reached .score-tier-name { opacity: 0.5; }
+.score-tier-step.active .score-tier-name  { opacity: 1; }
 
 /* Heatmap card */
 .heatmap-card {

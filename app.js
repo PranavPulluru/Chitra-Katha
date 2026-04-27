@@ -445,9 +445,9 @@ function initArtCardCycling() {
 
   const cycleNames = [
     ['WARLI', 'SOHRAI', 'PHAD', 'KALAMKARI', 'GOND'],
-    ['GOND', 'MADHUBANI', 'WARLI', 'KALIGHAT', 'TALAPATRA'],
-    ['MADHUBANI', 'WARLI', 'GOND', 'SOHRAI', 'PITCHWAI'],
-    ['KALIGHAT', 'TALAPATRA', 'MADHUBANI', 'GOND', 'WARLI'],
+    ['GOND', 'TALAPATRA', 'WARLI', 'KALIGHAT', 'SOHRAI'],
+    ['SOHRAI', 'WARLI', 'GOND', 'TALAPATRA', 'PITCHWAI'],
+    ['KALIGHAT', 'TALAPATRA', 'PHAD', 'GOND', 'WARLI'],
   ];
   const intervals = [5000, 5600, 6300, 7100];
 
@@ -456,7 +456,6 @@ function initArtCardCycling() {
     'SOHRAI':    'level3v2/step_images/sohrai/reference.png',
     'KALAMKARI': 'level3v2/step_images/kalamkari/reference.png',
     'GOND':      'level3v2/step_images/gond/reference.png',
-    'MADHUBANI': 'level3v2/step_images/madhubani/reference.png',
     'KALIGHAT':  'level3v2/step_images/kalighat/reference.png',
     'TALAPATRA': 'level3v2/step_images/talapatra/reference.png',
     'PHAD':      'level3v2/step_images/phad/reference.png',
