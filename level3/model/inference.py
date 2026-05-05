@@ -1,25 +1,25 @@
 """
 model/inference.py — infer()
 ==============================
-Single entry-point for scoring a child's contour against a reference.
+Single entry-point for scoring a student's contour against a reference.
 
 Returns
 -------
   score        : float in [0, 100]
-  heatmap_img  : (H, W, 3) uint8 — jet-coloured distance heatmap overlaid on
+  heatmap_img  : (H, W, 3) uint8 — jet-coloured error heatmap overlaid on
                  the reference contour
-  zone_report  : list of dicts, one per flagged zone, each containing:
+  zone_report  : list of dicts, one per flagged zone:
                    {
-                     "zone":        str   (e.g. "top-left curve"),
-                     "mean_dist":   float (average patch distance in zone),
-                     "severity":    str   ("low" | "medium" | "high"),
+                     "zone":      str   (e.g. "top-left"),
+                     "mean_dist": float (mean error in zone, 0–1),
+                     "severity":  str   ("low" | "medium" | "high"),
                    }
 
 Usage
 -----
     from model.inference import infer, load_model
 
-    model = load_model("level3/checkpoints/best.pt", device="cuda")
+    model = load_model("level3/checkpoints/best.pt", device="cpu")
     score, heatmap, zones = infer(model, ref_img, child_img)
 """
 
@@ -31,29 +31,26 @@ from pathlib import Path
 import cv2
 import numpy as np
 import torch
-import torch.nn.functional as F
-from .model import ChitraKathaModel, PATCH_GRID
+from .model import DTSiameseNet
+from data.preprocessing import to_distance_transform
 
-# ── global model cache (loaded once, reused across all requests) ───────────────
-_MODEL: ChitraKathaModel | None = None
+# ── global model cache ─────────────────────────────────────────────────────────
+_MODEL: DTSiameseNet | None = None
 
-# ── zone definitions ───────────────────────────────────────────────────────────
-# Each entry: (display_name, row_start, row_end, col_start, col_end)
-# Indices into the 16×16 patch grid.
-
-_ZONES: list[tuple[str, int, int, int, int]] = [
-    ("top-left curve",    0,  5,  0,  5),
-    ("top edge",          0,  5,  5, 11),
-    ("top-right curve",   0,  5, 11, 16),
-    ("left side",         5, 11,  0,  5),
-    ("center",            5, 11,  5, 11),
-    ("right side",        5, 11, 11, 16),
-    ("bottom-left curve", 11, 16,  0,  5),
-    ("bottom edge",       11, 16,  5, 11),
-    ("bottom-right curve",11, 16, 11, 16),
+# ── zone definitions (fractional: rows/cols as fraction of heatmap H/W) ───────
+# Each entry: (display_name, r0, r1, c0, c1) all in [0, 1]
+_ZONES_FRAC: list[tuple[str, float, float, float, float]] = [
+    ("top-left",      0.00, 0.33, 0.00, 0.33),
+    ("top-center",    0.00, 0.33, 0.33, 0.67),
+    ("top-right",     0.00, 0.33, 0.67, 1.00),
+    ("mid-left",      0.33, 0.67, 0.00, 0.33),
+    ("center",        0.33, 0.67, 0.33, 0.67),
+    ("mid-right",     0.33, 0.67, 0.67, 1.00),
+    ("bottom-left",   0.67, 1.00, 0.00, 0.33),
+    ("bottom-center", 0.67, 1.00, 0.33, 0.67),
+    ("bottom-right",  0.67, 1.00, 0.67, 1.00),
 ]
 
-# Thresholds on normalised mean zone distance (0–1 after min-max scaling)
 _SEV_MED  = 0.35
 _SEV_HIGH = 0.65
 
@@ -62,103 +59,88 @@ _SEV_HIGH = 0.65
 
 def _to_tensor(img: np.ndarray, device: torch.device) -> torch.Tensor:
     """
-    Convert a (H, W) uint8 contour image to a (1, 3, 224, 224) float32 tensor.
-    Handles both white-on-black and black-on-white inputs.
+    Convert a binary contour image to a (1, 1, H, W) distance-transform tensor.
+
+    Accepts either polarity (white-bg/black-stroke or white-stroke/black-bg).
+    Always normalises to white-stroke/black-bg before computing the DT.
     """
     if img.ndim == 3:
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Normalise to white-on-black
-    if img.mean() > 127:
+    # Ensure white-on-black (255 = stroke)
+    if img.mean() < 127:
+        pass   # already white-on-black
+    else:
         img = cv2.bitwise_not(img)
 
-    t = torch.from_numpy(img.astype(np.float32) / 255.0)  # (H, W)
-    t = t.unsqueeze(0).unsqueeze(0)                        # (1, 1, H, W)
-    t = t.expand(1, 3, -1, -1)                             # (1, 3, H, W)
+    dt = to_distance_transform(img, sigma=5.0)               # (H, W) float32 [0, 1]
+    t  = torch.from_numpy(dt).unsqueeze(0).unsqueeze(0)      # (1, 1, H, W)
     return t.to(device)
 
 
 def _make_heatmap_overlay(
-    ref_img:   np.ndarray,
-    heatmap:   np.ndarray,   # (16, 16) float32
-    alpha:     float = 0.55,
-    size:      tuple[int, int] | None = None,
+    ref_img: np.ndarray,
+    heatmap: np.ndarray,          # (H, W) float32
+    alpha:   float = 0.55,
+    size:    tuple[int, int] | None = None,
 ) -> np.ndarray:
     """
-    Return a jet-coloured heatmap blended over the reference contour.
+    Blend a jet-coloured error heatmap over the reference contour.
 
     Parameters
     ----------
-    ref_img  : (H, W) uint8 or (H, W, 3) uint8
-    heatmap  : (16, 16) patch-distance grid
-    alpha    : heatmap opacity
-    size     : output (width, height); defaults to ref_img spatial size
+    ref_img : (H, W) or (H, W, 3) uint8
+    heatmap : (H, W) float32 error map from the model
+    alpha   : heatmap opacity in the blend
+    size    : output (width, height); defaults to ref_img dimensions
     """
     h_ref, w_ref = ref_img.shape[:2]
     out_w, out_h = size if size else (w_ref, h_ref)
 
-    # Normalise heatmap to [0, 255]
     hm = heatmap.copy()
-    hm_min, hm_max = hm.min(), hm.max()
-    if hm_max > hm_min:
-        hm = (hm - hm_min) / (hm_max - hm_min)
+    lo, hi = hm.min(), hm.max()
+    if hi > lo:
+        hm = (hm - lo) / (hi - lo)
     hm_uint8 = (hm * 255).astype(np.uint8)
 
-    # Upscale to output size and apply jet colormap
     hm_big   = cv2.resize(hm_uint8, (out_w, out_h), interpolation=cv2.INTER_CUBIC)
-    hm_color = cv2.applyColorMap(hm_big, cv2.COLORMAP_JET)  # (H, W, 3) BGR
+    hm_color = cv2.applyColorMap(hm_big, cv2.COLORMAP_JET)
 
-    # Prepare base image
     if ref_img.ndim == 2:
         base = cv2.cvtColor(ref_img, cv2.COLOR_GRAY2BGR)
     else:
         base = ref_img.copy()
     base = cv2.resize(base, (out_w, out_h), interpolation=cv2.INTER_LINEAR)
 
-    # Blend
-    overlay = cv2.addWeighted(base, 1.0 - alpha, hm_color, alpha, 0)
-    return overlay
+    return cv2.addWeighted(base, 1.0 - alpha, hm_color, alpha, 0)
 
 
 def _zone_report(
-    heatmap: np.ndarray,    # (16, 16) float32
-    threshold: float = 0.0, # include only zones with normalised score ≥ threshold
+    heatmap:   np.ndarray,   # (H, W) float32
+    threshold: float = 0.0,
 ) -> list[dict]:
     """
-    Compute per-zone mean distance and severity labels.
+    Compute per-zone mean error and severity labels.
 
-    Parameters
-    ----------
-    heatmap   : (16, 16) normalised (or raw) patch distance grid
-    threshold : minimum normalised mean distance to include a zone in the report
-
-    Returns
-    -------
-    list of zone dicts, sorted by mean_dist descending
+    Zone boundaries are defined as fractions of the heatmap's spatial
+    dimensions, so this works correctly regardless of the heatmap resolution
+    output by the model.
     """
-    hm_min, hm_max = heatmap.min(), heatmap.max()
-    span = hm_max - hm_min if hm_max > hm_min else 1.0
-    hm_norm = (heatmap - hm_min) / span      # [0, 1]
+    H, W = heatmap.shape
+    lo, hi = heatmap.min(), heatmap.max()
+    span = hi - lo if hi > lo else 1.0
+    hm_norm = (heatmap - lo) / span
 
     report = []
-    for name, r0, r1, c0, c1 in _ZONES:
+    for name, r0f, r1f, c0f, c1f in _ZONES_FRAC:
+        r0, r1 = int(r0f * H), int(r1f * H)
+        c0, c1 = int(c0f * W), int(c1f * W)
         zone_vals = hm_norm[r0:r1, c0:c1]
         mean_d    = float(zone_vals.mean())
         if mean_d < threshold:
             continue
-        if mean_d >= _SEV_HIGH:
-            sev = "high"
-        elif mean_d >= _SEV_MED:
-            sev = "medium"
-        else:
-            sev = "low"
-        report.append(
-            {
-                "zone":      name,
-                "mean_dist": round(mean_d, 4),
-                "severity":  sev,
-            }
-        )
+        sev = "high" if mean_d >= _SEV_HIGH else ("medium" if mean_d >= _SEV_MED else "low")
+        report.append({"zone": name, "mean_dist": round(mean_d, 4), "severity": sev})
 
     report.sort(key=lambda x: x["mean_dist"], reverse=True)
     return report
@@ -169,44 +151,35 @@ def _zone_report(
 def load_model(
     ckpt_path: str | Path | None = None,
     device:    str | torch.device = "cpu",
-) -> ChitraKathaModel:
+) -> DTSiameseNet:
     """
-    Instantiate ChitraKathaModel and load the trained projection head.
+    Instantiate DTSiameseNet and optionally load trained weights.
+
+    The loaded model is cached globally; subsequent calls return the same
+    instance without reloading weights.
 
     Parameters
     ----------
-    ckpt_path : path to a local checkpoint; if None the weights are downloaded
-                from the Hugging Face Hub (pranavpul/chitra-katha-weights).
+    ckpt_path : path to a checkpoint saved by train.py (full state_dict).
+                Pass None to use an untrained model (for testing only).
     device    : 'cpu', 'cuda', or a torch.device object.
-
-    The loaded model is cached globally — subsequent calls return the same
-    instance without reloading weights.
     """
     global _MODEL
     if _MODEL is not None:
         return _MODEL
 
     dev = torch.device(device) if isinstance(device, str) else device
-    model = ChitraKathaModel(pretrained=True).to(dev)
+    model = DTSiameseNet(pretrained=False).to(dev)
     model.eval()
 
     if ckpt_path is not None:
-        ckpt = torch.load(ckpt_path, map_location=dev)
-        key = "proj_head_state" if "proj_head_state" in ckpt else "state_dict"
-        model.proj_head.load_state_dict(ckpt[key])
-        print(f"Loaded projection head from {ckpt_path}")
+        ckpt = torch.load(ckpt_path, map_location=dev, weights_only=True)
+        # Support both bare state_dict and wrapped {"state_dict": ...} saves
+        state = ckpt.get("state_dict", ckpt)
+        model.load_state_dict(state)
+        print(f"Loaded checkpoint from {ckpt_path}")
     else:
-        print("No checkpoint — using untrained projection head")
-
-    # Quantize the frozen backbone to int8 — cuts its memory ~4x with negligible
-    # quality loss for contour comparison on CPU.
-    if dev.type == "cpu":
-        model.backbone = torch.quantization.quantize_dynamic(
-            model.backbone,
-            {torch.nn.Linear},
-            dtype=torch.qint8,
-        )
-        print("Backbone quantized to int8")
+        print("No checkpoint — using untrained model weights")
 
     gc.collect()
     _MODEL = model
@@ -215,31 +188,29 @@ def load_model(
 
 @torch.no_grad()
 def infer(
-    model:       ChitraKathaModel,
-    ref_img:     np.ndarray,
-    child_img:   np.ndarray,
-    heatmap_size: tuple[int, int] | None = None,
+    model:          DTSiameseNet,
+    ref_img:        np.ndarray,
+    child_img:      np.ndarray,
+    heatmap_size:   tuple[int, int] | None = None,
     zone_threshold: float = 0.20,
 ) -> tuple[float, np.ndarray, list[dict]]:
     """
-    Score a child's contour against a reference.
+    Score a student's contour against a reference.
 
     Parameters
     ----------
-    model         : loaded ChitraKathaModel (from load_model())
+    model         : loaded DTSiameseNet (from load_model())
     ref_img       : (H, W) or (H, W, 3) uint8 reference contour
-    child_img     : (H, W) or (H, W, 3) uint8 child's tracing
+    child_img     : (H, W) or (H, W, 3) uint8 student's drawing
     heatmap_size  : (width, height) of the returned overlay image.
                     Defaults to ref_img's spatial dimensions.
-    zone_threshold: normalised distance threshold below which zones are omitted
-                    from the report (reduces noise in the feedback).
+    zone_threshold: minimum normalised error to include a zone in the report
 
     Returns
     -------
     score       : float in [0, 100]
     heatmap_img : (H, W, 3) uint8 BGR overlay — jet heatmap on ref contour
-    zone_report : list of dicts, sorted by severity (most deviated first)
-                  Each dict: {"zone": str, "mean_dist": float, "severity": str}
+    zone_report : list of dicts sorted by severity (most deviated first)
     """
     device = next(model.parameters()).device
     model.eval()
@@ -250,13 +221,13 @@ def infer(
     out = model(ref_t, child_t)
 
     score   = float(out["score"].squeeze().cpu())
-    heatmap = out["heatmap"].squeeze(0).cpu().numpy()  # (16, 16)
+    heatmap = out["heatmap"].squeeze(0).cpu().numpy()   # (H, W)
 
-    # Ensure ref_img is grayscale for overlay
-    if ref_img.ndim == 3:
-        ref_gray = cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
-    else:
-        ref_gray = ref_img
+    ref_gray = (
+        cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
+        if ref_img.ndim == 3
+        else ref_img
+    )
 
     overlay = _make_heatmap_overlay(ref_gray, heatmap, size=heatmap_size)
     zones   = _zone_report(heatmap, threshold=zone_threshold)
@@ -268,11 +239,10 @@ def infer(
 
 if __name__ == "__main__":
     import argparse
-    from pathlib import Path
 
-    p = argparse.ArgumentParser(description="Run Chitra Katha inference")
+    p = argparse.ArgumentParser(description="Run DTSiameseNet inference")
     p.add_argument("ref",   help="Path to reference contour image")
-    p.add_argument("child", help="Path to child's contour image")
+    p.add_argument("child", help="Path to student's contour image")
     p.add_argument("--ckpt",   default=None,              help="Checkpoint path")
     p.add_argument("--device", default="cpu",             help="cpu or cuda")
     p.add_argument("--out",    default="heatmap_out.png", help="Output overlay path")
@@ -284,8 +254,8 @@ if __name__ == "__main__":
     child_img = cv2.imread(args.child, cv2.IMREAD_GRAYSCALE)
 
     score, heatmap_img, zones = infer(model, ref_img, child_img)
-
     cv2.imwrite(args.out, heatmap_img)
+
     print(f"\nSimilarity score : {score:.1f} / 100")
     print(f"Heatmap saved    : {args.out}")
     print("\nRegion feedback:")

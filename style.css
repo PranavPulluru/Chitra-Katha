@@ -1115,6 +1115,23 @@ h3.card-heading {
   opacity: 0.78;
   font-weight: 500;
 }
+.btn-scan-again {
+  width: 100%;
+  padding: 0.55rem 1rem;
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: background 0.15s, color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-scan-again:hover { background: var(--parchment); color: var(--text); }
+.btn-scan-again:active { background: var(--border); }
 
 
 /* ============================================================

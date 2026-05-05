@@ -23,6 +23,20 @@
 const Level3v2 = (() => {
   'use strict';
 
+  // ── Translation helpers ─────────────────────────────────────────────────
+  function _uiStr(key) {
+    const lang = (typeof currentLang !== 'undefined') ? currentLang : 'en';
+    const s = (typeof UI_STRINGS !== 'undefined')
+      ? (UI_STRINGS[lang] || UI_STRINGS['en'])
+      : {};
+    return s[key] !== undefined ? s[key] : key;
+  }
+  function _uiFmt(key, vars) {
+    let str = _uiStr(key);
+    for (const [k, v] of Object.entries(vars)) str = str.replaceAll(`{${k}}`, v);
+    return str;
+  }
+
   // ── Internal state ──────────────────────────────────────────────────────
   let _artKey       = null;   // classifier key (e.g. "Kalighat of Bengal")
   let _tutorialId   = null;   // key into TUTORIAL_DATA
@@ -191,8 +205,8 @@ const Level3v2 = (() => {
             onerror="this.closest('.l3s-tile-img-wrap').classList.add('l3s-no-img');this.remove()"
           />
           <div class="l3s-tile-fallback">✦</div>
-          <div class="l3s-tile-chip">${data.totalSteps} STEPS</div>
-          ${featured ? `<div class="l3s-tile-popular">Most popular ✦</div>` : ''}
+          <div class="l3s-tile-chip">${_uiFmt('tileSteps', { n: data.totalSteps })}</div>
+          ${featured ? `<div class="l3s-tile-popular">${_uiStr('tileFeatured')}</div>` : ''}
         </div>
         <div class="l3s-tile-info">
           <p class="l3s-tile-name">${data.name}</p>
@@ -216,8 +230,8 @@ const Level3v2 = (() => {
     hint.innerHTML = `
       <div class="l3s-hint-icon">★</div>
       <div>
-        <div class="l3s-hint-title">Beginner-friendly path</div>
-        <div class="l3s-hint-sub">Start with Warli — fewer steps, simple shapes.</div>
+        <div class="l3s-hint-title">${_uiStr('hintTitle')}</div>
+        <div class="l3s-hint-sub">${_uiStr('hintSub')}</div>
       </div>
     `;
     grid.appendChild(hint);
@@ -249,7 +263,7 @@ const Level3v2 = (() => {
     const rail = document.getElementById('l3t-rail');
     if (!rail) return;
     rail.innerHTML = `
-      <div class="l3t-rail-count">${_tutorial.totalSteps} STEPS</div>
+      <div class="l3t-rail-count">${_uiFmt('tileSteps', { n: _tutorial.totalSteps })}</div>
       <div class="l3t-rail-title">${_tutorial.name}</div>
       <div class="l3t-rail-prog">
         <div class="l3t-rail-bar" id="l3t-rail-bar"></div>
@@ -283,9 +297,9 @@ const Level3v2 = (() => {
 
     // Step label + nav counter
     document.getElementById('l3t-step-label').textContent =
-      `STEP ${String(stepNum).padStart(2,'0')} OF ${String(total).padStart(2,'0')}`;
+      _uiFmt('stepCounter', { n: String(stepNum).padStart(2,'0'), total: String(total).padStart(2,'0') });
     document.getElementById('l3t-counter').textContent    = `${stepNum} / ${total}`;
-    document.getElementById('l3t-step-badge').textContent = `Step ${stepNum}`;
+    document.getElementById('l3t-step-badge').textContent = _uiFmt('stepBadge', { n: stepNum });
 
     // Progress bar
     const pct = (stepNum / total) * 100;
@@ -295,7 +309,7 @@ const Level3v2 = (() => {
     const halfwayEl = document.getElementById('l3t-halfway');
     if (halfwayEl) {
       const showHalfway = pct >= 40 && pct <= 65;
-      halfwayEl.textContent = showHalfway ? 'halfway there ✦' : '';
+      halfwayEl.textContent = showHalfway ? _uiStr('halfwayThere') : '';
     }
 
     // Step reference image
@@ -310,7 +324,9 @@ const Level3v2 = (() => {
     };
 
     // Instruction text
-    document.getElementById('l3t-instruction').textContent = step.instruction;
+    const _lang = (typeof currentLang !== 'undefined') ? currentLang : 'en';
+    const _t = step.translations && step.translations[_lang];
+    document.getElementById('l3t-instruction').textContent = (_t && _t.trim()) ? _t : step.instruction;
 
     // Desktop rail updates
     document.querySelectorAll('.l3t-rail-item').forEach((el, i) => {
@@ -321,9 +337,9 @@ const Level3v2 = (() => {
     if (railBar) railBar.style.width = pct + '%';
     const kicker = document.getElementById('l3t-center-kicker');
     if (kicker) kicker.textContent =
-      `STEP ${String(stepNum).padStart(2, '0')} OF ${String(total).padStart(2, '0')}`;
+      _uiFmt('stepCounter', { n: String(stepNum).padStart(2,'0'), total: String(total).padStart(2,'0') });
     const halfDesk = document.getElementById('l3t-halfway-desk');
-    if (halfDesk) halfDesk.textContent = (pct >= 40 && pct <= 65) ? 'halfway there ✦' : '';
+    if (halfDesk) halfDesk.textContent = (pct >= 40 && pct <= 65) ? _uiStr('halfwayThere') : '';
 
     // Clear any step-check result from the previous step
     _clearStepCheck();
@@ -460,7 +476,7 @@ const Level3v2 = (() => {
     panel.innerHTML = `
       <div class="l3t-check-loading">
         <div class="spinner"></div>
-        <p>Checking step ${stepNum}…</p>
+        <p>${_uiFmt('checkingStep', { n: stepNum })}</p>
       </div>`;
 
     try {
@@ -491,7 +507,7 @@ const Level3v2 = (() => {
       panel.innerHTML = `
         <div class="l3t-check-result l3t-check-error">
           <p>${msg}</p>
-          <button class="l3t-check-dismiss">Dismiss</button>
+          <button class="l3t-check-dismiss">${_uiStr('btnDismiss')}</button>
         </div>`;
       panel.querySelector('.l3t-check-dismiss').addEventListener('click', _clearStepCheck);
     }
@@ -508,7 +524,7 @@ const Level3v2 = (() => {
 
     let zonesHtml = '';
     if (!zones || zones.length === 0) {
-      zonesHtml = '<p class="zone-all-good">✦ Looking great!</p>';
+      zonesHtml = `<p class="zone-all-good">${_uiStr('scoreLookingGreat')}</p>`;
     } else {
       zonesHtml = zones.slice(0, 4).map(z => `
         <div class="zone-row">
@@ -523,7 +539,7 @@ const Level3v2 = (() => {
     panel.innerHTML = `
       <div class="l3t-check-result">
         <div class="l3t-check-header">
-          <span class="l3t-check-title">Step ${stepNum} Check</span>
+          <span class="l3t-check-title">${_uiFmt('stepCheckTitle', { n: stepNum })}</span>
         </div>
         <div class="l3t-check-score-block ${scoreClass}">
           <span class="l3t-check-score-number">${rounded}</span>
@@ -531,13 +547,13 @@ const Level3v2 = (() => {
         </div>
         <img class="l3t-check-heatmap" src="${overlayDataURL}" alt="Step heatmap with your drawing" />
         <p class="l3t-check-legend">
-          <span class="legend-dot" style="background:#1a7a2e"></span>Good &ensp;
-          <span class="legend-dot" style="background:#C98A1A"></span>Drift &ensp;
-          <span class="legend-dot" style="background:#B94012"></span>Deviation
-          <span class="l3t-check-legend-note">(your drawing overlaid)</span>
+          <span class="legend-dot" style="background:#1a7a2e"></span>${_uiStr('legendGood')} &ensp;
+          <span class="legend-dot" style="background:#C98A1A"></span>${_uiStr('legendDrift')} &ensp;
+          <span class="legend-dot" style="background:#B94012"></span>${_uiStr('legendDeviation')}
+          <span class="l3t-check-legend-note">${_uiStr('legendOverlaid')}</span>
         </p>
         <div class="l3t-check-zones">${zonesHtml}</div>
-        <button class="l3t-check-dismiss">Dismiss</button>
+        <button class="l3t-check-dismiss">${_uiStr('btnDismiss')}</button>
       </div>`;
 
     panel.querySelector('.l3t-check-dismiss').addEventListener('click', _clearStepCheck);
@@ -619,7 +635,7 @@ const Level3v2 = (() => {
     list.innerHTML = '';
 
     if (!zones || zones.length === 0) {
-      list.innerHTML = '<p class="zone-all-good">✦ No significant deviations — great work!</p>';
+      list.innerHTML = `<p class="zone-all-good">${_uiStr('scoreNoDeviations')}</p>`;
     } else {
       const artTips = (IMPROVEMENT_TIPS[_tutorialId] || {});
       zones.forEach(z => {
@@ -717,18 +733,18 @@ const Level3v2 = (() => {
   }
 
   function _scoreLabel(score) {
-    if (score >= 90) return 'Near perfect!';
-    if (score >= 75) return 'Great work!';
-    if (score >= 55) return 'Well done!';
-    if (score >= 35) return 'Good start!';
-    return 'Keep practising!';
+    if (score >= 90) return _uiStr('scoreLabelNearPerfect');
+    if (score >= 75) return _uiStr('scoreLabelGreat');
+    if (score >= 55) return _uiStr('scoreLabelWellDone');
+    if (score >= 35) return _uiStr('scoreLabelGoodStart');
+    return _uiStr('scoreLabelKeepPractising');
   }
 
   function _scoreTier(score) {
-    if (score >= 80) return 'Master';
-    if (score >= 60) return 'Journeyman';
-    if (score >= 40) return 'Apprentice';
-    return 'Beginner';
+    if (score >= 80) return _uiStr('tierMaster');
+    if (score >= 60) return _uiStr('tierJourneyman');
+    if (score >= 40) return _uiStr('tierApprentice');
+    return _uiStr('tierBeginner');
   }
 
   function _updateTierDots(score) {
@@ -805,11 +821,12 @@ const Level3v2 = (() => {
           // Show final score after all questions answered
           if (answered === questions.length) {
             const pct = Math.round((correct / questions.length) * 100);
+            const _qv = { correct, total: questions.length };
             let msg;
-            if (pct === 100)    msg = `Perfect — ${correct}/${questions.length}! You've truly mastered the eye of a critic.`;
-            else if (pct >= 75) msg = `${correct}/${questions.length} — Great eye! You're picking up the style well.`;
-            else if (pct >= 50) msg = `${correct}/${questions.length} — Good effort! Revisit the tutorial to sharpen your eye.`;
-            else                msg = `${correct}/${questions.length} — Keep exploring — every master starts as a student.`;
+            if (pct === 100)    msg = _uiFmt('quizPerfect',       _qv);
+            else if (pct >= 75) msg = _uiFmt('quizGreat',         _qv);
+            else if (pct >= 50) msg = _uiFmt('quizGood',          _qv);
+            else                msg = _uiFmt('quizKeepExploring',  _qv);
 
             finalEl.textContent = msg;
             scoreEl.style.display = 'block';

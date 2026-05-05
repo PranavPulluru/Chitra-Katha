@@ -11,6 +11,7 @@ texture, pencil grain — so the CNN only ever sees clean line information.
 
 import cv2
 import numpy as np
+from scipy.ndimage import distance_transform_edt
 
 
 # ---------------------------------------------------------------------------
@@ -213,6 +214,41 @@ class ContourPreprocessor:
         )
         cv2.drawContours(canvas, contours, -1, 0, self.contour_thickness)
         return canvas
+
+
+# ---------------------------------------------------------------------------
+# Distance-transform conversion
+# ---------------------------------------------------------------------------
+
+def to_distance_transform(stroke_on_black: np.ndarray, sigma: float = 5.0) -> np.ndarray:
+    """
+    Convert a binary contour image to a soft distance-transform representation.
+
+    Parameters
+    ----------
+    stroke_on_black : (H, W) uint8 — 255 at strokes, 0 at background
+    sigma           : Gaussian falloff in pixels; controls how far the signal
+                      extends from each stroke (larger = softer gradients)
+
+    Returns
+    -------
+    (H, W) float32 in [0, 1] — 1.0 at stroke pixels, decaying smoothly to 0
+    with distance.  Two structurally similar drawings that are offset by a few
+    pixels will have similar DT images; raw binary images would not.
+
+    Why this representation
+    -----------------------
+    Raw binary contours are 1-pixel-thin lines. Any global shift of even 2 px
+    makes the pixel-wise MSE enormous even when the structure is nearly correct.
+    The DT encodes spatial proximity continuously, making small displacements
+    produce small distances — which is exactly what a structural loss needs.
+    """
+    stroke_mask = (stroke_on_black > 127).astype(np.uint8)
+    # distance_transform_edt returns the Euclidean distance from each 0-pixel
+    # to the nearest 1-pixel; we pass (1 - mask) so distance is measured FROM
+    # background pixels TO the nearest stroke pixel.
+    dt = distance_transform_edt(1 - stroke_mask)
+    return np.exp(-dt / sigma).astype(np.float32)
 
 
 # ---------------------------------------------------------------------------

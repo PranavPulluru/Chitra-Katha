@@ -40,6 +40,7 @@ function showScreen(id) {
   document.querySelectorAll('.wn-tab').forEach(t =>
     t.classList.toggle('active', t.dataset.screen === id)
   );
+  applyUITranslations(currentLang);
 }
 
 
@@ -174,12 +175,20 @@ function getLangData(art, lang) {
   const t = art.translations[lang];
   return {
     ...art,
-    tagline:   t.tagline   || art.tagline,
-    history:   t.history   || art.history,
-    community: t.community || art.community,
-    materials: t.materials || art.materials,
-    tools:     t.tools     || art.tools,
+    tagline:      t.tagline      || art.tagline,
+    tools:        t.tools        || art.tools,
+    surface:      t.surface      || art.surface,
+    colours:      t.colours      || art.colours,
+    significance: t.significance || art.significance,
   };
+}
+
+function applyUITranslations(lang) {
+  const s = (typeof UI_STRINGS !== 'undefined' && UI_STRINGS[lang]) ? UI_STRINGS[lang] : (UI_STRINGS && UI_STRINGS['en']) || {};
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (s[key] !== undefined) el.textContent = s[key];
+  });
 }
 
 function populateLevel1(key, probability, lang = 'en') {
@@ -192,22 +201,16 @@ function populateLevel1(key, probability, lang = 'en') {
   const art  = ARTFORMS[key];
   const data = getLangData(art, currentLang);
 
-  document.getElementById('l1-region').textContent    = '✦ ' + art.region.toUpperCase();
-  document.getElementById('l1-name').textContent      = art.name;
-  document.getElementById('l1-tagline').textContent   = data.tagline;
-  document.getElementById('l1-history').textContent   = data.history;
-  document.getElementById('l1-community').textContent = data.community;
+  document.getElementById('l1-region').textContent       = '✦ ' + art.region.toUpperCase();
+  document.getElementById('l1-name').textContent         = art.name;
+  document.getElementById('l1-tagline').textContent      = data.tagline;
+  document.getElementById('l1-tools').textContent        = data.tools;
+  document.getElementById('l1-surface').textContent      = data.surface;
+  document.getElementById('l1-colours').textContent      = data.colours;
+  document.getElementById('l1-significance').textContent = data.significance;
 
   const pct = Math.round(probability * 100);
   document.getElementById('confidence-pill').textContent = `${pct}% match`;
-
-  // Materials list
-  const matList = document.getElementById('l1-materials');
-  matList.innerHTML = data.materials.map(m => `<li>${m}</li>`).join('');
-
-  // Tools list
-  const toolList = document.getElementById('l1-tools');
-  toolList.innerHTML = data.tools.map(t => `<li>${t}</li>`).join('');
 
   // Show user's image in the ref card, or reference.png when browsing from atlas
   const refImg = document.getElementById('l1-ref-img');
@@ -285,6 +288,16 @@ function goHome() {
   showScreen('screen-home');
 }
 
+async function goScanAgain() {
+  mode = 'camera';
+  document.getElementById('identify-title').textContent   = (UI_STRINGS[currentLang] || UI_STRINGS['en']).identifyTitle;
+  document.getElementById('camera-wrap').style.display    = 'block';
+  document.getElementById('upload-preview').style.display = 'none';
+  clearStateOverlays();
+  showScreen('screen-identify');
+  await startCamera();
+}
+
 
 /* ------------------------------------------------------------------ */
 /*  Event listeners                                                    */
@@ -293,7 +306,7 @@ function goHome() {
 // Home — camera
 document.getElementById('btn-camera').addEventListener('click', async () => {
   mode = 'camera';
-  document.getElementById('identify-title').textContent   = 'Point at the artwork';
+  document.getElementById('identify-title').textContent   = (UI_STRINGS[currentLang] || UI_STRINGS['en']).identifyTitle;
   document.getElementById('camera-wrap').style.display    = 'block';
   document.getElementById('upload-preview').style.display = 'none';
   clearStateOverlays();
@@ -315,7 +328,7 @@ document.getElementById('file-input').addEventListener('change', (e) => {
   const img  = document.getElementById('preview-img');
   img.src    = url;
 
-  document.getElementById('identify-title').textContent   = 'Review your image';
+  document.getElementById('identify-title').textContent   = (UI_STRINGS[currentLang] || UI_STRINGS['en']).identifyTitleUpload;
   document.getElementById('camera-wrap').style.display    = 'none';
   document.getElementById('upload-preview').style.display = 'flex';
   clearStateOverlays();
@@ -336,6 +349,9 @@ document.getElementById('btn-try-again').addEventListener('click', () => {
 
 // Back from identify → home
 document.getElementById('identify-back').addEventListener('click', goHome);
+
+// Scan again from result → identify
+document.getElementById('btn-scan-again').addEventListener('click', goScanAgain);
 
 // Back from level 1 → home
 document.getElementById('l1-back').addEventListener('click', goHome);
@@ -380,6 +396,7 @@ function _handleLangClick(e) {
   if (lang === currentLang) return;
   const pct = parseInt(document.getElementById('confidence-pill').textContent);
   populateLevel1(currentArtKey, (pct || 0) / 100, lang);
+  applyUITranslations(lang);
 }
 document.getElementById('lang-row').addEventListener('click', _handleLangClick);
 document.getElementById('l1-hero-langs').addEventListener('click', _handleLangClick);
@@ -412,6 +429,7 @@ langDropdown.addEventListener('click', (e) => {
   } else {
     currentLang = lang;
   }
+  applyUITranslations(lang);
 });
 
 document.addEventListener('click', () => { langDropdown.hidden = true; });
@@ -524,7 +542,7 @@ function initAtlas() {
     card.innerHTML = `
       <div class="atlas-card-img atlas-tone-${tone}">
         ${imgHtml}
-        <span class="atlas-steps-pill">${stepsCount} STEPS</span>
+        <span class="atlas-steps-pill">${stepsCount !== '–' ? ((UI_STRINGS[currentLang] || UI_STRINGS['en']).tileSteps || '{n} STEPS').replace('{n}', stepsCount) : stepsCount}</span>
       </div>
       <div class="atlas-card-body">
         <p class="atlas-card-name">${art.name}</p>

@@ -42,11 +42,11 @@
       <span class="wn-wordmark">Chitra Katha</span>
     </div>
     <div class="wn-tabs">
-      <button class="wn-tab" data-screen="screen-home">Home</button>
-      <button class="wn-tab" data-screen="screen-identify">Identify</button>
-      <button class="wn-tab" data-screen="screen-l3-select">Learn</button>
-      <button class="wn-tab wn-tab--coming-soon" data-screen="screen-l4"><span>Compare</span></button>
-      <button class="wn-tab" data-screen="screen-atlas">Atlas</button>
+      <button class="wn-tab" data-screen="screen-home"      data-i18n="navHome">Home</button>
+      <button class="wn-tab" data-screen="screen-identify"  data-i18n="navIdentify">Identify</button>
+      <button class="wn-tab" data-screen="screen-l3-select" data-i18n="navLearn">Learn</button>
+      <button class="wn-tab wn-tab--coming-soon" data-screen="screen-l4"><span data-i18n="navCompare">Compare</span></button>
+      <button class="wn-tab" data-screen="screen-atlas"     data-i18n="navAtlas">Atlas</button>
     </div>
     <div class="wn-right" style="position:relative">
       <button class="wn-pill" id="wn-lang-btn">EN ⌄</button>
@@ -74,24 +74,24 @@
         <div class="home-ornament">चित्र · कथा &nbsp;✦&nbsp; Picture · Story</div>
         <h1 class="home-title">Chitra<br><span class="home-title-line2">Katha</span></h1>
         <div class="home-divider"><span class="home-divider-diamond"></span></div>
-        <p class="home-subtitle">Discover the living art traditions of India. Scan a painting, read its story, and learn to draw it — line by line.</p>
+        <p class="home-subtitle" data-i18n="homeSubtitle">Discover the living art traditions of India. Scan a painting, read its story, and learn to draw it — line by line.</p>
 
         <div class="home-actions">
           <button class="btn-primary" id="btn-camera">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/><path d="M8 6L9.5 4H14.5L16 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
-            Scan a Painting
+            <span data-i18n="btnScanArtwork">Scan a Painting</span>
           </button>
           <button class="btn-secondary" id="btn-upload">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16V5M7 10l5-5 5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17V19a2 2 0 002 2h12a2 2 0 002-2V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            Upload an Image
+            <span data-i18n="btnUploadImage">Upload an Image</span>
           </button>
           <input type="file" id="file-input" accept="image/*" />
         </div>
 
-        <div class="home-meta">
+        <div class="home-meta" data-i18n="homeStats">
           <span>5 TUTORIALS</span><span>·</span><span>98 STEPS</span><span>·</span><span>14 traditions in the atlas</span>
         </div>
-        <div class="home-tagline">a folk art companion ✦</div>
+        <div class="home-tagline" data-i18n="homeTagline">a folk art companion ✦</div>
       </div>
 
       <!-- Right column: 2×2 art card grid -->
@@ -127,7 +127,7 @@
   ================================================================ -->
   <div id="screen-identify" class="screen">
     <div class="identify-header">
-      <button class="btn-back" id="identify-back">← Back</button>
+      <button class="btn-back" id="identify-back" data-i18n="btnBack">← Back</button>
       <span class="identify-title" id="identify-title">Point at the artwork</span>
     </div>
 
@@ -150,20 +150,20 @@
     <!-- Loading -->
     <div class="state-overlay" id="state-loading">
       <div class="spinner"></div>
-      <p class="state-label">Identifying artwork…</p>
+      <p class="state-label" data-i18n="identifyLoading">Identifying artwork…</p>
     </div>
 
     <!-- Error / not recognised -->
     <div class="state-overlay" id="state-error">
       <div class="state-ornament">✦</div>
-      <h3 class="state-heading">Not Recognised</h3>
-      <p class="state-body">This doesn't look like one of the folk art forms we know yet. Try a different image.</p>
-      <button class="btn-primary" id="btn-try-again">Try Again</button>
+      <h3 class="state-heading" data-i18n="identifyErrorTitle">Not Recognised</h3>
+      <p class="state-body" data-i18n="identifyErrorBody">This doesn't look like one of the folk art forms we know yet. Try a different image.</p>
+      <button class="btn-primary" id="btn-try-again" data-i18n="identifyTryAgain">Try Again</button>
     </div>
 
     <!-- Identify action bar -->
     <div class="identify-footer" id="identify-footer">
-      <button class="btn-identify" id="btn-identify">Identify</button>
+      <button class="btn-identify" id="btn-identify" data-i18n="btnIdentify">Identify</button>
     </div>
   </div>
 
@@ -205,34 +205,33 @@
       </div>
 
       <div class="map-card">
-        <h3 class="card-heading">Origin</h3>
+        <h3 class="card-heading" data-i18n="cardOrigin">Origin</h3>
         <div id="l1-map"></div>
       </div>
 
-      <div class="two-col">
-        <div class="info-card">
-          <h3 class="card-heading">Materials</h3>
-          <ul id="l1-materials" class="detail-list"></ul>
-        </div>
-        <div class="info-card">
-          <h3 class="card-heading">Tools</h3>
-          <ul id="l1-tools" class="detail-list"></ul>
-        </div>
+      <div class="info-card">
+        <h3 class="card-heading" data-i18n="cardTools">Primary Tools</h3>
+        <p id="l1-tools"></p>
       </div>
 
       <div class="info-card">
-        <h3 class="card-heading">History &amp; Tradition</h3>
-        <p id="l1-history"></p>
+        <h3 class="card-heading" data-i18n="cardSurface">Surface &amp; Canvas</h3>
+        <p id="l1-surface"></p>
       </div>
 
       <div class="info-card">
-        <h3 class="card-heading">Artist Community</h3>
-        <p id="l1-community"></p>
+        <h3 class="card-heading" data-i18n="cardColours">Colours &amp; Pigments</h3>
+        <p id="l1-colours"></p>
+      </div>
+
+      <div class="info-card">
+        <h3 class="card-heading" data-i18n="cardSignificance">Significance &amp; Key Features</h3>
+        <p id="l1-significance"></p>
       </div>
 
       <!-- Language switcher — mobile only (desktop uses hero-langs) -->
       <div class="lang-card">
-        <p class="lang-label">Read in your language</p>
+        <p class="lang-label" data-i18n="langLabel">Read in your language</p>
         <div class="lang-row" id="lang-row">
           <button class="lang-btn active" data-lang="en">EN</button>
           <button class="lang-btn" data-lang="hi">हि</button>
@@ -247,13 +246,14 @@
 
     <div class="go-deeper-bar">
       <button class="btn-go-deeper" id="btn-try-tutorial">
-        <span class="go-deeper-main">Try Drawing This ✦</span>
-        <span class="go-deeper-sub">Step-by-step guided tutorial</span>
+        <span class="go-deeper-main" data-i18n="ctaTutorial">Try Drawing This ✦</span>
+        <span class="go-deeper-sub" data-i18n="ctaTutorialSub">Step-by-step guided tutorial</span>
       </button>
       <button class="btn-go-deeper btn-go-deeper-secondary btn-coming-soon" id="btn-compare">
-        <span class="go-deeper-main">Compare &amp; Contrast 🔍</span>
-        <span class="go-deeper-sub">See how this art form differs</span>
+        <span class="go-deeper-main" data-i18n="ctaCompare">Compare &amp; Contrast 🔍</span>
+        <span class="go-deeper-sub" data-i18n="ctaCompareSub">See how this art form differs</span>
       </button>
+      <button class="btn-scan-again" id="btn-scan-again" data-i18n="ctaScanAgain">← Scan Another Artwork</button>
     </div>
   </div>
 
@@ -324,8 +324,8 @@
     </div>
 
     <div class="l3s-intro">
-      <h2>Learn to draw</h2>
-      <p>Pick a tradition and follow each step in your own time. The AI will guide you, line by line.</p>
+      <h2 data-i18n="learnTitle">Learn to draw</h2>
+      <p data-i18n="learnSubtitle">Pick a tradition and follow each step in your own time. The AI will guide you, line by line.</p>
       <svg class="l3s-folk-divider" width="70" height="14" viewBox="0 0 80 14" aria-hidden="true">
         <line x1="0" y1="7" x2="26" y2="7" stroke="var(--terracotta)" stroke-width="1.2"/>
         <line x1="54" y1="7" x2="80" y2="7" stroke="var(--terracotta)" stroke-width="1.2"/>
@@ -350,7 +350,7 @@
     <!-- Dark hero header (mobile only; hidden on desktop) -->
     <div class="l3t-hero">
       <div class="l3t-hero-row">
-        <button class="l3t-hero-back" id="l3t-back">← Steps</button>
+        <button class="l3t-hero-back" id="l3t-back" data-i18n="btnStepsBack">← Steps</button>
         <span class="l3t-hero-kicker" id="l3t-title"></span>
         <button class="l3t-hero-menu" aria-label="More options">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="5" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="19" r="2" fill="currentColor"/></svg>
@@ -391,10 +391,10 @@
 
       <div class="l3t-check-btns">
         <button class="l3t-check-btn" id="l3t-check-btn-upload">
-          <span class="btn-icon">⬆</span> Upload Photo
+          <span class="btn-icon">⬆</span><span data-i18n="btnUploadPhoto"> Upload Photo</span>
         </button>
         <button class="l3t-check-btn l3t-check-btn-cam" id="l3t-check-btn-camera">
-          <span class="btn-icon">◉</span> Use Camera
+          <span class="btn-icon">◉</span><span data-i18n="btnUseCamera"> Use Camera</span>
         </button>
       </div>
       <input type="file" id="l3t-check-input" accept="image/*" />
@@ -405,11 +405,11 @@
 
     <!-- Fixed navigation bar (Back / Counter / Next / Finish) -->
     <div class="l3t-nav">
-      <button class="l3t-nav-back-btn" id="l3t-prev" disabled>BACK</button>
+      <button class="l3t-nav-back-btn" id="l3t-prev" disabled data-i18n="navBtnBack">BACK</button>
       <span class="l3t-nav-counter" id="l3t-counter">1 / 1</span>
-      <button class="l3t-nav-btn l3t-nav-next" id="l3t-next">NEXT STEP</button>
+      <button class="l3t-nav-btn l3t-nav-next" id="l3t-next" data-i18n="navBtnNext">NEXT STEP</button>
       <button class="l3t-nav-btn l3t-nav-finish" id="l3t-finish"
-              style="display:none">EVALUATE ✦</button>
+              style="display:none" data-i18n="navBtnEval">EVALUATE ✦</button>
     </div>
 
   </div>
@@ -422,27 +422,27 @@
     <div class="folk-border"></div>
 
     <div class="l3e-header">
-      <button class="btn-back" id="l3e-back">← Steps</button>
+      <button class="btn-back" id="l3e-back" data-i18n="evalBackBtn">← Steps</button>
     </div>
 
     <div class="l3e-content">
       <div class="home-ornament">✦</div>
-      <h2 class="l3e-title">Evaluate Your Artwork</h2>
+      <h2 class="l3e-title" data-i18n="evalTitle">Evaluate Your Artwork</h2>
       <p class="l3e-artname" id="l3e-artname"></p>
-      <p class="l3e-intro">
+      <p class="l3e-intro" data-i18n="evalIntro">
         Take a clear photo of your finished artwork and upload it here.
         The AI will compare it against the master reference and give you detailed feedback.
       </p>
 
       <button class="btn-compare" id="l3e-btn-upload">
         <span class="btn-icon">⬆</span>
-        Upload Your Artwork
+        <span data-i18n="evalUploadBtn">Upload Your Artwork</span>
       </button>
       <input type="file" id="l3e-file-input" accept="image/*" />
 
       <div class="compare-loading" id="l3e-loading" style="display:none">
         <div class="spinner"></div>
-        <p class="compare-loading-label">Analysing your artwork…</p>
+        <p class="compare-loading-label" data-i18n="evalAnalysing">Analysing your artwork…</p>
       </div>
 
       <div id="l3e-results" style="display:none;flex-direction:column;gap:16px;width:100%">
@@ -462,7 +462,7 @@
               <div class="score-number" id="l3e-score">–</div>
             </div>
             <div class="score-right">
-              <p class="score-you-are">YOU ARE A</p>
+              <p class="score-you-are" data-i18n="evalYouAre">YOU ARE A</p>
               <p class="score-tier" id="l3e-score-tier"></p>
               <p class="score-label" id="l3e-score-label"></p>
             </div>
@@ -470,42 +470,42 @@
           <div class="score-tier-track">
             <div class="score-tier-step" data-tier="0">
               <div class="score-tier-dot"></div>
-              <div class="score-tier-name">BEGINNER</div>
+              <div class="score-tier-name" data-i18n="trackBeginner">BEGINNER</div>
             </div>
             <div class="score-tier-step" data-tier="1">
               <div class="score-tier-dot"></div>
-              <div class="score-tier-name">APPRENTICE</div>
+              <div class="score-tier-name" data-i18n="trackApprentice">APPRENTICE</div>
             </div>
             <div class="score-tier-step" data-tier="2">
               <div class="score-tier-dot"></div>
-              <div class="score-tier-name">JOURNEYMAN</div>
+              <div class="score-tier-name" data-i18n="trackJourneyman">JOURNEYMAN</div>
             </div>
             <div class="score-tier-step" data-tier="3">
               <div class="score-tier-dot"></div>
-              <div class="score-tier-name">MASTER</div>
+              <div class="score-tier-name" data-i18n="trackMaster">MASTER</div>
             </div>
           </div>
         </div>
 
         <div class="heatmap-card">
-          <p class="card-kicker">WHERE IT DRIFTED</p>
-          <h3 class="card-heading">Heatmap</h3>
+          <p class="card-kicker" data-i18n="evalWhereDrifted">WHERE IT DRIFTED</p>
+          <h3 class="card-heading" data-i18n="evalHeatmapTitle">Heatmap</h3>
           <img id="l3e-heatmap" class="heatmap-img" src="" alt="Deviation heatmap" />
           <p class="heatmap-legend">
-            <span class="legend-dot" style="background:#1a7a2e"></span>Good match &ensp;
-            <span class="legend-dot" style="background:#C98A1A"></span>Some drift &ensp;
-            <span class="legend-dot" style="background:#B94012"></span>Most deviation &ensp;
-            <span style="font-style:italic;opacity:0.7">(your artwork overlaid)</span>
+            <span class="legend-dot" style="background:#1a7a2e"></span><span data-i18n="evalHeatLegendGood">Good match</span> &ensp;
+            <span class="legend-dot" style="background:#C98A1A"></span><span data-i18n="evalHeatLegendDrift">Some drift</span> &ensp;
+            <span class="legend-dot" style="background:#B94012"></span><span data-i18n="evalHeatLegendDev">Most deviation</span> &ensp;
+            <span style="font-style:italic;opacity:0.7" data-i18n="evalHeatLegendOverlaid">(your artwork overlaid)</span>
           </p>
         </div>
 
         <div class="zone-card">
-          <p class="card-kicker">REGION BY REGION</p>
-          <h3 class="card-heading">Zone Feedback</h3>
+          <p class="card-kicker" data-i18n="evalRegionKicker">REGION BY REGION</p>
+          <h3 class="card-heading" data-i18n="evalZoneFeedbackTitle">Zone Feedback</h3>
           <div id="l3e-zone-list"></div>
         </div>
 
-        <button class="l3e-retry" id="l3e-retry">Upload Another Photo</button>
+        <button class="l3e-retry" id="l3e-retry" data-i18n="evalRetryBtn">Upload Another Photo</button>
 
       </div><!-- /#l3e-results -->
 
@@ -513,12 +513,12 @@
         <div class="l3e-quiz-divider">
           <div class="home-ornament">✦</div>
         </div>
-        <h3 class="l3e-quiz-title">Test Your Eye</h3>
-        <p class="l3e-quiz-intro">Can you spot the defining features of this art form?</p>
+        <h3 class="l3e-quiz-title" data-i18n="evalQuizTitle">Test Your Eye</h3>
+        <p class="l3e-quiz-intro" data-i18n="evalQuizIntro">Can you spot the defining features of this art form?</p>
         <div id="l3e-quiz-cards"></div>
         <div id="l3e-quiz-score" style="display:none">
           <p class="l3e-quiz-final" id="l3e-quiz-final-text"></p>
-          <button class="l3e-quiz-retry-btn" id="l3e-quiz-retry">Try Quiz Again</button>
+          <button class="l3e-quiz-retry-btn" id="l3e-quiz-retry" data-i18n="evalQuizRetry">Try Quiz Again</button>
         </div>
       </div>
 
@@ -598,9 +598,9 @@
   ================================================================ -->
   <div id="screen-atlas" class="screen">
     <div class="atlas-header">
-      <div class="atlas-kicker">BROWSE · 14 TRADITIONS</div>
-      <h1 class="atlas-title">The Folk Atlas</h1>
-      <p class="atlas-sub">Fourteen living traditions from across the subcontinent. Pick one and learn its language.</p>
+      <div class="atlas-kicker" data-i18n="atlasKicker">BROWSE · 14 TRADITIONS</div>
+      <h1 class="atlas-title"  data-i18n="atlasTitle">The Folk Atlas</h1>
+      <p class="atlas-sub"     data-i18n="atlasSubtitle">Fourteen living traditions from across the subcontinent. Pick one and learn its language.</p>
     </div>
     <div class="atlas-grid" id="atlas-grid"></div>
   </div>
@@ -627,7 +627,7 @@
   <div id="l3t-cam-modal" class="l3t-cam-modal" style="display:none">
     <div class="l3t-cam-inner">
       <div class="l3t-cam-header">
-        <span class="l3t-cam-title">Point at your drawing</span>
+        <span class="l3t-cam-title" data-i18n="camModalTitle">Point at your drawing</span>
         <button class="l3t-cam-cancel-x" id="l3t-cam-cancel">✕</button>
       </div>
       <div class="l3t-cam-viewport">
@@ -655,6 +655,7 @@
 
 <!-- App scripts -->
 <script src="artforms.js"></script>
+<script src="translations.js"></script>
 <script src="classifier.js"></script>
 <script src="app.js"></script>
 
