@@ -190,9 +190,40 @@ class DrawingDataset(Dataset):
         return len(self.rows)
 
     def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Return (ref_dt, student_dt, score)."""
+        """Return (ref_dt, student_dt, score).
+
+        10 % of the time a self-similarity pair is returned: the reference is
+        used as both inputs with score=100.  This anchors the score head so
+        that zero-difference input maps to ~100 rather than sigmoid(bias)≈50.
+        Without these pairs the score head never sees zero-difference during
+        training and its bias drifts to the sigmoid midpoint.
+        """
         row     = self.rows[idx]
         ref_bin = self._load_binary(row["ref"])
+        r = random.random()
+
+        # Top anchor: identical pair → score 100 (zero-difference calibration)
+        if r < 0.10:
+            ref_t = self._binary_to_dt(ref_bin, augment=False)
+            return ref_t, ref_t, torch.tensor(100.0, dtype=torch.float32)
+
+        # Bottom anchor: cross-subject hard negative → score 0
+        # Without these, the model never learns to output very low scores because
+        # all training pairs are same-subject (q10–q95 tiers).  Cross-subject
+        # pairs have larger fused differences than any same-subject q10 pair, so
+        # they anchor the bottom of the output range.
+        if r < 0.20:
+            cur_subject = row["subject"]
+            other_subjects = [s for s in self.subject_to_indices if s != cur_subject]
+            if other_subjects:
+                neg_subject = random.choice(other_subjects)
+                neg_idx     = random.choice(self.subject_to_indices[neg_subject])
+                neg_row     = self.rows[neg_idx]
+                neg_bin     = self._load_binary(neg_row["student"])
+                ref_t       = self._binary_to_dt(ref_bin, augment=False)
+                neg_t       = self._binary_to_dt(neg_bin, augment=False)
+                return ref_t, neg_t, torch.tensor(0.0, dtype=torch.float32)
+
         stu_bin = self._load_binary(row["student"])
         ref_t   = self._binary_to_dt(ref_bin, augment=False)
         stu_t   = self._binary_to_dt(stu_bin, augment=True)
@@ -281,12 +312,14 @@ class DrawingLoss(nn.Module):
         margin:       float = 5.0,
         min_gap:      float = 5.0,
         lambda_reg:   float = 1.0,
+        lambda_rank:  float = 1.0,
         lambda_align: float = 0.01,
     ) -> None:
         super().__init__()
         self.margin       = margin
         self.min_gap      = min_gap
         self.lambda_reg   = lambda_reg
+        self.lambda_rank  = lambda_rank
         self.lambda_align = lambda_align
 
     def regression_loss(
@@ -344,7 +377,7 @@ class DrawingLoss(nn.Module):
 
         total = (
             self.lambda_reg   * L_reg
-            + L_rank
+            + self.lambda_rank * L_rank
             + self.lambda_align * L_align
         )
 
@@ -436,24 +469,45 @@ def eval_epoch(
 
 def get_curriculum_params(epoch: int) -> dict:
     """
-    Three-stage curriculum:
-      Stage 1 (1–20)  : STN frozen at identity. Regression only.
-                        Score head learns clean features without STN noise.
-      Stage 2 (21–50) : STN unfrozen with strong alignment constraint.
-                        Add ranking loss. STN learns small corrections only.
-      Stage 3 (51+)   : Reduce regression weight. Ranking dominates.
-                        Loosen alignment slightly for fine-grained warps.
+    Three-stage curriculum with smooth transitions to avoid loss-scale shocks.
+
+      Stage 1 (1–18)   : STN frozen. Regression dominant, light ranking.
+      Transition 1→2   : Epochs 19–23: linearly interpolate all lambdas.
+                         STN unfreezes at epoch 21 (midpoint).
+      Stage 2 (24–48)  : Ranking drives gradients; regression is light anchor.
+      Transition 2→3   : Epochs 49–53: linearly interpolate lambdas.
+      Stage 3 (54+)    : Ranking dominates; regression is tiny calibration.
     """
-    if epoch <= 20:
-        # STN frozen. Regression only — calibrate the score head.
-        return {"use_ranking": False, "lambda_reg": 1.0,  "lambda_align": 1.0,  "freeze_stn": True}
-    elif epoch <= 50:
-        # STN unfrozen. Ranking drives gradients; regression is a light anchor.
-        # lambda_reg=0.05: 0.05×55≈2.8 vs rank≈1.5 → ranking is ~35% of loss.
-        return {"use_ranking": True,  "lambda_reg": 0.05, "lambda_align": 0.5,  "freeze_stn": False}
-    else:
-        # Ranking dominates completely. Regression is a tiny calibration signal.
-        return {"use_ranking": True,  "lambda_reg": 0.02, "lambda_align": 0.20, "freeze_stn": False}
+    def lerp(a: float, b: float, t: float) -> float:
+        return a + (b - a) * max(0.0, min(1.0, t))
+
+    if epoch <= 18:
+        return {"use_ranking": True, "lambda_reg": 1.0,  "lambda_rank": 0.1,  "lambda_align": 1.0,  "freeze_stn": True}
+
+    if epoch <= 23:
+        t = (epoch - 18) / 5   # 0.0 at ep19, 1.0 at ep23
+        return {
+            "use_ranking":  True,
+            "lambda_reg":   lerp(1.0,  0.05, t),
+            "lambda_rank":  lerp(0.1,  1.0,  t),
+            "lambda_align": lerp(1.0,  0.5,  t),
+            "freeze_stn":   t < 0.5,   # unfreeze at epoch 21
+        }
+
+    if epoch <= 48:
+        return {"use_ranking": True, "lambda_reg": 0.05, "lambda_rank": 1.0,  "lambda_align": 0.5,  "freeze_stn": False}
+
+    if epoch <= 53:
+        t = (epoch - 48) / 5   # 0.0 at ep49, 1.0 at ep53
+        return {
+            "use_ranking":  True,
+            "lambda_reg":   lerp(0.05, 0.02, t),
+            "lambda_rank":  1.0,
+            "lambda_align": lerp(0.5,  0.20, t),
+            "freeze_stn":   False,
+        }
+
+    return {"use_ranking": True, "lambda_reg": 0.02, "lambda_rank": 1.0,  "lambda_align": 0.20, "freeze_stn": False}
 
 
 # ── main ───────────────────────────────────────────────────────────────────────
@@ -563,6 +617,8 @@ def main() -> None:
 
     best_rho  = -1.0
     best_loss = float("inf")
+    ema_rho   = None         # warm-started from first epoch's val_rho
+    EMA_ALPHA = 0.3          # new epoch carries 30 %, history 70 %
 
     print(f"\nTraining DTSiameseNet for {args.epochs} epochs on {device}")
     print(f"  Train samples : {len(train_ds)}")
@@ -573,6 +629,7 @@ def main() -> None:
     for epoch in range(start_epoch, args.epochs + 1):
         cur = get_curriculum_params(epoch)
         criterion.lambda_reg   = cur["lambda_reg"]
+        criterion.lambda_rank  = cur["lambda_rank"]
         criterion.lambda_align = cur["lambda_align"]
 
         train_metrics = train_epoch(
@@ -583,7 +640,7 @@ def main() -> None:
         )
         scheduler.step()
 
-        stage = 1 if epoch <= 20 else (2 if epoch <= 50 else 3)
+        stage = 1 if epoch <= 23 else (2 if epoch <= 53 else 3)
         log   = (
             f"Epoch {epoch:3d}/{args.epochs} [stage {stage}] "
             f"loss={train_metrics['total']:.4f} "
@@ -594,10 +651,14 @@ def main() -> None:
 
         if val_loader is not None:
             val_metrics = eval_epoch(model, val_loader, device)
-            log += f"  |  val_rho={val_metrics['spearman_rho']:.4f}"
-            is_best = val_metrics["spearman_rho"] > best_rho
+            raw_rho  = val_metrics["spearman_rho"]
+            # Warm-start: initialise EMA to the first real value so the
+            # cold-start from 0 doesn't make early epochs artificially "best".
+            ema_rho  = raw_rho if ema_rho is None else (EMA_ALPHA * raw_rho + (1 - EMA_ALPHA) * ema_rho)
+            log     += f"  |  val_rho={raw_rho:.4f}  ema={ema_rho:.4f}"
+            is_best  = ema_rho > best_rho
             if is_best:
-                best_rho = val_metrics["spearman_rho"]
+                best_rho = ema_rho
         else:
             is_best = train_metrics["total"] < best_loss
             if is_best:
@@ -613,7 +674,7 @@ def main() -> None:
         }
         if is_best:
             torch.save(save_payload, ckpt_dir / "best.pt")
-            print(f"  → saved best checkpoint")
+            print(f"  → saved best checkpoint  (ema={best_rho:.4f})")
 
         if epoch % 10 == 0:
             torch.save(save_payload, ckpt_dir / f"epoch_{epoch:04d}.pt")

@@ -22,6 +22,7 @@ binary contours before calling forward().
 
 from __future__ import annotations
 
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -191,6 +192,9 @@ class ScoreHead(nn.Module):
             nn.Linear(128, 1),
             nn.Sigmoid(),
         )
+        # Zero difference → score should start near 90, not 50.
+        # sigmoid(log(9)) = 0.9 → 90/100.
+        self.net[-2].bias.data.fill_(math.log(9))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.net(x).squeeze(-1) * 100.0   # (B,) in [0, 100]
@@ -215,6 +219,9 @@ class HeatmapHead(nn.Module):
             nn.Conv2d(64, 1, 1),
             nn.Sigmoid(),
         )
+        # Zero difference → error map should start near 0, not 0.5.
+        # sigmoid(-5) ≈ 0.007
+        self.refine[-2].bias.data.fill_(-5.0)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = F.interpolate(

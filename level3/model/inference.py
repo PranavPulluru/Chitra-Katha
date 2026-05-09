@@ -193,6 +193,8 @@ def infer(
     child_img:      np.ndarray,
     heatmap_size:   tuple[int, int] | None = None,
     zone_threshold: float = 0.20,
+    overlay_bgr:    np.ndarray | None = None,
+    return_raw:     bool = False,
 ) -> tuple[float, np.ndarray, list[dict]]:
     """
     Score a student's contour against a reference.
@@ -205,12 +207,16 @@ def infer(
     heatmap_size  : (width, height) of the returned overlay image.
                     Defaults to ref_img's spatial dimensions.
     zone_threshold: minimum normalised error to include a zone in the report
+    overlay_bgr   : optional original colour reference image to use as overlay
+                    background instead of the preprocessed contour
+    return_raw    : if True, also return the raw float32 heatmap array
 
     Returns
     -------
     score       : float in [0, 100]
     heatmap_img : (H, W, 3) uint8 BGR overlay — jet heatmap on ref contour
     zone_report : list of dicts sorted by severity (most deviated first)
+    heatmap_raw : (H, W) float32 — only included when return_raw=True
     """
     device = next(model.parameters()).device
     model.eval()
@@ -223,15 +229,17 @@ def infer(
     score   = float(out["score"].squeeze().cpu())
     heatmap = out["heatmap"].squeeze(0).cpu().numpy()   # (H, W)
 
-    ref_gray = (
-        cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY)
-        if ref_img.ndim == 3
-        else ref_img
+    # Use the original colour reference as overlay background when provided;
+    # otherwise fall back to the preprocessed contour (grayscale).
+    overlay_base = overlay_bgr if overlay_bgr is not None else (
+        cv2.cvtColor(ref_img, cv2.COLOR_BGR2GRAY) if ref_img.ndim == 3 else ref_img
     )
 
-    overlay = _make_heatmap_overlay(ref_gray, heatmap, size=heatmap_size)
+    overlay = _make_heatmap_overlay(overlay_base, heatmap, size=heatmap_size)
     zones   = _zone_report(heatmap, threshold=zone_threshold)
 
+    if return_raw:
+        return score, overlay, zones, heatmap
     return score, overlay, zones
 
 
