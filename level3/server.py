@@ -40,7 +40,21 @@ app = Flask(__name__, static_folder=_WEB_DIR, static_url_path="")
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 # ── globals loaded once at startup ────────────────────────────────────────────
-model        = None
+# Load model at import time so gunicorn workers have it ready (not just __main__).
+_ckpt_path = os.environ.get('CKPT_PATH')
+if _ckpt_path is None:
+    _auto = os.path.join(BASE_DIR, 'checkpoints', 'best.pt')
+    if os.path.exists(_auto):
+        _ckpt_path = _auto
+        print(f"Auto-detected checkpoint: {_ckpt_path}")
+    else:
+        print("No checkpoint found — using untrained model weights")
+
+print("Loading model…")
+model = load_model(ckpt_path=_ckpt_path, device='cpu')
+gc.collect()
+print("Model ready.")
+
 preprocessor = ContourPreprocessor(
     output_size       = 224,
     blur_kernel       = 3,
