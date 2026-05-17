@@ -12,6 +12,7 @@ texture, pencil grain — so the CNN only ever sees clean line information.
 import cv2
 import numpy as np
 from scipy.ndimage import distance_transform_edt
+from data.background_removal import remove_background
 
 
 # ---------------------------------------------------------------------------
@@ -53,6 +54,11 @@ PREPROCESS_CFG = dict(
     # or after re-rendering contours (findContours path).  Set to 0 to disable.
     # A value of 1-2 thickens lines for visibility without over-fattening.
     dilate_px = 0,
+
+    # strip_background: run GrabCut + paper-layer removal before edge detection.
+    # Keeps table/wall/paper edges out of the contour output.
+    # Leave False for training (reference images are already clean).
+    strip_background = False,
 )
 
 
@@ -96,6 +102,7 @@ class ContourPreprocessor:
         self.auto_canny        = cfg["auto_canny"]
         self.direct_edges      = cfg["direct_edges"]
         self.dilate_px         = cfg["dilate_px"]
+        self.strip_background  = cfg["strip_background"]
 
     # ------------------------------------------------------------------
     # Public API
@@ -121,6 +128,8 @@ class ContourPreprocessor:
         (output_size, output_size) uint8 — white background, black strokes.
         """
         img = self._warp(bgr, corners) if corners is not None else bgr
+        if self.strip_background:
+            img = remove_background(img)
         img = cv2.resize(img, (self.output_size, self.output_size))
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         blurred = self._blur(gray)

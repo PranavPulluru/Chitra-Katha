@@ -60,9 +60,9 @@ preprocessor = ContourPreprocessor(
     blur_kernel       = 3,
     min_contour_area  = 2,
     contour_thickness = 1,
-    auto_canny        = True, # Otsu-derived thresholds adapt to variable lighting
-    direct_edges      = True, # return 1-px Canny edges; avoids thick-contour artefact
-    #dilate_px         = 1,    # thicken edges by 1 px (increase to 2 if still too thin)
+    auto_canny        = True,
+    direct_edges      = True,
+    strip_background  = True,
 )
 
 
