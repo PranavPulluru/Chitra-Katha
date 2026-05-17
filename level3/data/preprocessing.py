@@ -59,6 +59,11 @@ PREPROCESS_CFG = dict(
     # Keeps table/wall/paper edges out of the contour output.
     # Leave False for training (reference images are already clean).
     strip_background = False,
+
+    # center_subject: crop to the bounding box of non-white content before
+    # resizing.  Neutralises position/scale differences between the reference
+    # and the student's photo so the model compares structure, not placement.
+    center_subject = False,
 )
 
 
@@ -103,6 +108,7 @@ class ContourPreprocessor:
         self.direct_edges      = cfg["direct_edges"]
         self.dilate_px         = cfg["dilate_px"]
         self.strip_background  = cfg["strip_background"]
+        self.center_subject    = cfg["center_subject"]
 
     # ------------------------------------------------------------------
     # Public API
@@ -130,6 +136,8 @@ class ContourPreprocessor:
         img = self._warp(bgr, corners) if corners is not None else bgr
         if self.strip_background:
             img = remove_background(img)
+        if self.center_subject:
+            img = self._crop_to_subject(img)
         img = cv2.resize(img, (self.output_size, self.output_size))
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         blurred = self._blur(gray)
@@ -157,6 +165,32 @@ class ContourPreprocessor:
     # ------------------------------------------------------------------
     # Steps (each overridable independently in a subclass)
     # ------------------------------------------------------------------
+
+    def _crop_to_subject(self, bgr: np.ndarray, pad_frac: float = 0.05) -> np.ndarray:
+        """
+        Crop to the bounding box of non-white pixels so the subject fills
+        the frame before resizing.  Both the reference and the student image
+        go through this step, so positional / scale differences between them
+        are neutralised before the model sees either one.
+
+        pad_frac adds a small border around the tight bounding box so strokes
+        near the edge are not clipped by the subsequent resize.
+        """
+        gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY) if bgr.ndim == 3 else bgr
+        # Find pixels that are not near-white (threshold at 240 to catch off-white paper)
+        _, mask = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY_INV)
+        coords  = cv2.findNonZero(mask)
+        if coords is None:
+            return bgr   # fully white image — nothing to crop
+
+        x, y, w, h = cv2.boundingRect(coords)
+        H, W = bgr.shape[:2]
+        pad  = max(1, int(max(w, h) * pad_frac))
+        x1   = max(0, x - pad)
+        y1   = max(0, y - pad)
+        x2   = min(W, x + w + pad)
+        y2   = min(H, y + h + pad)
+        return bgr[y1:y2, x1:x2]
 
     def _warp(self, bgr: np.ndarray, corners: np.ndarray) -> np.ndarray:
         """Perspective-warp the AR canvas region to a square crop."""

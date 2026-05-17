@@ -14,6 +14,9 @@ import cv2
 import numpy as np
 
 
+_GRABCUT_MAX_DIM = 512   # GrabCut resolution cap — full-res adds nothing useful
+
+
 def remove_background(
     bgr: np.ndarray,
     margin_frac: float = 0.05,
@@ -44,21 +47,34 @@ def remove_background(
     """
     h, w = bgr.shape[:2]
 
-    # Inset rectangle: everything outside is seeded as definite background.
-    mx = max(1, int(w * margin_frac))
-    my = max(1, int(h * margin_frac))
-    rect = (mx, my, w - 2 * mx, h - 2 * my)
+    # Downsample for GrabCut — quality is identical at 512px and it's O(pixels).
+    # A 4K photo is ~60× more pixels than needed; mask is upsampled back after.
+    scale = min(1.0, _GRABCUT_MAX_DIM / max(h, w))
+    if scale < 1.0:
+        small = cv2.resize(bgr, (int(w * scale), int(h * scale)))
+    else:
+        small = bgr
+    sh, sw = small.shape[:2]
 
-    mask    = np.zeros((h, w), np.uint8)
+    # Inset rectangle: everything outside is seeded as definite background.
+    mx = max(1, int(sw * margin_frac))
+    my = max(1, int(sh * margin_frac))
+    rect = (mx, my, sw - 2 * mx, sh - 2 * my)
+
+    mask    = np.zeros((sh, sw), np.uint8)
     bgd_mdl = np.zeros((1, 65), np.float64)
     fgd_mdl = np.zeros((1, 65), np.float64)
 
-    cv2.grabCut(bgr, mask, rect, bgd_mdl, fgd_mdl, iterations, cv2.GC_INIT_WITH_RECT)
+    cv2.grabCut(small, mask, rect, bgd_mdl, fgd_mdl, iterations, cv2.GC_INIT_WITH_RECT)
 
     # Both definite (GC_FGD) and probable (GC_PR_FGD) foreground become the mask.
     fg = np.where(
         (mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 255, 0
     ).astype(np.uint8)
+
+    # Upsample mask back to original resolution.
+    if scale < 1.0:
+        fg = cv2.resize(fg, (w, h), interpolation=cv2.INTER_NEAREST)
 
     # Sanity check: if foreground is suspiciously small, GrabCut probably
     # confused the painting's cream/off-white paper with the background.

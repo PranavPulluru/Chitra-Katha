@@ -55,15 +55,17 @@ model = load_model(ckpt_path=_ckpt_path, device='cpu')
 gc.collect()
 print("Model ready.")
 
-preprocessor = ContourPreprocessor(
+_preprocess_cfg = dict(
     output_size       = 224,
     blur_kernel       = 3,
     min_contour_area  = 2,
     contour_thickness = 1,
     auto_canny        = True,
     direct_edges      = True,
-    strip_background  = True,
+    center_subject    = True,
 )
+preprocessor     = ContourPreprocessor(**_preprocess_cfg, strip_background=True)
+ref_preprocessor = ContourPreprocessor(**_preprocess_cfg, strip_background=False)
 
 
 # ── helpers ────────────────────────────────────────────────────────────────────
@@ -118,9 +120,10 @@ def _load_ref_bgr(tutorial_id: str, step: int | None) -> np.ndarray:
     return cv2.cvtColor(np.array(pil), cv2.COLOR_RGB2BGR)
 
 
-def _to_contour(bgr: np.ndarray) -> np.ndarray:
+def _to_contour(bgr: np.ndarray, is_ref: bool = False) -> np.ndarray:
     """Run the contour preprocessor → (output_size, output_size) white-on-black."""
-    contour = preprocessor.process(bgr)   # white-bg, black-stroke
+    proc    = ref_preprocessor if is_ref else preprocessor
+    contour = proc.process(bgr)            # white-bg, black-stroke
     return cv2.bitwise_not(contour)        # → white-on-black (model convention)
 
 
@@ -234,8 +237,8 @@ def compare():
     # proportions are preserved regardless of input resolution or orientation.
     ref_lb    = _letterbox_square(ref_bgr)
     child_lb  = _letterbox_square(child_bgr)
-    ref_img   = _to_contour(ref_lb)
-    child_img = _to_contour(child_lb)
+    ref_img   = _to_contour(ref_lb,   is_ref=True)
+    child_img = _to_contour(child_lb, is_ref=False)
 
     # Compute display size that preserves the reference's native aspect ratio.
     ref_h, ref_w = ref_bgr.shape[:2]
@@ -287,8 +290,8 @@ def debug_compare():
 
     ref_lb        = _letterbox_square(ref_bgr)
     child_lb      = _letterbox_square(child_bgr)
-    ref_contour   = _to_contour(ref_lb)
-    child_contour = _to_contour(child_lb)
+    ref_contour   = _to_contour(ref_lb,   is_ref=True)
+    child_contour = _to_contour(child_lb, is_ref=False)
 
     _scale = _MAX_DISPLAY / max(ref_w, ref_h)
     disp_w = int(ref_w * _scale)
@@ -344,7 +347,7 @@ def model_sanity(tutorial_id):
         return jsonify({"error": str(exc)}), 400
 
     ref_lb      = _letterbox_square(ref_bgr)
-    ref_contour = _to_contour(ref_lb)   # (224, 224) uint8 white-on-black
+    ref_contour = _to_contour(ref_lb, is_ref=True)   # (224, 224) uint8 white-on-black
 
     # Build DT tensor the same way inference._to_tensor does.
     # ref_contour is already white-on-black (255 = stroke).
