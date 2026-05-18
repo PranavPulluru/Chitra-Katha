@@ -38,11 +38,11 @@ model = load_model(ckpt_path=_ckpt, device='cpu')
 gc.collect()
 print("Model ready.")
 
-# Student photos: heavy blur + contour filtering (removes grain/noise) + bg strip + centering.
-# Reference images: direct edges (already clean — no noise to filter).
+# Student photos: heavy blur + background strip + subject centering.
+# Reference images: light blur only (already clean flat scans).
 preprocessor = ContourPreprocessor(
-    output_size=224, blur_kernel=11, min_contour_area=20,
-    auto_canny=True, direct_edges=False,
+    output_size=224, blur_kernel=7, min_contour_area=2,
+    auto_canny=True, direct_edges=True,
     strip_background=True, center_subject=True,
 )
 ref_preprocessor = ContourPreprocessor(
@@ -144,6 +144,10 @@ def level3v2_static(filename):
 @app.route("/level4/<path:filename>")
 def serve_level4(filename):
     return send_from_directory(os.path.join(BASE_DIR, '..', 'level4'), filename)
+
+@app.route("/debug")
+def debug_page():
+    return send_from_directory(str(_WEB_DIR), "debug.html")
 
 
 @app.route("/contour", methods=["POST"])

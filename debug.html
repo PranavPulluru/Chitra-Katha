@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SNN Debug Viewer</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: monospace; background: #111; color: #eee; padding: 20px; }
+  h1 { font-size: 1.2rem; margin-bottom: 16px; color: #aef; }
+  h2 { font-size: 0.9rem; color: #aaa; margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 20px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  label { font-size: 0.75rem; color: #888; }
+  input[type=text], input[type=number] {
+    background: #222; border: 1px solid #444; color: #eee;
+    padding: 6px 10px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; width: 160px;
+  }
+  input[type=file] { color: #aaa; font-size: 0.85rem; }
+  button {
+    background: #2a5caa; color: #fff; border: none; padding: 8px 18px;
+    border-radius: 4px; cursor: pointer; font-family: monospace; font-size: 0.85rem;
+  }
+  button:hover { background: #3a6cca; }
+  button:disabled { background: #444; cursor: default; }
+  #status { font-size: 0.85rem; color: #fa0; margin-bottom: 16px; min-height: 1.2em; }
+  .score-box {
+    display: inline-block; font-size: 2rem; font-weight: bold;
+    padding: 10px 24px; border-radius: 6px; margin-bottom: 16px;
+    background: #1a3a1a; color: #4f4;
+  }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .img-card {
+    background: #1a1a1a; border: 1px solid #333; border-radius: 6px;
+    padding: 10px; min-width: 200px;
+  }
+  .img-card .label { font-size: 0.75rem; color: #888; margin-bottom: 6px; }
+  .img-card img { display: block; max-width: 300px; max-height: 300px; border-radius: 3px; }
+  .zones { margin-top: 16px; }
+  .zone-row {
+    display: flex; gap: 8px; align-items: center;
+    padding: 5px 0; border-bottom: 1px solid #222; font-size: 0.82rem;
+  }
+  .sev { padding: 2px 6px; border-radius: 3px; font-size: 0.7rem; font-weight: bold; }
+  .sev-low    { background: #2a4a1a; color: #8f8; }
+  .sev-medium { background: #4a3a0a; color: #fd8; }
+  .sev-high   { background: #4a1a1a; color: #f88; }
+  .sep { border-top: 1px solid #333; margin: 24px 0; }
+</style>
+</head>
+<body>
+<h1>SNN Debug Viewer</h1>
+
+<div class="controls">
+  <div class="field">
+    <label>Tutorial ID</label>
+    <input type="text" id="tutId" placeholder="e.g. tutorial_1" value="">
+  </div>
+  <div class="field">
+    <label>Step (optional)</label>
+    <input type="number" id="step" placeholder="leave blank for ref">
+  </div>
+  <div class="field">
+    <label>Upload photo</label>
+    <input type="file" id="fileIn" accept="image/*">
+  </div>
+  <button id="runBtn" onclick="run()">Run Debug Compare</button>
+  <button onclick="runPreprocess()">Preprocess Only</button>
+</div>
+
+<div id="status"></div>
+<div id="out"></div>
+
+<script>
+const API = '';  // same origin
+
+function status(msg, col) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.style.color = col || '#fa0';
+}
+
+async function fileToB64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = e => res(e.target.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function imgCard(label, src) {
+  return `<div class="img-card"><div class="label">${label}</div><img src="${src}"></div>`;
+}
+
+function severityClass(s) { return 'sev sev-' + s; }
+
+async function run() {
+  const btn = document.getElementById('runBtn');
+  const file = document.getElementById('fileIn').files[0];
+  const tutId = document.getElementById('tutId').value.trim();
+  const stepVal = document.getElementById('step').value.trim();
+
+  if (!file) { status('Pick an image file first.', '#f88'); return; }
+  if (!tutId) { status('Enter a tutorial ID.', '#f88'); return; }
+
+  btn.disabled = true;
+  status('Encoding image…');
+
+  const b64 = await fileToB64(file);
+  const body = { tutorial_id: tutId, child: b64 };
+  if (stepVal !== '') body.step = parseInt(stepVal);
+
+  status('Sending to /debug_compare…');
+  let data;
+  try {
+    const resp = await fetch('/debug_compare', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    data = await resp.json();
+    if (data.error) { status('Server error: ' + data.error, '#f88'); btn.disabled = false; return; }
+  } catch(e) { status('Request failed: ' + e, '#f88'); btn.disabled = false; return; }
+
+  btn.disabled = false;
+  status('Done.', '#4f4');
+  renderCompare(data);
+}
+
+async function runPreprocess() {
+  const file = document.getElementById('fileIn').files[0];
+  if (!file) { status('Pick an image file first.', '#f88'); return; }
+  status('Running preprocess only…');
+  const b64 = await fileToB64(file);
+  let data;
+  try {
+    const resp = await fetch('/debug_preprocess', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: b64 }),
+    });
+    data = await resp.json();
+    if (data.error) { status('Server error: ' + data.error, '#f88'); return; }
+  } catch(e) { status('Request failed: ' + e, '#f88'); return; }
+  status('Done.', '#4f4');
+
+  let html = '<h2>Student preprocessing steps</h2><div class="grid">';
+  for (const [k, v] of Object.entries(data)) {
+    html += imgCard(k.replace('child_', ''), v);
+  }
+  html += '</div>';
+  document.getElementById('out').innerHTML = html;
+}
+
+function renderCompare(d) {
+  let html = '';
+
+  // Score
+  html += `<div class="score-box">Score: ${d.score} / 100</div>`;
+
+  // Size info
+  if (d.ref_size && d.child_size)
+    html += `<div style="font-size:0.8rem;color:#888;margin-bottom:12px">
+      ref size: ${d.ref_size[0]}×${d.ref_size[1]} px &nbsp;|&nbsp;
+      upload size: ${d.child_size[0]}×${d.child_size[1]} px
+    </div>`;
+
+  // What the model actually compared
+  html += '<h2>What the model compared (224×224 contours)</h2><div class="grid">';
+  if (d.ref_contour)   html += imgCard('reference contour (input to model)', d.ref_contour);
+  if (d.child_contour) html += imgCard('your upload contour (input to model)', d.child_contour);
+  html += '</div>';
+
+  // Heatmaps
+  html += '<h2>Heatmaps</h2><div class="grid">';
+  if (d.heatmap_overlay) html += imgCard('overlay (jet on reference)', d.heatmap_overlay);
+  if (d.heatmap_raw)     html += imgCard('raw heatmap (normalised)', d.heatmap_raw);
+  html += '</div>';
+
+  // Reference preprocessing steps
+  const refKeys = Object.keys(d).filter(k => k.startsWith('ref_') && !['ref_contour','ref_size'].includes(k));
+  if (refKeys.length) {
+    html += '<div class="sep"></div><h2>Reference preprocessing steps</h2><div class="grid">';
+    refKeys.forEach(k => { html += imgCard(k.replace('ref_', ''), d[k]); });
+    html += '</div>';
+  }
+
+  // Student preprocessing steps
+  const childKeys = Object.keys(d).filter(k => k.startsWith('child_') && k !== 'child_size');
+  if (childKeys.length) {
+    html += '<div class="sep"></div><h2>Your upload preprocessing steps</h2><div class="grid">';
+    childKeys.forEach(k => { html += imgCard(k.replace('child_', ''), d[k]); });
+    html += '</div>';
+  }
+
+  // Zones
+  if (d.zones && d.zones.length) {
+    html += '<div class="sep"></div><h2>Zone report</h2><div class="zones">';
+    d.zones.forEach(z => {
+      html += `<div class="zone-row">
+        <span class="${severityClass(z.severity)}">${z.severity}</span>
+        <span style="flex:1">${z.zone}</span>
+        <span style="color:#888">error ${z.mean_dist.toFixed(3)}</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  document.getElementById('out').innerHTML = html;
+}
+</script>
+</body>
+</html>
