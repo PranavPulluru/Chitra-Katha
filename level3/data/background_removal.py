@@ -46,13 +46,17 @@ def remove_background(bgr: np.ndarray, margin_frac: float = 0.05,
 
     # ── Second pass: strip connected paper layer (low-sat, high-brightness) ──
     hsv  = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
-    paper = ((hsv[:, :, 1] < 40) & (hsv[:, :, 2] > 140)).astype(np.uint8) * 255
+    paper = ((hsv[:, :, 1] < 50) & (hsv[:, :, 2] > 130)).astype(np.uint8) * 255
 
-    # Flood-fill from border so only paper reachable from edges is removed;
-    # internal highlights (jewellery, skin) are left intact.
+    # Flood-fill from border to identify border-connected paper (the gray blob
+    # GrabCut leaves as PR_FGD). After flood-fill, border-connected pixels become
+    # 0; enclosed interior paper (jewellery highlights etc.) stay 255. We want
+    # to remove the border-connected ones only.
+    was_paper = (paper == 255)
     padded = cv2.copyMakeBorder(paper, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=255)
     cv2.floodFill(padded, None, (0, 0), 0)
-    result[padded[1:-1, 1:-1] == 255] = 255
+    border_connected_paper = was_paper & (padded[1:-1, 1:-1] == 0)
+    result[border_connected_paper] = 255
 
     return result
 
