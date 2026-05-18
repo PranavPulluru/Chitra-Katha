@@ -168,28 +168,46 @@ class ContourPreprocessor:
 
     def _crop_to_subject(self, bgr: np.ndarray, pad_frac: float = 0.05) -> np.ndarray:
         """
-        Crop to the bounding box of non-white pixels so the subject fills
-        the frame before resizing.  Both the reference and the student image
-        go through this step, so positional / scale differences between them
-        are neutralised before the model sees either one.
+        Crop to the densest cluster of dark pixels rather than the bounding
+        box of all non-white content.
 
-        pad_frac adds a small border around the tight bounding box so strokes
-        near the edge are not clipped by the subsequent resize.
+        A Gaussian density map is built from the dark-pixel mask.  The crop
+        region is the area whose local density is at least 25 % of the peak —
+        this naturally centres on the drawing and ignores sparse edge noise
+        (stray text, paper grain, table corners) that would inflate a naive
+        bounding-box crop.
         """
         gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY) if bgr.ndim == 3 else bgr
-        # Find pixels that are not near-white (threshold at 240 to catch off-white paper)
-        _, mask = cv2.threshold(gray, 240, 255, cv2.THRESH_BINARY_INV)
-        coords  = cv2.findNonZero(mask)
+        H, W = gray.shape
+
+        # Dark pixels = strokes.  Threshold at 200 to catch slightly faded ink.
+        _, dark = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+
+        if dark.sum() == 0:
+            return bgr   # nothing dark at all — pass through unchanged
+
+        # Smooth into a density field.  sigma scales with image size so the
+        # kernel is always broad enough to merge nearby stroke clusters into
+        # one blob even at low resolution.
+        sigma   = max(10.0, min(H, W) * 0.12)
+        density = cv2.GaussianBlur(dark.astype(np.float32), (0, 0), sigma)
+
+        # Region whose density is at least 25 % of the peak is the "drawing".
+        # Sparse edge noise (a line of text, a corner shadow) stays well below
+        # this threshold when the main figure dominates the frame.
+        thresh = density.max() * 0.25
+        region = (density >= thresh).astype(np.uint8)
+
+        coords = cv2.findNonZero(region)
         if coords is None:
-            return bgr   # fully white image — nothing to crop
+            return bgr
 
         x, y, w, h = cv2.boundingRect(coords)
-        H, W = bgr.shape[:2]
-        pad  = max(1, int(max(w, h) * pad_frac))
-        x1   = max(0, x - pad)
-        y1   = max(0, y - pad)
-        x2   = min(W, x + w + pad)
-        y2   = min(H, y + h + pad)
+        pad = max(1, int(max(w, h) * pad_frac))
+        x1  = max(0, x - pad)
+        y1  = max(0, y - pad)
+        x2  = min(W, x + w + pad)
+        y2  = min(H, y + h + pad)
         return bgr[y1:y2, x1:x2]
 
     def _warp(self, bgr: np.ndarray, corners: np.ndarray) -> np.ndarray:

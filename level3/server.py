@@ -55,17 +55,26 @@ model = load_model(ckpt_path=_ckpt_path, device='cpu')
 gc.collect()
 print("Model ready.")
 
-_preprocess_cfg = dict(
+preprocessor = ContourPreprocessor(
     output_size       = 224,
-    blur_kernel       = 3,
+    blur_kernel       = 7,    # heavier blur for camera photos — kills paper grain / lighting noise
     min_contour_area  = 2,
     contour_thickness = 1,
     auto_canny        = True,
     direct_edges      = True,
     center_subject    = True,
+    strip_background  = True,
 )
-preprocessor     = ContourPreprocessor(**_preprocess_cfg, strip_background=True)
-ref_preprocessor = ContourPreprocessor(**_preprocess_cfg, strip_background=False)
+ref_preprocessor = ContourPreprocessor(
+    output_size       = 224,
+    blur_kernel       = 3,    # clean reference images need less smoothing
+    min_contour_area  = 2,
+    contour_thickness = 1,
+    auto_canny        = True,
+    direct_edges      = True,
+    center_subject    = True,
+    strip_background  = False,
+)
 
 
 # ── helpers ────────────────────────────────────────────────────────────────────

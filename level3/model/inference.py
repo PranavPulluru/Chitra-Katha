@@ -146,6 +146,17 @@ def _zone_report(
     return report
 
 
+# ── score calibration ──────────────────────────────────────────────────────────
+# The checkpoint was trained before the score-head bias fix, so identical inputs
+# produce ~84 instead of ~100.  We rescale linearly so that observed ceiling maps
+# to 100 and the rest of the range stretches proportionally.
+_SCORE_CEILING = 84.0   # update if you retrain with the fixed curriculum
+
+
+def _calibrate(raw: float) -> float:
+    return min(100.0, max(0.0, raw * 100.0 / _SCORE_CEILING))
+
+
 # ── public API ─────────────────────────────────────────────────────────────────
 
 def load_model(
@@ -226,7 +237,7 @@ def infer(
 
     out = model(ref_t, child_t)
 
-    score   = float(out["score"].squeeze().cpu())
+    score   = _calibrate(float(out["score"].squeeze().cpu()))
     heatmap = out["heatmap"].squeeze(0).cpu().numpy()   # (H, W)
 
     # Use the original colour reference as overlay background when provided;
