@@ -149,9 +149,20 @@ def _zone_report(
 # to 100 and the rest of the range stretches proportionally.
 _SCORE_CEILING = 84.0   # update if you retrain with the fixed curriculum
 
+# Photo vs digital gap: a power curve lifts mid/low scores without moving the
+# ceiling (100 stays 100). Lower gamma = more aggressive lift.
+_SCORE_GAMMA  = 0.32
+_SCORE_CUTOFF = 20.0   # below this (linear) score, no gamma is applied
+
 
 def _calibrate(raw: float) -> float:
-    return min(100.0, max(0.0, raw * 100.0 / _SCORE_CEILING))
+    linear = min(100.0, max(0.0, raw * 100.0 / _SCORE_CEILING))
+    if linear <= _SCORE_CUTOFF:
+        return round(linear, 1)
+    # Remap [cutoff, 100] → gamma curve → [cutoff, 100] so the join is smooth.
+    t = (linear - _SCORE_CUTOFF) / (100.0 - _SCORE_CUTOFF)
+    boosted = _SCORE_CUTOFF + (t ** _SCORE_GAMMA) * (100.0 - _SCORE_CUTOFF)
+    return round(boosted, 1)
 
 
 # ── public API ─────────────────────────────────────────────────────────────────
