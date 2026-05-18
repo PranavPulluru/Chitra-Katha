@@ -46,7 +46,7 @@ preprocessor = ContourPreprocessor(
     strip_background=True, center_subject=True,
 )
 ref_preprocessor = ContourPreprocessor(
-    output_size=224, blur_kernel=3, min_contour_area=2,
+    output_size=224, blur_kernel=5, min_contour_area=2,
     auto_canny=True, direct_edges=True,
     strip_background=False, center_subject=True,
 )
