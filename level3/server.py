@@ -38,11 +38,11 @@ model = load_model(ckpt_path=_ckpt, device='cpu')
 gc.collect()
 print("Model ready.")
 
-# Student photos: heavy blur + background strip + subject centering.
-# Reference images: light blur only (already clean flat scans).
+# Student photos: heavy blur + contour filtering (removes grain/noise) + bg strip + centering.
+# Reference images: direct edges (already clean — no noise to filter).
 preprocessor = ContourPreprocessor(
-    output_size=224, blur_kernel=7, min_contour_area=2,
-    auto_canny=True, direct_edges=True,
+    output_size=224, blur_kernel=11, min_contour_area=20,
+    auto_canny=True, direct_edges=False,
     strip_background=True, center_subject=True,
 )
 ref_preprocessor = ContourPreprocessor(
