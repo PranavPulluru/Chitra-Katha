@@ -127,15 +127,12 @@ def _zone_report(
     output by the model.
     """
     H, W = heatmap.shape
-    lo, hi = heatmap.min(), heatmap.max()
-    span = hi - lo if hi > lo else 1.0
-    hm_norm = (heatmap - lo) / span
 
     report = []
     for name, r0f, r1f, c0f, c1f in _ZONES_FRAC:
         r0, r1 = int(r0f * H), int(r1f * H)
         c0, c1 = int(c0f * W), int(c1f * W)
-        zone_vals = hm_norm[r0:r1, c0:c1]
+        zone_vals = heatmap[r0:r1, c0:c1]
         mean_d    = float(zone_vals.mean())
         if mean_d < threshold:
             continue

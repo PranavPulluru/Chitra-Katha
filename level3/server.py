@@ -41,7 +41,7 @@ print("Model ready.")
 # Student photos: heavy blur + background strip + subject centering.
 # Reference images: light blur only (already clean flat scans).
 preprocessor = ContourPreprocessor(
-    output_size=224, blur_kernel=7, min_contour_area=2,
+    output_size=224, blur_kernel=3, min_contour_area=2,
     auto_canny=True, direct_edges=True,
     strip_background=True, center_subject=True,
 )
