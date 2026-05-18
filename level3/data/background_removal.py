@@ -1,143 +1,68 @@
-"""
-data/background_removal.py
-===========================
-GrabCut-based background removal for student-uploaded folk art photos.
-
-Assumes the painting is the primary subject, roughly centred and occupying
-at least 60 % of the frame — a fair assumption for close-up student uploads.
-
-Call remove_background(bgr) before ContourPreprocessor.process() so the
-edge detector only sees painting strokes, not table / wall edges.
-"""
+from __future__ import annotations
 
 import cv2
 import numpy as np
 
+_MAX_DIM = 512   # GrabCut resolution cap — quality doesn't improve past this
 
-_GRABCUT_MAX_DIM = 512   # GrabCut resolution cap — full-res adds nothing useful
 
-
-def remove_background(
-    bgr: np.ndarray,
-    margin_frac: float = 0.05,
-    iterations: int = 5,
-    min_fg_fraction: float = 0.15,
-) -> np.ndarray:
+def remove_background(bgr: np.ndarray, margin_frac: float = 0.05,
+                      iterations: int = 5, min_fg_fraction: float = 0.15) -> np.ndarray:
     """
-    Isolate the painting from its background using GrabCut.
+    Strip the background from a student photo using GrabCut + paper detection.
 
-    Parameters
-    ----------
-    bgr              : input BGR image (any resolution)
-    margin_frac      : fraction of image dimensions to treat as definite
-                       background border; everything outside the inset rect
-                       is seeded as background for GrabCut (default 5 %)
-    iterations       : GrabCut EM iterations — more iterations = sharper mask
-                       at the cost of speed (5 is a good balance)
-    min_fg_fraction  : if recovered foreground covers less than this fraction
-                       of total pixels, GrabCut likely failed (e.g. the
-                       painting bleeds to the image border) — return the
-                       original image unchanged so we degrade gracefully
-
-    Returns
-    -------
-    BGR image the same size as input with background pixels set to white
-    (matching the white-background convention expected by ContourPreprocessor).
-    Returns the original image unchanged if GrabCut produces an implausible mask.
+    Assumes the painting is the primary subject and occupies the central region.
+    Returns a BGR image with background pixels set to white.
+    Falls through unchanged if GrabCut produces an implausible mask.
     """
     h, w = bgr.shape[:2]
 
-    # Downsample for GrabCut — quality is identical at 512px and it's O(pixels).
-    # A 4K photo is ~60× more pixels than needed; mask is upsampled back after.
-    scale = min(1.0, _GRABCUT_MAX_DIM / max(h, w))
-    if scale < 1.0:
-        small = cv2.resize(bgr, (int(w * scale), int(h * scale)))
-    else:
-        small = bgr
+    # ── GrabCut on a capped-resolution copy ──────────────────────────────────
+    scale = min(1.0, _MAX_DIM / max(h, w))
+    small = cv2.resize(bgr, (int(w * scale), int(h * scale))) if scale < 1.0 else bgr
     sh, sw = small.shape[:2]
 
-    # Inset rectangle: everything outside is seeded as definite background.
-    mx = max(1, int(sw * margin_frac))
-    my = max(1, int(sh * margin_frac))
-    rect = (mx, my, sw - 2 * mx, sh - 2 * my)
-
+    mx, my = max(1, int(sw * margin_frac)), max(1, int(sh * margin_frac))
     mask    = np.zeros((sh, sw), np.uint8)
     bgd_mdl = np.zeros((1, 65), np.float64)
     fgd_mdl = np.zeros((1, 65), np.float64)
+    cv2.grabCut(small, mask, (mx, my, sw - 2*mx, sh - 2*my),
+                bgd_mdl, fgd_mdl, iterations, cv2.GC_INIT_WITH_RECT)
 
-    cv2.grabCut(small, mask, rect, bgd_mdl, fgd_mdl, iterations, cv2.GC_INIT_WITH_RECT)
-
-    # Both definite (GC_FGD) and probable (GC_PR_FGD) foreground become the mask.
-    fg = np.where(
-        (mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 255, 0
-    ).astype(np.uint8)
-
-    # Upsample mask back to original resolution.
+    fg = np.where((mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 255, 0).astype(np.uint8)
     if scale < 1.0:
         fg = cv2.resize(fg, (w, h), interpolation=cv2.INTER_NEAREST)
 
-    # Sanity check: if foreground is suspiciously small, GrabCut probably
-    # confused the painting's cream/off-white paper with the background.
-    # In that case pass through unchanged — contour extractor handles it fine.
     if fg.sum() / 255 < min_fg_fraction * h * w:
-        return bgr
+        return bgr   # GrabCut confused paper with background — pass through
 
-    # Morphological close: fills holes where GrabCut punched through uniform
-    # light-coloured areas inside the painting (cream paper, off-white regions).
-    close_r = max(1, int(min(h, w) * 0.03))   # ~3 % of shorter dimension
-    kernel  = cv2.getStructuringElement(
-        cv2.MORPH_ELLIPSE, (close_r * 2 + 1, close_r * 2 + 1)
-    )
-    fg = cv2.morphologyEx(fg, cv2.MORPH_CLOSE, kernel)
+    # Morphological close: fills holes GrabCut punched through uniform light areas.
+    r      = max(1, int(min(h, w) * 0.03))
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (r*2+1, r*2+1))
+    fg     = cv2.morphologyEx(fg, cv2.MORPH_CLOSE, kernel)
 
     result = bgr.copy()
-    result[fg == 0] = 255   # outer background → white
+    result[fg == 0] = 255
 
-    # Second pass: strip the paper layer.
-    # Paper is low-saturation + high-brightness (gray/cream/off-white).
-    # Actual painting content is either dark (black outlines) or colourful.
-    # We flood-fill the paper from the foreground mask border inward so we
-    # only remove connected paper regions, not light areas inside the figure.
-    hsv = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
-    sat = hsv[:, :, 1]   # 0 = grey, 255 = fully saturated
-    val = hsv[:, :, 2]   # 0 = black, 255 = bright
+    # ── Second pass: strip connected paper layer (low-sat, high-brightness) ──
+    hsv  = cv2.cvtColor(result, cv2.COLOR_BGR2HSV)
+    paper = ((hsv[:, :, 1] < 40) & (hsv[:, :, 2] > 140)).astype(np.uint8) * 255
 
-    # Paper pixels: saturation < 40 AND brightness > 140
-    paper_mask = ((sat < 40) & (val > 140)).astype(np.uint8) * 255
+    # Flood-fill from border so only paper reachable from edges is removed;
+    # internal highlights (jewellery, skin) are left intact.
+    padded = cv2.copyMakeBorder(paper, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=255)
+    cv2.floodFill(padded, None, (0, 0), 0)
+    result[padded[1:-1, 1:-1] == 255] = 255
 
-    # Only erase paper that is reachable from the image border (connected to
-    # the edge of the frame), so internal light patches inside the figure
-    # (highlights, jewellery, skin) are never wiped.
-    flood = paper_mask.copy()
-    flood_padded = cv2.copyMakeBorder(flood, 1, 1, 1, 1, cv2.BORDER_CONSTANT, value=255)
-    cv2.floodFill(flood_padded, None, (0, 0), 0)
-    border_paper = flood_padded[1:-1, 1:-1]   # connected-to-border paper pixels
-
-    result[border_paper == 255] = 255
     return result
 
 
-# ---------------------------------------------------------------------------
-# CLI smoke test:  python background_removal.py <image_path> [output_path]
-# ---------------------------------------------------------------------------
-
 if __name__ == "__main__":
     import sys
-
-    src_path = sys.argv[1] if len(sys.argv) > 1 else None
-    out_path = sys.argv[2] if len(sys.argv) > 2 else "bg_removed.png"
-
-    if src_path is None:
-        # Generate a fake test image: grey background, coloured rectangle subject
-        img = np.full((400, 400, 3), (180, 180, 180), dtype=np.uint8)
-        cv2.rectangle(img, (80, 80), (320, 320), (40, 80, 160), -1)
-        cv2.circle(img, (200, 200), 60, (200, 60, 40), -1)
-    else:
-        img = cv2.imread(src_path)
-        if img is None:
-            print(f"Could not read {src_path}")
-            sys.exit(1)
-
-    result = remove_background(img)
-    cv2.imwrite(out_path, result)
-    print(f"Saved to {out_path}")
+    src  = sys.argv[1] if len(sys.argv) > 1 else None
+    dest = sys.argv[2] if len(sys.argv) > 2 else "bg_removed.png"
+    img  = cv2.imread(src) if src else (
+        lambda i: (cv2.rectangle(i, (80,80),(320,320),(40,80,160),-1), i)[1]
+    )(np.full((400,400,3), (180,180,180), dtype=np.uint8))
+    cv2.imwrite(dest, remove_background(img))
+    print(f"Saved to {dest}")

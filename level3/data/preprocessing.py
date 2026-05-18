@@ -1,13 +1,4 @@
-"""
-data/preprocessing.py — ContourPreprocessor
-=============================================
-Shared OpenCV pipeline used by:
-    - prepare_dataset.py  (batch: folk art images → training contours)
-    - main.py             (runtime: live camera frames → CNN input)
-
-The goal is to strip everything except stroke geometry — lighting, paper
-texture, pencil grain — so the CNN only ever sees clean line information.
-"""
+from __future__ import annotations
 
 import cv2
 import numpy as np
@@ -15,88 +6,25 @@ from scipy.ndimage import distance_transform_edt
 from data.background_removal import remove_background
 
 
-# ---------------------------------------------------------------------------
-# Config  ← edit defaults here; both dataset prep and runtime inherit them
-# ---------------------------------------------------------------------------
-
 PREPROCESS_CFG = dict(
-    output_size      = 128,    # square output in pixels (must match MODEL_CFG)
-    blur_kernel      = 5,      # Gaussian kernel size; increase for noisier paper
-    canny_low        = 50,     # Canny lower threshold (ignored when auto_canny=True)
-    canny_high       = 150,    # Canny upper threshold (ignored when auto_canny=True)
-
-    # Sohrai uses bold, thick strokes — genuine marks are long contours.
-    # 50 px arc-length filters out single-pixel paper grain without
-    # clipping real Sohrai lines.  (contourArea is ~0 for thin Canny
-    # edges, so we filter by arc length instead.)
-    min_contour_area = 50,
-
-    # "canny" works well for both:
-    #   - user drawings on paper (high-contrast pencil/ink)
-    #   - reference images (digital line art or clean scans)
-    # Switch to "adaptive" only if your reference images are photos of actual
-    # mud walls — wall texture confuses Canny.
-    edge_mode        = "canny",
-
-    contour_thickness = 1,     # px thickness when re-drawing clean contours
-
-    # auto_canny: derive Canny thresholds from the image's Otsu value so the
-    # detector adapts to variable lighting / contrast in user-uploaded photos.
-    auto_canny   = False,
-
-    # direct_edges: skip findContours + drawContours entirely and return the
-    # raw Canny edge map.  Edges are always 1-px thin, which eliminates the
-    # "thick contour" artefact that occurs when findContours traces the outer
-    # boundary of wide Sohrai strokes.
-    direct_edges = False,
-
-    # dilate_px: dilation radius applied after edge detection (direct_edges path)
-    # or after re-rendering contours (findContours path).  Set to 0 to disable.
-    # A value of 1-2 thickens lines for visibility without over-fattening.
-    dilate_px = 0,
-
-    # strip_background: run GrabCut + paper-layer removal before edge detection.
-    # Keeps table/wall/paper edges out of the contour output.
-    # Leave False for training (reference images are already clean).
-    strip_background = False,
-
-    # center_subject: crop to the bounding box of non-white content before
-    # resizing.  Neutralises position/scale differences between the reference
-    # and the student's photo so the model compares structure, not placement.
-    center_subject = False,
+    output_size       = 128,
+    blur_kernel       = 5,
+    canny_low         = 50,
+    canny_high        = 150,
+    min_contour_area  = 50,
+    edge_mode         = "canny",
+    contour_thickness = 1,
+    auto_canny        = False,
+    direct_edges      = False,
+    dilate_px         = 0,
+    strip_background  = False,
+    center_subject    = False,
 )
 
 
-# ---------------------------------------------------------------------------
-# ContourPreprocessor
-# ---------------------------------------------------------------------------
-
 class ContourPreprocessor:
-    """
-    Converts an image (BGR numpy array) into a clean binary contour image
-    ready for the CNN.
-
-    Pipeline
-    --------
-    [optional] 1. Perspective-warp to AR canvas bounds (runtime only)
-               2. Resize to output_size × output_size
-               3. Grayscale
-               4. Gaussian blur          – kills pencil texture / paper grain
-               5. Edge detection         – Canny or adaptive threshold
-               6. Contour extraction     – cv2.findContours
-               7. Small-contour removal  – drops noise below min_contour_area
-               8. Re-render contours     – clean white-bg / black-stroke image
-
-    Output
-    ------
-    uint8 numpy array, shape (output_size, output_size), white bg, black strokes.
-    Pass through torchvision.transforms.ToTensor() to get a (1, H, W) float32
-    tensor in [0, 1] suitable for the model.
-    """
-
     def __init__(self, **cfg_overrides):
         cfg = {**PREPROCESS_CFG, **cfg_overrides}
-
         self.output_size       = cfg["output_size"]
         self.blur_kernel       = cfg["blur_kernel"]
         self.canny_low         = cfg["canny_low"]
@@ -110,225 +38,140 @@ class ContourPreprocessor:
         self.strip_background  = cfg["strip_background"]
         self.center_subject    = cfg["center_subject"]
 
-    # ------------------------------------------------------------------
-    # Public API
-    # ------------------------------------------------------------------
+    # ── public ────────────────────────────────────────────────────────────────
 
-    def process(
-        self,
-        bgr: np.ndarray,
-        corners: np.ndarray | None = None,
-    ) -> np.ndarray:
-        """
-        Full pipeline on a single BGR image or camera frame.
-
-        Parameters
-        ----------
-        bgr     : (H, W, 3) uint8 BGR image (standard OpenCV format)
-        corners : (4, 2) float32 array of AR marker pixel coords,
-                  ordered [top-left, top-right, bottom-right, bottom-left].
-                  Pass None to skip perspective warp (dataset prep mode).
-
-        Returns
-        -------
-        (output_size, output_size) uint8 — white background, black strokes.
-        """
+    def process(self, bgr: np.ndarray, corners: np.ndarray | None = None) -> np.ndarray:
+        """Full pipeline → (output_size, output_size) uint8, white-bg black-strokes."""
         img = self._warp(bgr, corners) if corners is not None else bgr
         if self.strip_background:
             img = remove_background(img)
         if self.center_subject:
             img = self._crop_to_subject(img)
-        img = cv2.resize(img, (self.output_size, self.output_size))
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        return self._to_edges(img)
+
+    def process_debug(self, bgr: np.ndarray) -> dict[str, np.ndarray]:
+        """
+        Same as process() but returns every intermediate step as a BGR image.
+        Keys: original, after_bg_removal, after_crop, after_resize, contour.
+        """
+        steps: dict[str, np.ndarray] = {"original": bgr.copy()}
+
+        img = bgr
+        if self.strip_background:
+            img = remove_background(img)
+            steps["after_bg_removal"] = img.copy()
+
+        if self.center_subject:
+            img = self._crop_to_subject(img)
+            steps["after_crop"] = img.copy()
+
+        resized = cv2.resize(img, (self.output_size, self.output_size))
+        steps["after_resize"] = resized.copy()
+
+        result = self._to_edges(img)
+        # Convert single-channel result to BGR for uniform encoding
+        steps["contour"] = cv2.cvtColor(result, cv2.COLOR_GRAY2BGR)
+        return steps
+
+    # ── steps ─────────────────────────────────────────────────────────────────
+
+    def _to_edges(self, img: np.ndarray) -> np.ndarray:
+        """Resize → grayscale → blur → edges → (optional dilate)."""
+        img     = cv2.resize(img, (self.output_size, self.output_size))
+        gray    = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         blurred = self._blur(gray)
-        edges = self._edges(blurred)
+        edges   = self._edges(blurred)
 
         if self.direct_edges:
-            # Canny: white=edge, black=background → invert to white-bg black-stroke.
             result = cv2.bitwise_not(edges)
         else:
-            contours = self._extract_contours(edges)
-            result = self._render(contours)
+            result = self._render(self._extract_contours(edges))
 
         if self.dilate_px > 0:
-            kernel = cv2.getStructuringElement(
+            k      = cv2.getStructuringElement(
                 cv2.MORPH_ELLIPSE,
                 (self.dilate_px * 2 + 1, self.dilate_px * 2 + 1),
             )
-            # Dilate the strokes: invert so strokes are white, dilate, invert back.
-            strokes = cv2.bitwise_not(result)
-            strokes = cv2.dilate(strokes, kernel, iterations=1)
-            result  = cv2.bitwise_not(strokes)
+            result = cv2.bitwise_not(cv2.dilate(cv2.bitwise_not(result), k))
 
         return result
 
-    # ------------------------------------------------------------------
-    # Steps (each overridable independently in a subclass)
-    # ------------------------------------------------------------------
-
     def _crop_to_subject(self, bgr: np.ndarray, pad_frac: float = 0.05) -> np.ndarray:
         """
-        Crop to the densest cluster of dark pixels rather than the bounding
-        box of all non-white content.
-
-        A Gaussian density map is built from the dark-pixel mask.  The crop
-        region is the area whose local density is at least 25 % of the peak —
-        this naturally centres on the drawing and ignores sparse edge noise
-        (stray text, paper grain, table corners) that would inflate a naive
-        bounding-box crop.
+        Crop to the bounding box of actual strokes, ignoring the outermost 3 %
+        of pixels.  The border exclusion removes edge text and corner artifacts
+        without a density map — sparse limbs at the painting edges are kept.
         """
         gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY) if bgr.ndim == 3 else bgr
         H, W = gray.shape
 
-        # Dark pixels = strokes.  Threshold at 200 to catch slightly faded ink.
-        _, dark = cv2.threshold(gray, 200, 255, cv2.THRESH_BINARY_INV)
+        # Only pixels darker than 127 count as strokes (avoids photo shadows).
+        _, dark = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY_INV)
 
-        if dark.sum() == 0:
-            return bgr   # nothing dark at all — pass through unchanged
+        # Zero out the outermost 3 % border to ignore edge text / corner noise.
+        by, bx = max(1, int(H * 0.03)), max(1, int(W * 0.03))
+        dark[:by, :]  = 0;  dark[-by:, :] = 0
+        dark[:, :bx]  = 0;  dark[:, -bx:] = 0
 
-        # Smooth into a density field.  sigma scales with image size so the
-        # kernel is always broad enough to merge nearby stroke clusters into
-        # one blob even at low resolution.
-        sigma   = max(10.0, min(H, W) * 0.12)
-        density = cv2.GaussianBlur(dark.astype(np.float32), (0, 0), sigma)
-
-        # Region whose density is at least 25 % of the peak is the "drawing".
-        # Sparse edge noise (a line of text, a corner shadow) stays well below
-        # this threshold when the main figure dominates the frame.
-        thresh = density.max() * 0.25
-        region = (density >= thresh).astype(np.uint8)
-
-        coords = cv2.findNonZero(region)
+        coords = cv2.findNonZero(dark)
         if coords is None:
             return bgr
 
         x, y, w, h = cv2.boundingRect(coords)
         pad = max(1, int(max(w, h) * pad_frac))
-        x1  = max(0, x - pad)
-        y1  = max(0, y - pad)
-        x2  = min(W, x + w + pad)
-        y2  = min(H, y + h + pad)
-        return bgr[y1:y2, x1:x2]
+        return bgr[
+            max(0, y - pad) : min(H, y + h + pad),
+            max(0, x - pad) : min(W, x + w + pad),
+        ]
 
     def _warp(self, bgr: np.ndarray, corners: np.ndarray) -> np.ndarray:
-        """Perspective-warp the AR canvas region to a square crop."""
         dst = np.float32([
-            [0,                    0],
+            [0, 0],
             [self.output_size - 1, 0],
             [self.output_size - 1, self.output_size - 1],
-            [0,                    self.output_size - 1],
+            [0, self.output_size - 1],
         ])
         M = cv2.getPerspectiveTransform(corners.astype(np.float32), dst)
         return cv2.warpPerspective(bgr, M, (self.output_size, self.output_size))
 
     def _blur(self, gray: np.ndarray) -> np.ndarray:
-        """Gaussian blur — removes pencil texture and high-frequency noise."""
-        k = self.blur_kernel
-        # kernel must be odd
-        if k % 2 == 0:
-            k += 1
+        k = self.blur_kernel | 1   # ensure odd without a branch
         return cv2.GaussianBlur(gray, (k, k), 0)
 
     def _edges(self, blurred: np.ndarray) -> np.ndarray:
-        """Edge / threshold step — output is a binary uint8 image."""
         if self.edge_mode == "canny":
             if self.auto_canny:
-                # Derive thresholds from Otsu so the detector adapts to
-                # whatever contrast the user's photo happens to have.
-                otsu_val, _ = cv2.threshold(
-                    blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU
-                )
-                high = max(otsu_val, 1.0)
-                low  = high * 0.4
-                return cv2.Canny(blurred, low, high)
+                otsu, _ = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                high = max(otsu, 1.0)
+                return cv2.Canny(blurred, high * 0.4, high)
             return cv2.Canny(blurred, self.canny_low, self.canny_high)
 
         if self.edge_mode == "adaptive":
             return cv2.adaptiveThreshold(
                 blurred, 255,
-                cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                cv2.THRESH_BINARY_INV,
-                blockSize=11,
-                C=2,
+                cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV,
+                blockSize=11, C=2,
             )
 
-        raise ValueError(
-            f"Unknown edge_mode '{self.edge_mode}'. Choose 'canny' or 'adaptive'."
-        )
+        raise ValueError(f"Unknown edge_mode '{self.edge_mode}'")
 
     def _extract_contours(self, edges: np.ndarray) -> list:
-        """Extract contours, dropping anything shorter than min_contour_area pixels.
-
-        Canny edges are 1-pixel-wide lines whose enclosed area is ~0, so
-        cv2.contourArea() always returns ~0 and would filter everything out.
-        We use cv2.arcLength() (perimeter / line length) instead.
-        """
-        contours, _ = cv2.findContours(
-            edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
-        )
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         return [c for c in contours if cv2.arcLength(c, False) >= self.min_contour_area]
 
     def _render(self, contours: list) -> np.ndarray:
-        """Draw clean contours onto a white canvas."""
-        canvas = np.full(
-            (self.output_size, self.output_size), 255, dtype=np.uint8
-        )
+        canvas = np.full((self.output_size, self.output_size), 255, dtype=np.uint8)
         cv2.drawContours(canvas, contours, -1, 0, self.contour_thickness)
         return canvas
 
 
-# ---------------------------------------------------------------------------
-# Distance-transform conversion
-# ---------------------------------------------------------------------------
+# ── distance transform ────────────────────────────────────────────────────────
 
 def to_distance_transform(stroke_on_black: np.ndarray, sigma: float = 5.0) -> np.ndarray:
     """
-    Convert a binary contour image to a soft distance-transform representation.
-
-    Parameters
-    ----------
-    stroke_on_black : (H, W) uint8 — 255 at strokes, 0 at background
-    sigma           : Gaussian falloff in pixels; controls how far the signal
-                      extends from each stroke (larger = softer gradients)
-
-    Returns
-    -------
-    (H, W) float32 in [0, 1] — 1.0 at stroke pixels, decaying smoothly to 0
-    with distance.  Two structurally similar drawings that are offset by a few
-    pixels will have similar DT images; raw binary images would not.
-
-    Why this representation
-    -----------------------
-    Raw binary contours are 1-pixel-thin lines. Any global shift of even 2 px
-    makes the pixel-wise MSE enormous even when the structure is nearly correct.
-    The DT encodes spatial proximity continuously, making small displacements
-    produce small distances — which is exactly what a structural loss needs.
+    Soft distance-transform: 1.0 at strokes, decaying exponentially with distance.
+    Inputs offset by a few pixels produce similar DT images (unlike raw binary).
     """
-    stroke_mask = (stroke_on_black > 127).astype(np.uint8)
-    # distance_transform_edt returns the Euclidean distance from each 0-pixel
-    # to the nearest 1-pixel; we pass (1 - mask) so distance is measured FROM
-    # background pixels TO the nearest stroke pixel.
-    dt = distance_transform_edt(1 - stroke_mask)
+    mask = (stroke_on_black > 127).astype(np.uint8)
+    dt   = distance_transform_edt(1 - mask)
     return np.exp(-dt / sigma).astype(np.float32)
-
-
-# ---------------------------------------------------------------------------
-# Smoke test
-# ---------------------------------------------------------------------------
-
-if __name__ == "__main__":
-    preprocessor = ContourPreprocessor()
-
-    # Fake a camera frame: light grey background with a drawn circle
-    fake = np.ones((480, 640, 3), dtype=np.uint8) * 230
-    cv2.circle(fake, (320, 240), 80, (30, 30, 30), 3)
-
-    result = preprocessor.process(fake)
-    print(f"Output shape : {result.shape}")
-    print(f"Unique values: {sorted(set(result.flatten()))[:5]} ...")
-
-    # Confirm it can also run in adaptive mode
-    soft = ContourPreprocessor(edge_mode="adaptive")
-    result2 = soft.process(fake)
-    print(f"Adaptive output shape: {result2.shape}")
-    print("Smoke test passed.")
