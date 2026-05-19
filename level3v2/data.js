@@ -34,7 +34,7 @@ const TUTORIAL_DATA = {
         instruction: "Extend two curved lines downward from the oval to outline the neck and the initial slope of the shoulders. Outline the basic shape of the lower body, ensuring the silhouette feels voluminous and rounded."
       },
       {
-        instruction: "Define the arms by drawing two sets of parallel curved lines extending from the shoulders. End the limbs with curved lines making the shape of her feet."
+        instruction: "Define the arms by drawing two sets of parallel curved lines extending from the shoulders. End the limbs with curved lines making shape of her feet."
       },
       {
         instruction: "Sketch the basic outline of the hair, framing the top and sides of the oval face. Refine the facial features by marking the positions for the eyes, nose, and lips."
@@ -46,19 +46,19 @@ const TUTORIAL_DATA = {
         instruction: "Draw the hands, focusing on the elegant, elongated finger shapes typical of traditional Indian art. Add volume to her hair and details to the fish she is holding."
       },
       {
-        instruction: "Add all the primary folds of the saree or clothing using sweeping, rhythmic lines across the torso."
+        instruction: "Add the all the primary folds of the saree or clothing using sweeping, rhythmic lines across the torso."
       },
       {
-        instruction: "Now we start with water colours. Begin adding the first layer of base colour to the skin, typically using a light ochre or warm tone."
+        instruction: "Now we start with water colors. Begin adding the first layer of base color to the skin, typically using a light ochre or warm tone."
       },
       {
-        instruction: "Add a second layer on the skin with a shade of orange to bring in depth, around corners to define the features and shadows."
+        instruction: "Add a second layer on the skin with a shade of orange to bring in depth, around corners to define the feature and shadows."
       },
       {
-        instruction: "Apply the base colour for the clothing, ensuring the paint is applied smoothly within the outlines. Make sure the brush follows the folds of the fabric."
+        instruction: "Apply the base color for the clothing, ensuring the paint is applied smoothly within the outlines. Make sure the brush follows the folds of the fabric."
       },
       {
-        instruction: "Add a second layer on the saree with a darker shade to bring in depth, around corners to define the features and shadows."
+        instruction: "Add a second layer on the saree with a darker shade to bring in depth, around corners to define the feature and shadows."
       },
       {
         instruction: "Define the borders of the saree (the paar), adding a second line parallel to the clothing edges. Add colour to the bindi, lips and alta on the palm and feet."
@@ -76,7 +76,7 @@ const TUTORIAL_DATA = {
         instruction: "Finish the detailed linework by tracing the main outlines with a fine brush and black ink."
       },
       {
-        instruction: "Add the black details on the saree to emphasise all the folds."
+        instruction: "Add the black details on the saree to emphasize all the folds."
       },
       {
         instruction: "Use a slightly darker shade to add 'shading' or 'rolling' (darkening the edges) to give the figure volume."
@@ -85,10 +85,10 @@ const TUTORIAL_DATA = {
         instruction: "After the paint dries. Add white lines to the ears and the initial circular shapes for the heavy traditional earrings."
       },
       {
-        instruction: "Use white paint to draw the jewellery on the neck, like a necklace, following the curve of the collarbone."
+        instruction: "Use white paint to draw the jewelry on the neck, like a necklace, following the curve of the collarbone."
       },
       {
-        instruction: "Add bangles or 'shakha-pola' to the wrists using several small, parallel circular lines. Draw payal on her feet, and rings using white. Add intricate patterns to the saree border and jewellery using white or gold accents."
+        instruction: "Add bangles or 'shakha-pola' to the wrists using several small, parallel circular lines. Draw payal on her feet, and rings using white. Add intricate patterns to the saree border and jewelry using white or gold accents."
       },
       {
         instruction: "Add lines of orange to complete the fabric flowing behind her. Colour the fish in orange."
@@ -108,10 +108,10 @@ const TUTORIAL_DATA = {
     driveUrl: "https://drive.google.com/drive/folders/1p4yi3Lsh3hqf139BHelv5v00lzqNNC5V",
     steps: [
       {
-        instruction: "Begin by preparing the base of your canvas. Apply a smooth, even layer of mud/ochre colour base."
+        instruction: "Begin by preparing the base of your canvas. Apply a smooth, even layer of mud/ochre color base."
       },
       {
-        instruction: "Now begin using your fingers to spread the base material, ensuring the texture is organic and follows a consistent rhythm across the surface."
+        instruction: "Now begin with using your fingers to spread the base material, ensuring the texture is organic and follows a consistent rhythm across the surface."
       },
       {
         instruction: "Once the base is slightly set, use a pencil to lightly sketch the large central silhouette of the animal (bull). Draw the broad head and the distinctive shape of the horns or ears using light pencil strokes."
@@ -123,55 +123,55 @@ const TUTORIAL_DATA = {
         instruction: "Sketch the sturdy legs and hooves with the pencil to ensure the animal figure feels balanced on the base. Sketch the surrounding elements. Add concentric circles around the canvas for flowers, to fill the space around the main figure."
       },
       {
-        instruction: "Begin applying the primary colours, like red oxide on the concentric circles in shapes of petals."
+        instruction: "Begin applying the primary colors, like red oxide on the concentric circles in shapes of petals."
       },
       {
-        instruction: "Continue adding colour to the background floral and plant motifs, layering warm earth tones to build up the surrounding composition."
+        instruction: "Then start painting red oxide in regular intervals on the body of the snake."
       },
       {
-        instruction: "Fill in the remaining background sections with earthy tones, completing the first colour pass across the entire canvas."
+        instruction: "Use the same technique to fill in color for the other forest creature. Paint the tail, horn and head."
       },
       {
-        instruction: "Use your pencil to mark out geometric patterns or secondary forest creatures like birds and lizards."
+        instruction: "In a similar format continue to paint the body of the creature. The animal is slowly taking shape."
       },
       {
-        instruction: "Begin applying the primary colours, like red oxide or yellow ochre, into the sections you sketched for the animal's body."
+        instruction: "Now introduce light ochre to the canvas. Begin applying it into the sections of the snake's body."
       },
       {
-        instruction: "Fill in the floral motifs and background plants with warm, earthy tones."
+        instruction: "Fill in the same color on the creature's body. Apply color to the secondary figures, ensuring they complement the palette of the central animal."
       },
       {
-        instruction: "Apply colour to the secondary figures, ensuring they complement the palette of the central animal."
+        instruction: "Use the contrasting shade to complete the floral motifs and background plants. Define the leaves and flower."
       },
       {
-        instruction: "Use a contrasting earthy shade to fill in the geometric border patterns you sketched earlier."
+        instruction: "Add more depth to the animal's body by layering a second coat of color in specific patches or sections."
       },
       {
-        instruction: "Add more depth to the animal's body by layering a second coat of colour in specific patches or sections."
+        instruction: "Start the final outlining phase by using black ink or soot to trace the top of the animal's head and horns along with the snake's head. Draw the bold black outline around the eyes and snout to bring out the animal's expression."
       },
       {
-        instruction: "Paint the details of the 'Tree of Life,' using natural pigments to define the leaves and branches."
+        instruction: "Begin by drawing the outline around the snake and then fill in the sections with black, to complete and define its body."
       },
       {
-        instruction: "Start the final outlining phase by using black ink or soot to trace the top of the animal's head and horns."
+        instruction: "Trace the entire silhouette of the animal with a thick, confident black line to make it pop against the base. Use the black outline to define the legs, hooves, and the rhythmic curve of the tail."
       },
       {
-        instruction: "Draw the bold black outline around the eyes and snout to bring out the animal's expression."
+        instruction: "Use black lines to add patterns inside the colored sections of the animal's body."
       },
       {
-        instruction: "Trace the entire silhouette of the animal with a thick, confident black line to make it pop against the base."
+        instruction: "Add black outlines to the flora in the background."
       },
       {
-        instruction: "Use the black outline to define the legs, hooves, and the rhythmic curve of the tail."
+        instruction: "Now complete the leaves by adding black outlines."
       },
       {
-        instruction: "Add fine black outlines to the birds, lizards, and floral creepers in the background."
+        instruction: "Complete the painting by tracing the branches and stem."
       },
       {
-        instruction: "Use thin black lines to add texture and patterns inside the coloured sections of the animal's body."
+        instruction: "Once the black outline dries. Use white paint detailing on the black outline of the snake to make it pop against the base."
       },
       {
-        instruction: "Complete the painting by tracing the outer border of the entire composition with a final, heavy black outline."
+        instruction: "Add these white details in and around the flora and leaves."
       }
     ]
   },
@@ -188,132 +188,162 @@ const TUTORIAL_DATA = {
         instruction: "Begin by preparing the base of your canvas or wall by applying a smooth, even layer of red ochre (geru) to create the traditional background."
       },
       {
-        instruction: "Use a pencil to lightly sketch the central point of your composition, which will act as the anchor for the rhythmic circular movement."
+        instruction: "Once the base dries slightly, lightly sketch a large central square (chauk) using a pencil to establish the main focal area of the composition."
       },
       {
         instruction: "Lightly draw a large circle with your pencil to outline the boundary for a 'Tarpa' dance or a communal gathering scene."
       },
       {
-        instruction: "Start sketching the basic geometric shapes for the human figures: draw two triangles that meet at the tip to form the torso."
+        instruction: "Now that the base is ready, take a thin paintbrush and begin with tracing along the outline of the square."
       },
       {
-        instruction: "Use the pencil to add a small circle on top of the triangles to represent the head."
+        instruction: "Now use a round brush and start painting blobs around the circumference of the circle. These represent the head."
       },
       {
-        instruction: "Sketch simple lines for the arms, showing them connected to the figures on either side to signify a dance."
+        instruction: "Start sketching the basic geometric shapes for the human figures: draw a triangle that forms the torso."
+      },
+      {
+        instruction: "Next draw another triangle that meets at the tip of the previous triangle/torso."
       },
       {
         instruction: "Add two slightly bent lines at the bottom of the triangles to represent the legs in a moving or dancing posture."
       },
       {
-        instruction: "Draw the central figure of the 'Tarpa' player, sketching the long, curved shape of the traditional wind instrument."
+        instruction: "Sketch simple lines for the arms, showing them connected to the figures on either side to signify a dance."
       },
       {
-        instruction: "Sketch surrounding elements of nature, such as a stylised sun or a simple 'Tree of Life' using basic lines and triangles."
+        instruction: "Begin the painting phase by using a fine brush to fill in the triangles representing the body of the human figures."
       },
       {
-        instruction: "Add details of daily life around the central dance, such as simple huts made of square and triangular shapes."
+        instruction: "Now repeat the same process of drawing triangles across the circle to form a human chain."
       },
       {
-        instruction: "Draw small domestic animals like goats or birds using the same minimalist geometric style."
+        instruction: "Paint the white base for the triangular bodies of all the dancing figures. Paint the arms ensuring the lines remain thin, rhythmic and connected."
       },
       {
-        instruction: "Begin the painting phase by using a fine brush and white pigment (rice paste) to fill in the heads of the human figures."
+        instruction: "Draw a series of small, rhythmic dashes along the ground line to represent the legs and show the movement of the dancers."
       },
       {
-        instruction: "Paint the white base for the triangular bodies of all the dancing figures."
+        instruction: "Carefully fill in the triangles with white color."
       },
       {
-        instruction: "Carefully fill in the white colour for the arms and legs, ensuring the lines remain thin and rhythmic."
+        instruction: "Draw the central figure of the 'Tarpa' player's body. He is the central point of your composition, which will act as the anchor."
       },
       {
-        instruction: "Apply the white pigment to the central Tarpa instrument, highlighting its unique curved shape."
+        instruction: "Next paint the curved shape of the traditional Horn instrument using thin white lines."
       },
       {
-        instruction: "Paint the surrounding nature motifs — the sun and trees — using solid white strokes."
+        instruction: "Add the arms and legs and other small details to the instrument. It should appear that he is blowing air into the horn."
       },
       {
-        instruction: "Fill in the geometric shapes of the huts and animals with a consistent layer of white."
+        instruction: "Start the detailing phase by adding tiny strokes on the human figures. Draw white lines to the central Tarpa instrument, highlighting its unique curved shape."
       },
       {
-        instruction: "Start the detailing phase by adding tiny strokes for hair or traditional headgear on the human figures."
+        instruction: "Next we move to the border. Drop two blobs of white paint on either side of the border and extend them a little using a thin brush to create a leaf shape."
       },
       {
-        instruction: "Add delicate white dots or short 'v' shapes along the tree branches to represent leaves or flowers."
+        instruction: "Repeat this technique to paint the entire side of the border."
       },
       {
-        instruction: "Use a very fine brush to add texture to the clothing of the figures or the thatched roofs of the huts."
+        instruction: "Complete the painting by adding the same pattern around the entire border to frame the composition."
       },
       {
-        instruction: "Draw a series of small, rhythmic dashes along the ground line to represent the movement of the dancers."
-      },
-      {
-        instruction: "Complete the painting by adding a simple geometric border around the entire scene to frame the composition."
+        instruction: "To finish off, just erase any pencil marks."
       }
     ]
   },
 
-  // ── Gond Painting (18 steps) ──────────────────────────────────────────────
+  // ── Gond Painting (28 steps) ──────────────────────────────────────────────
   gond: {
     name: "Gond Painting",
     subtitle: "Deer in the Forest — Madhya Pradesh",
     artformKeys: ["Gond Art of Madhya Pradesh"],
-    totalSteps: 18,
+    totalSteps: 28,
     driveUrl: "https://drive.google.com/drive/folders/1iHsnair9wHsxxeaKO4THyUBDjnyGceEk",
     steps: [
       {
-        instruction: "Begin by applying a flat, smooth base coat of colour to your canvas, usually a bright or earthy tone that will make the patterns pop."
+        instruction: "Draw two ovals and extend a curved line from each of their ends using a pencil. This represents the head and neck of the deer."
       },
       {
-        instruction: "Use a pencil to lightly sketch the large, flowing silhouette of your central figure, such as a deer, bird, or a mythical creature."
+        instruction: "Next add few lines to draw the base of the body of the deers."
       },
       {
-        instruction: "Define the long, curved neck and the primary body shape with sweeping pencil lines."
+        instruction: "Sketch the legs using long, slightly curved vertical lines, ensuring they feel slender and balanced."
       },
       {
-        instruction: "Sketch the delicate legs and antlers or horns, ensuring the figure feels balanced and graceful."
+        instruction: "Now begin drawing the main tree trunk behind the deer using a thick upward curved line. Extend branches outward in multiple directions using flowing, organic lines."
       },
       {
-        instruction: "Add the placement for the eye and any large internal divisions on the body where different patterns will go."
+        instruction: "Now lighten this pencil drawing as we begin to sketch the details using a black pen. Draw the head using a small oval, and extend a pointed snout."
       },
       {
-        instruction: "Sketch the surrounding nature elements, like a stylised tree with swirling branches or floating leaves."
+        instruction: "Add two leaf-shaped ears on top of the head."
       },
       {
-        instruction: "Use your pencil to add secondary forest animals or birds to create a sense of a living ecosystem."
+        instruction: "Next draw the eyes and extend the necks."
       },
       {
-        instruction: "Fill in the main body of your central figure with a solid, vibrant base colour using a medium brush."
+        instruction: "Draw the second deer beside the first, overlapping slightly to create interaction."
       },
       {
-        instruction: "Apply contrasting solid colours to the different sections of the background elements, like leaves and tree trunks."
+        instruction: "Repeat the same structure: body curve, neck, head, and legs. Keep proportions similar."
       },
       {
-        instruction: "Paint the secondary animals in different hues to ensure each character in the story stands out."
+        instruction: "Refine both deer shapes, smoothing curves and ensuring the bodies feel full and flowing."
       },
       {
-        instruction: "Start the detailing phase by choosing your 'signature' Gond pattern, such as dots, dashes, or tiny scales."
+        instruction: "Finish drawing the legs of both the deers."
       },
       {
-        instruction: "Using a fine brush, begin filling the first section of the central animal with a repetitive pattern of small, uniform dots."
+        instruction: "Add lines to complete the back of the second deer."
       },
       {
-        instruction: "In the next section, switch to a 'comb' pattern — groups of short, parallel lines that follow the curve of the body."
+        instruction: "Now begin drawing the main tree trunk behind the deer using a thick upward curved line."
       },
       {
-        instruction: "Add a 'seed' or 'grain' motif to the neck or legs to create a different texture within the same figure."
+        instruction: "Extend branches outward in multiple directions using flowing, organic lines."
       },
       {
-        instruction: "Use a bright, contrasting colour to add 'fish-scale' patterns to the tail or fins of your creature."
+        instruction: "Add smaller sub-branches splitting from the main branches, creating a dense structure."
       },
       {
-        instruction: "Apply rhythmic dash patterns to the branches of the tree, making them look as if they are vibrating with energy."
+        instruction: "Add lines and connect these sub-branches together to the main branch."
       },
       {
-        instruction: "Detail the leaves of the tree with tiny, intricate veins or interlocking circles."
+        instruction: "Start drawing leaves using teardrop or oval shapes attached along the branches. Fill the entire tree canopy with clustered leaves, ensuring a rich and full appearance. Once done fill the body of the deer in yellow solid paint."
       },
       {
-        instruction: "Paint the eye of the central figure with a bold black centre surrounded by a bright white or yellow ring."
+        instruction: "Next add shades of ochre and orange to the remaining body of the deer."
+      },
+      {
+        instruction: "Paint the branches in two different shades of purple."
+      },
+      {
+        instruction: "Next paint some leaves in a light green shade."
+      },
+      {
+        instruction: "Finish some of the leaves by painting them a medium green tone."
+      },
+      {
+        instruction: "Complete the leftover leaves by painting them with a deeper shade of green."
+      },
+      {
+        instruction: "Next paint the details around deer's body with red color."
+      },
+      {
+        instruction: "Start adding dot/blob texture around the borders of the deer's body in a deeper shade of orange."
+      },
+      {
+        instruction: "Next add some more dots and dashes on the deer's body in a contrasting pink color."
+      },
+      {
+        instruction: "Throw in some dots with brown color as well."
+      },
+      {
+        instruction: "Next add texture to the branch using dots of a contrasting color."
+      },
+      {
+        instruction: "Finish the painting by following the similar dot techniques on the leaves."
       }
     ]
   },
@@ -321,55 +351,55 @@ const TUTORIAL_DATA = {
   // ── Kalamkari Painting (15 steps) ────────────────────────────────────────
   kalamkari: {
     name: "Kalamkari Painting",
-    subtitle: "Pen on Fabric — Andhra Pradesh",
+    subtitle: "Peacock — Tamil Nadu",
     artformKeys: ["Kalamkari Of Tamil Nadu"],
     totalSteps: 15,
-    driveUrl: "",
+    driveUrl: "https://drive.google.com/drive/folders/1SJ6WykvZ36_ZZdZ65k-Fme4pMWjWFqk4",
     steps: [
       {
-        instruction: "Prepare your canvas by washing the cotton cloth with a solution of myrobalan powder and water to mordant the surface. This ensures the natural dyes will bond permanently to the fabric."
+        instruction: "Start sketching the main body of the peacock using a curved oval shape placed slightly to one side of the page. Make 2 paisley motifs to represent its body, neck and head."
       },
       {
-        instruction: "Once dry, use a fine brush dipped in black outline ink to sketch the large central deity figure — a standing figure of Rama, Krishna, or a goddess. Draw just the outer silhouette and head position."
+        instruction: "Then add curved lines which roughly denote the placement of wings and feathers."
       },
       {
-        instruction: "Define the face with almond-shaped eyes, a long curved nose, and full lips. Add the headdress or crown — a tall kirita or peacock-feathered mukuta that identifies the deity."
+        instruction: "Double outline these wings in order to mark space for the feathers, tails and feet."
       },
       {
-        instruction: "Sketch the flowing torso, drawing the arms in their characteristic mudra positions — one raised in blessing, one holding an attribute such as a lotus, conch, or bow."
+        instruction: "Draw eye, head piece and add other chunky details around the neck and wings."
       },
       {
-        instruction: "Add the lower garments — a dhoti or pattu pavadai — with sweeping curved lines that suggest the weight and flow of silk. Kalamkari garments fall generously from the waist downward."
+        instruction: "Lighten the pencil marks and begin with outlining the peacock motif with a black pen/brush pen. We begin from one side of the motif and continue it to the other end. Begin with the beak and the details on the head (eye, neck and feather)."
       },
       {
-        instruction: "Draw the decorative jewellery — layered necklaces, heavy earrings, armlets, and anklets — using small repeated geometric motifs. These ornamental details are a Kalamkari hallmark."
+        instruction: "Next we will detail out the body with some floral pattern creating shapes in which we can fill solid color later."
       },
       {
-        instruction: "Frame the central figure with a large arch or temple canopy formed of layered lotus petals and scrolling foliage. This creates the sacred space around the deity."
+        instruction: "Then we move on to the feet, add details of the claw and feathers."
       },
       {
-        instruction: "Add companion figures — attendants, musicians, or smaller deities — flanking the central figure in the lower registers of the composition."
+        instruction: "Next draw the central wing of the peacock. It needs to be detailed and illustrative."
       },
       {
-        instruction: "Fill the background with scrolling floral creepers, lotus ponds, and narrative vignettes. Every inch of the border area should be richly patterned with plant and animal motifs."
+        instruction: "Then add lines and finish the other wing. Keep the lines neat and clean."
       },
       {
-        instruction: "Begin applying colour with natural dyes, starting with warm tones. Fill skin areas with a golden-ochre wash and clothing areas with a soft first pass of their base colour."
+        instruction: "Next complete the tail adding illustrative detailed features arranged in rhythmic pattern."
       },
       {
-        instruction: "Apply deep red (pomegranate rind dye) to the main garments and the border archway. Let this layer dry fully before continuing to the next colour."
+        instruction: "We have almost completed the outline. Finish it with adding extra paisley shaped feathers below the tail."
       },
       {
-        instruction: "Fill the foliage and creepers with indigo or natural green. Apply yellow (turmeric) to jewellery and gold accents. Keep colour washes transparent and even — Kalamkari colour is never opaque."
+        instruction: "Now we start with filling colors, fill in red in the central regions of the neck, wings and tail."
       },
       {
-        instruction: "Add a second, deeper layer of each colour to the shadow areas — beneath the arms, in the folds of fabric, and around the face — to give the figure warmth and volume."
+        instruction: "Then fill green in the head and outlines of the wings and tail."
       },
       {
-        instruction: "Use the fine kalam pen to reinforce all outlines in strong black, clarifying every contour, jewellery edge, and facial feature. Add fine interior line details to garment patterns."
+        instruction: "Use the blue to complete most of the peacock motif, colour all the feathers in blue."
       },
       {
-        instruction: "Complete the painting by drawing a framing border of repeating lotus buds and creeper scrolls around the entire composition. This final border ties the picture together and echoes Kalamkari's temple-art origins."
+        instruction: "Next finish the artwork by painting the background in yellow."
       }
     ]
   },
@@ -377,135 +407,141 @@ const TUTORIAL_DATA = {
   // ── Madhubani Painting (18 steps) ────────────────────────────────────────
   madhubani: {
     name: "Madhubani Painting",
-    subtitle: "Radha Krishna — Bihar",
+    subtitle: "Fish — Bihar",
     artformKeys: ["Madhubani of Bihar"],
     totalSteps: 18,
-    driveUrl: "",
+    driveUrl: "https://drive.google.com/drive/folders/1hNm_vYjzfBKa32OSADbpl4iDAKBxhdI_",
     steps: [
       {
-        instruction: "Prepare a sheet of handmade paper by applying a thin wash of white to create a smooth, even base. Let it dry fully before beginning."
+        instruction: "Lightly draw a circular border close to the edges of the page to define the composition area. Draw few concentric circles parallel to the first border to create the characteristic double-line frame of Madhubani art."
       },
       {
-        instruction: "Draw a double-line rectangular border close to the edges of the paper — two parallel black lines about 5mm apart. This outer frame is the first mark in every Madhubani composition."
+        instruction: "Start sketching the central figure or main motif using light and rhythmic curved lines."
       },
       {
-        instruction: "Inside the border, draw a second smaller rectangle, then fill the band between the two borders with repeating geometric motifs — small diamonds, zigzags, or short parallel dashes."
+        instruction: "Add more details to the central figure. We are drawing two fishes enclosed in a circle."
       },
       {
-        instruction: "Lightly sketch the central figure in pencil — typically Krishna with his flute or Radha. Position the figure centrally with the head at upper-centre of the composition."
+        instruction: "Sketch curved lines representing the fins and heads of the fish."
       },
       {
-        instruction: "Draw the large, characteristic wide eyes — the irises are filled solidly and pupils clearly marked. Add the long, sweeping eyebrows that nearly meet at the bridge of the nose."
+        instruction: "Complete the fishes by adding eyes and details to the body."
       },
       {
-        instruction: "Define the face outline: a broad forehead, a straight nose, and full lips. Add the elaborate tilaka mark on the forehead. The face in Madhubani is frontal and perfectly symmetrical."
+        instruction: "Now we move to the next circle. We need to fill it with small wedges to make a pattern and fill it with lines later."
       },
       {
-        instruction: "Sketch the torso in a slightly three-quarter pose, with arms positioned holding a flute or garland. Draw elaborate necklaces, earrings, and bangles using simple ring-and-dot shorthand."
+        instruction: "Next we move towards adding details to the outer circle. Begin by drawing oval leaf shapes facing each other to complete the entire border."
       },
       {
-        instruction: "Add the lower half of the figure — the dhoti or ghagra falling in gentle curves. Extend lotus flowers or peacock feathers into the space around the feet."
+        instruction: "Now draw the line/circle defining the border."
       },
       {
-        instruction: "Draw a large lotus plant or kadamba tree beside the figure to fill the vertical space. Lotus pads, buds, and blooms are the single most common space-filler in Madhubani."
+        instruction: "Add another line of triangles in the middle circle. The base of the Madhubani painting is ready with this pencil sketch."
       },
       {
-        instruction: "Scatter fish motifs in pairs throughout the background — fish (machha) are the most auspicious symbol in Mithila art. Add birds, parrots, and stylised suns in the remaining gaps."
+        instruction: "Now refine all outlines using a black pen or fine brush, going over the pencil sketch with confident, continuous lines. We will begin with the central motif."
       },
       {
-        instruction: "Begin applying colour with flat brushes, starting with the figure's skin in a warm golden tone. Fill solidly inside the outlines, keeping colours flat and even."
+        instruction: "Now go creative and start filling it with patterns! Add the characteristic double-line detailing within the figures."
       },
       {
-        instruction: "Paint the main garment in red or deep pink. Apply blue to the background sky areas, and green to the lotus leaves. Madhubani colour fields are bold and unshaded."
+        instruction: "Complete the fishes by adding scales and finish them by filling shapes with lines."
       },
       {
-        instruction: "Fill secondary motifs — fish in silver-white, lotus blooms in pink and yellow, birds in bright contrasting colours. Keep every colour field flat and decisive."
+        instruction: "Now in a similar style of detailing, outline the triangles and fill them with lines to make a beautiful pattern."
       },
       {
-        instruction: "Apply a background colour to fill any remaining white paper — often yellow-ochre or pale terracotta — so the surface is completely covered, following the horror vacui principle of Madhubani."
+        instruction: "We will similarly outline the outer border and fill in the line details using black pen or fine brush."
       },
       {
-        instruction: "Now reinforce all outlines using a fine brush dipped in strong black ink. Trace every contour with a double-line stroke — the characteristic twin outline of Madhubani."
+        instruction: "Now we start filling the colours within these shapes. We need to use bright and contrasting colors. Use yellow for the face and orange in the borders."
       },
       {
-        instruction: "Add fine pattern details inside each colour field — parallel lines on garments, dot clusters on lotus petals, scale patterns on fish bodies. The density of interior mark-making gives Madhubani its richness."
+        instruction: "Next add a pop of red in the border and tail of the fish."
       },
       {
-        instruction: "Paint the border band with a repeating pattern in a contrasting colour — rows of dots, triangles, or stylised mango (kalka) forms. The border should feel as intricate as the central image."
+        instruction: "Then paint in green in background of the fishes and other borders."
       },
       {
-        instruction: "Make final adjustments — strengthen any outlines that need sharpening, fill any remaining white gaps, and confirm that every inch of the surface carries pattern or colour. Your Madhubani painting is complete."
+        instruction: "Complete the painting by adding blue in the remaining areas."
       }
     ]
   },
 
-  // ── Phad Painting (20 steps) ──────────────────────────────────────────────
+  // ── Phad Painting (22 steps) ──────────────────────────────────────────────
   phad: {
     name: "Phad Painting",
-    subtitle: "Epic Scroll — Rajasthan",
+    subtitle: "Elephant and Warrior — Rajasthan",
     artformKeys: ["Phad of Rajasthan"],
-    totalSteps: 20,
-    driveUrl: "",
+    totalSteps: 22,
+    driveUrl: "https://drive.google.com/drive/folders/1G62IFretMTA076HpgkrWtrIktnqvGC82",
     steps: [
       {
-        instruction: "Prepare a long horizontal canvas by stretching natural cotton cloth on a frame. Coat it with a paste of chalk or starch to create a smooth, receptive painting ground."
+        instruction: "Lightly sketch the basic outline of the elephant using simple curved lines to define the body mass."
       },
       {
-        instruction: "Sketch the overall layout in pencil. Phad is a narrative scroll — divide the horizontal space into multiple registers (horizontal bands), each containing a scene from the folk hero's story."
+        instruction: "Begin drawing the rider seated on top by sketching a small torso and head above the saddle."
       },
       {
-        instruction: "In the central register, draw the large hero figure — Pabuji or Devnarayan — on horseback. The hero is always the largest figure in the composition, shown in bold profile."
+        instruction: "Extend the trunk downward with a gentle curve and add the curled tip at the end. Draw the legs using thick, slightly tapered forms, positioning them to suggest a walking posture. Add the ear and tail."
       },
       {
-        instruction: "Draw the hero's horse with a curved neck, arched tail, and four hooves clearly shown. Decorate the horse with a patterned saddle and ornamental headgear."
+        instruction: "Define the rider's posture, draw one arm extended forward and the other bent inward."
       },
       {
-        instruction: "Add a canopy (chatri) above the hero's head to signify royal or divine status. Draw banner-carrying attendants flanking the mounted hero on either side."
+        instruction: "Now sketch the decorative saddle cloth over the elephant's back using a rectangular shape with soft edges. Also add details of this drape and poshak (clothes) to the rider."
       },
       {
-        instruction: "Sketch the upper register: draw a row of female figures — the hero's wives or attendant goddesses — standing in graceful profile. Their saris flow behind them in long, sweeping curves."
+        instruction: "Add clothing details such as sleeves, waistband, and draped fabric using flowing lines. Begin decorating the elephant by adding ornamental patterns on the headgear, neck, and saddle."
       },
       {
-        instruction: "In the lower register, sketch the dramatic action scenes — a battle with enemies, a cattle rescue episode, or a demon-slaying sequence. Use dynamic diagonal poses for the fighting figures."
+        instruction: "Now that the base drawing is ready we begin with color. Start coloring by applying a flat yellow base to the decorative cloth and skin of the rider."
       },
       {
-        instruction: "Add the animals of the narrative: camels, cows, peacocks, and snakes winding through the background space. All animals are depicted in clear side profile."
+        instruction: "Add orange to jewellery around the elephant's neck, toes and the rider's headgear."
       },
       {
-        instruction: "Draw the architectural elements — a palace with arched doorways, a temple with a shikhara spire, or a village well with women gathering. These ground the narrative in a recognisable landscape."
+        instruction: "Next use green to build in contrast and paint the fabrics of the rider and the elephant's saddle."
       },
       {
-        instruction: "Sketch the trees and vegetation — stylised trees with round canopies and straight trunks, always with birds perched in the branches. Tree tops divide the sky area from the narrative below."
+        instruction: "Use red to paint the drape and headgear of the rider."
       },
       {
-        instruction: "Begin applying colour. Fill the background sky area with a flat deep red — red oxide or bright vermilion is the dominant background colour of Phad painting."
+        instruction: "Next use the red to highlight facial features, trunk and eyes of the elephant. Also use it to add contrast to the decorative saddle."
       },
       {
-        instruction: "Apply yellow ochre to the architectural forms (palace walls, temple towers) and fill the ground plane with a warm tan tone."
+        instruction: "Next we start with the outlining using black pen/brush pen. Enhance details by outlining facial features, ornaments, and patterns with black for clarity."
       },
       {
-        instruction: "Paint the hero's costume and horse decoration in bright green and yellow. Apply bold geometric patterns to garments — Phad figures wear ornately decorated dhotis and angarkhas."
+        instruction: "Similarly outline the fabric details on the torso and the folds of the fabric using black."
       },
       {
-        instruction: "Colour the female figures in pink, orange, and saffron. Use flat, unshaded colour fills — Phad colour is opaque and decisive, never graduated or blended."
+        instruction: "Next we move on to the lower torso. Complete it with black outlines."
       },
       {
-        instruction: "Fill the battle scenes with contrasting hues — blue for enemy figures, green for the hero's allies — to help the viewer follow the narrative across the scroll."
+        instruction: "Draw bold outline around the elephant's face to highlight the jewellery and his eyes. Fold of his trunk and ears."
       },
       {
-        instruction: "Paint the animals with characteristic Phad body decoration — painted spots, saddlecloths, and ornamental trappings on every animal, making each one visually distinct."
+        instruction: "Then draw the neck piece and the front leg and a rope which is held by the rider."
       },
       {
-        instruction: "Begin the detailed black outline pass. Using a fine brush loaded with carbon black, trace every contour of every figure, from the topmost register to the bottom."
+        instruction: "Complete the next two legs similarly. The key here is to keep the lines clean."
       },
       {
-        instruction: "Add fine interior detailing lines — the feathers of peacocks, the scales of snakes, the woven patterns of garments, the veins of leaves. The bold black line holds the entire Phad composition together."
+        instruction: "Finish the last leg and tail of the elephant similarly, adding and outlining all the details."
       },
       {
-        instruction: "Draw the outer border of the scroll: a decorative edge of repeating floral or geometric motifs frames the entire painting on all four sides."
+        instruction: "Next we add decorative details to the saddle. Complete it with neat and clean borders."
       },
       {
-        instruction: "Review the scroll and complete any remaining fill areas — sharpen outlines, fill white gaps, and confirm all narrative scenes read clearly from end to end. Your Phad painting is complete."
+        instruction: "Now paint the elephant black. Be careful around the eyes."
+      },
+      {
+        instruction: "Once the black paint dries add small details around his face and fabric using white dots."
+      },
+      {
+        instruction: "Next paint a red border around the drawing to complete the painting."
       }
     ]
   },
@@ -513,70 +549,70 @@ const TUTORIAL_DATA = {
   // ── Pitchwai Painting (20 steps) ──────────────────────────────────────────
   pitchwai: {
     name: "Pitchwai Painting",
-    subtitle: "Shrinathji & Cows — Nathdwara, Rajasthan",
+    subtitle: "Lotus and Cow — Nathdwara, Rajasthan",
     artformKeys: ["Pichhwai of Rajasthan"],
     totalSteps: 20,
-    driveUrl: "",
+    driveUrl: "https://drive.google.com/drive/folders/1yR4qjllFfJvAL9fUK8tRW5q6jXiD8kct",
     steps: [
       {
-        instruction: "Prepare a fine-weave cotton cloth by coating it with starch paste, then polishing the dried surface with a smooth stone to create an even, semi-luminous ground for painting."
+        instruction: "Start by lightly sketching the main subject, a cow. Place it slightly off-center to allow space for background elements. Draw the basic body of the cow using a large horizontal oval, ensuring the form feels full and balanced."
       },
       {
-        instruction: "Lightly sketch the full composition in chalk or pencil. Pitchwai is a radial composition — all elements radiate outward from the central figure of Shrinathji standing with his left arm raised."
+        instruction: "Next we need to add lotus buds and stems in the background to make the composition look beautiful and balanced."
       },
       {
-        instruction: "Draw the central figure of Shrinathji: a slightly stocky figure with the raised left arm, the characteristic flat-topped hairdo, and the divine peacock-feather crown."
+        instruction: "After finishing the lotus, define the snout and forehead of the cow with gentle curves. Start adding jewellery around the horns and neck."
       },
       {
-        instruction: "Draw the cow herd around Shrinathji — cows stand on either side, their heads turned toward the deity in devotion. Cows are always depicted in graceful profile with large, expressive eyes."
+        instruction: "Lightly mark the placement of the eyes, nose, and mouth, keeping the expression calm and gentle. Refine the ears and horns using soft curved lines, keeping them symmetrical and elegant."
       },
       {
-        instruction: "Sketch the gopis (cowherd maidens) — rows of slim female figures flanking the cows, standing with hands raised in prayer or holding offerings of flowers and butter."
+        instruction: "Lightly draw a rectangular border near the edges of the page to frame the composition. Next fill it with a bright yellow color — this is our base."
       },
       {
-        instruction: "Draw kadamba trees rising symmetrically on both sides of the composition. Depict them with round leafy canopies and hanging strands of orange blooms — the signature tree of Krishna's Vrindavan."
+        instruction: "Now we begin painting white base on one of the petals of the lotus."
       },
       {
-        instruction: "At the base of the composition, draw a lotus pond — large circular blooms and pads fill the lower section, with ducks and fish swimming between them."
+        instruction: "Next we are going to begin with shading. Add a slight shade of pink on the top which smoothens out into the white."
       },
       {
-        instruction: "Across the top of the painting, sketch an elaborate garland of flowers suspended in arcs between the tree tops — marigolds and chameli blossoms strung on looping chains."
+        instruction: "Similarly take some yellow and paint it on the lower end of the petal and blur it into the white."
       },
       {
-        instruction: "Add celestial elements in the sky: a large moon with a face (chandra), a radiant sun, and small deer or peacocks perched among the tree branches."
+        instruction: "Follow the same steps to paint all the lotus petals and the buds."
       },
       {
-        instruction: "Sketch a decorative border around the entire canvas — an outer frame of repeating lotus-bud chains or scrolling vine that contains and completes the whole composition."
+        instruction: "Next add in the pink and yellow shading to bring in the depth."
       },
       {
-        instruction: "Begin painting the deep background. Fill the entire sky and all empty areas with a rich midnight blue or black — this dark ground is the most immediately recognisable feature of classic Pitchwai."
+        instruction: "Once done, to define these flowers we will take a deeper shade of pink and outline all the flowers and buds."
       },
       {
-        instruction: "Apply deep green to the tree canopies and lotus leaves. Leave the flower outlines unpainted for now — they will be filled with contrasting colours in a later step."
+        instruction: "Next we start filling the stems and leaves with a slightly darker shade of green."
       },
       {
-        instruction: "Paint Shrinathji's body using a deep blue-black tone (Krishna's divine complexion). Fill his pitamba (dhoti) with a flat bright yellow — the contrast of blue body and yellow cloth is iconic."
+        instruction: "Next we take a lighter green and finish the leaves and add a small line of detail over the darker green."
       },
       {
-        instruction: "Fill the gopis' garments in a range of jewel tones — deep red, saffron, pink, and olive green. Each gopi wears a slightly different colour to individualise her within the devotional group."
+        instruction: "Use the darker green to create blobs over the leaf and create depth."
       },
       {
-        instruction: "Paint the cows in white with subtle pink detailing around the eyes and muzzle. Decorate their bodies with small painted flower garlands in red and orange."
+        instruction: "Next paint a section of horns in bright red and the hump of the cow in orange."
       },
       {
-        instruction: "Fill the lotus blooms in pink and deep red, and the pads in green. Paint the marigold garland across the top in golden yellow and the chameli blossoms in white."
+        instruction: "Then use gold paint to fill in all the jewellery around the horns and the neck."
       },
       {
-        instruction: "Add Shrinathji's elaborate jewellery — layered ratna necklaces, kundan earrings, and the ornamental waistband — using a fine brush to paint each ornament in delicate gold lines."
+        instruction: "Once the gold paint dries take some brown paint on a thin brush and outline all the jewellery and fill it with simple but intricate patterns."
       },
       {
-        instruction: "Paint the intricate pattern on Shrinathji's yellow pitamba — typically a geometric grid of small diamonds or floral medallions in a slightly darker gold tone."
+        instruction: "Next using a black paint draw delicate eyes and nose."
       },
       {
-        instruction: "Begin the final outline reinforcement: using a very fine brush loaded with carbon black, sharpen every figure contour, facial feature, jewellery edge, and leaf outline across the entire composition."
+        instruction: "Take a flat brush, and paint around the border of the cow to highlight all the curves and turns of the body."
       },
       {
-        instruction: "Complete the border decoration with repeating floral motifs in contrasting colours against the dark ground. Add final white dot accents — stars, dewdrops, and eye highlights — to bring the painting to life. Your Pitchwai painting is complete."
+        instruction: "To complete the painting outline the cow using a thin brush. The brown outline will make the central figure pop against the background."
       }
     ]
   },

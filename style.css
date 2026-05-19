@@ -2088,3 +2088,226 @@ h3.card-heading {
   opacity: 1;
   transform: translateY(0);
 }
+
+
+/* ── Art Passport Screen ──────────────────────────────────────────────────── */
+
+#screen-passport {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: var(--paper-warm);
+  padding: 0;
+}
+
+.passport-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px 10px;
+  flex-shrink: 0;
+}
+
+.passport-title {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--deep-brown);
+  margin: 0;
+  text-align: center;
+}
+
+.passport-count {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--terracotta);
+  background: rgba(185, 64, 18, 0.1);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#passport-map {
+  height: 260px;
+  width: 100%;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(58, 26, 2, 0.1);
+  border-bottom: 1px solid rgba(58, 26, 2, 0.1);
+}
+
+.passport-grid-section {
+  padding: 18px 16px 48px;
+}
+
+.passport-grid-title {
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--deep-brown);
+  opacity: 0.45;
+  margin: 0 0 12px;
+}
+
+.passport-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+@media (min-width: 600px) {
+  .passport-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 900px) {
+  .passport-grid { grid-template-columns: repeat(4, 1fr); }
+  #passport-map  { height: 320px; }
+}
+
+.stamp-card {
+  border: 1.5px solid rgba(58, 26, 2, 0.14);
+  border-radius: 10px;
+  padding: 13px 10px 10px;
+  background: var(--paper-warm);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.stamp-card--earned {
+  border-color: var(--terracotta);
+  background: #fff9f2;
+  box-shadow: 0 2px 10px rgba(185, 64, 18, 0.1);
+}
+
+.stamp-card--info {
+  opacity: 0.5;
+}
+
+.stamp-seal {
+  font-size: 1.25rem;
+  color: var(--terracotta);
+  margin-bottom: 5px;
+  display: block;
+  animation: stampPop 0.4s ease;
+}
+
+.stamp-lock {
+  font-size: 1.25rem;
+  color: var(--deep-brown);
+  opacity: 0.2;
+  margin-bottom: 5px;
+  display: block;
+}
+
+@keyframes stampPop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+.stamp-name {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  color: var(--deep-brown);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+
+.stamp-region {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  color: var(--deep-brown);
+  opacity: 0.55;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.stamp-tier {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--terracotta);
+  background: rgba(185, 64, 18, 0.1);
+  padding: 2px 7px;
+  border-radius: 12px;
+  margin-bottom: 2px;
+}
+
+.stamp-score {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  color: var(--deep-brown);
+  opacity: 0.4;
+  margin-top: 1px;
+}
+
+.stamp-hint {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  color: var(--deep-brown);
+  opacity: 0.4;
+  font-style: italic;
+}
+
+/* Passport Leaflet markers */
+.pp-marker {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.pp-marker--earned {
+  background: var(--terracotta);
+  box-shadow: 0 0 0 3px rgba(185, 64, 18, 0.25);
+  animation: ppPulse 2s ease-out infinite;
+}
+
+.pp-marker--locked {
+  background: rgba(58, 26, 2, 0.18);
+  border: 1.5px solid rgba(58, 26, 2, 0.28);
+}
+
+@keyframes ppPulse {
+  0%   { box-shadow: 0 0 0 0   rgba(185, 64, 18, 0.5); }
+  70%  { box-shadow: 0 0 0 9px rgba(185, 64, 18, 0);   }
+  100% { box-shadow: 0 0 0 0   rgba(185, 64, 18, 0);   }
+}
+
+/* Stamp-earned toast */
+.passport-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--deep-brown);
+  color: var(--paper-warm);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 9px 18px;
+  border-radius: 24px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s, transform 0.28s;
+  z-index: 9999;
+}
+
+.passport-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}

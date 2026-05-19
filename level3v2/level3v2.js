@@ -624,6 +624,11 @@ const Level3v2 = (() => {
     document.getElementById('l3e-score').textContent      = rounded;
     document.getElementById('l3e-score-tier').textContent = _scoreTier(score);
     document.getElementById('l3e-score-label').textContent = _scoreLabel(score);
+
+    // Persist to Art Passport if Apprentice tier or above (score ≥ 40)
+    if (score >= 40 && typeof PassportManager !== 'undefined') {
+      PassportManager.save(_tutorialId, rounded, _scoreTier(score));
+    }
     setTimeout(() => _animateRing(score), 60);
     _updateTierDots(score);
 

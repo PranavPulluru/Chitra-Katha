@@ -31,6 +31,130 @@ const ART_IMAGE_FOLDERS = {
 
 
 /* ------------------------------------------------------------------ */
+/*  Art Passport                                                        */
+/* ------------------------------------------------------------------ */
+
+const PassportManager = {
+  STORAGE_KEY:    'chitrakatha_passport',
+  TUTORIAL_COUNT: 9,
+  _map:           null,
+  _toastTimer:    null,
+
+  load() {
+    try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '{}'); }
+    catch { return {}; }
+  },
+
+  // Call after a successful evaluation (score ≥ 40)
+  save(tutorialId, score, tier) {
+    const data  = this.load();
+    const isNew = !data[tutorialId];
+    // Only update if this is a new stamp or a better score
+    if (isNew || score > (data[tutorialId].score || 0)) {
+      data[tutorialId] = { score, tier, earnedAt: new Date().toISOString().slice(0, 10) };
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+      this._updateCounter();
+      if (isNew) this._showToast(tutorialId);
+    }
+  },
+
+  _updateCounter() {
+    const el = document.getElementById('passport-count');
+    if (el) el.textContent = `${Object.keys(this.load()).length} / ${this.TUTORIAL_COUNT}`;
+  },
+
+  _showToast(tutorialId) {
+    const artKey = typeof ARTFORM_TO_TUTORIAL !== 'undefined'
+      ? Object.keys(ARTFORM_TO_TUTORIAL).find(k => ARTFORM_TO_TUTORIAL[k] === tutorialId)
+      : null;
+    const art    = artKey ? ARTFORMS[artKey] : null;
+    const name   = art ? art.name   : tutorialId;
+    const region = art ? art.region : '';
+    const toast  = document.getElementById('passport-toast');
+    if (!toast) return;
+    toast.textContent = `New stamp! ${name} — ${region} ✦`;
+    toast.classList.add('show');
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+  },
+
+  initPassportScreen() {
+    this._updateCounter();
+    this._renderGrid();
+    this._initMap();
+  },
+
+  _renderGrid() {
+    const grid = document.getElementById('passport-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    const data = this.load();
+
+    Object.keys(ARTFORMS).forEach(artKey => {
+      const art    = ARTFORMS[artKey];
+      const tutId  = typeof ARTFORM_TO_TUTORIAL !== 'undefined' ? ARTFORM_TO_TUTORIAL[artKey] : null;
+      const stamp  = tutId ? data[tutId] : null;
+
+      const card = document.createElement('div');
+      card.className = 'stamp-card' + (stamp ? ' stamp-card--earned' : '') + (!tutId ? ' stamp-card--info' : '');
+
+      if (stamp) {
+        card.innerHTML = `
+          <span class="stamp-seal">✦</span>
+          <div class="stamp-name">${art.name}</div>
+          <div class="stamp-region">${art.region}</div>
+          <span class="stamp-tier">${stamp.tier}</span>
+          <span class="stamp-score">${stamp.score} / 100</span>`;
+      } else if (tutId) {
+        card.innerHTML = `
+          <span class="stamp-lock">○</span>
+          <div class="stamp-name">${art.name}</div>
+          <div class="stamp-region">${art.region}</div>
+          <span class="stamp-hint">Complete tutorial to earn</span>`;
+      } else {
+        card.innerHTML = `
+          <span class="stamp-lock">◎</span>
+          <div class="stamp-name">${art.name}</div>
+          <div class="stamp-region">${art.region}</div>`;
+      }
+      grid.appendChild(card);
+    });
+  },
+
+  _initMap() {
+    if (this._map) { this._map.remove(); this._map = null; }
+    const mapEl = document.getElementById('passport-map');
+    if (!mapEl || typeof L === 'undefined') return;
+
+    const data = this.load();
+    this._map  = L.map('passport-map', { zoomControl: true, attributionControl: false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 12 }).addTo(this._map);
+    this._map.setView([22, 82], 4);
+
+    Object.keys(ARTFORMS).forEach(artKey => {
+      const art   = ARTFORMS[artKey];
+      if (!art.coords) return;
+      const tutId = typeof ARTFORM_TO_TUTORIAL !== 'undefined' ? ARTFORM_TO_TUTORIAL[artKey] : null;
+      const stamp = tutId ? data[tutId] : null;
+
+      const icon = L.divIcon({
+        className: '',
+        html:      `<div class="pp-marker ${stamp ? 'pp-marker--earned' : 'pp-marker--locked'}"></div>`,
+        iconSize:  [14, 14],
+        iconAnchor:[7, 7],
+      });
+
+      const popupHtml = stamp
+        ? `<strong>${art.name}</strong><br>${stamp.tier} &middot; ${stamp.score}/100`
+        : `<strong>${art.name}</strong><br>${art.region}${tutId ? '<br><em>Try the tutorial to earn a stamp</em>' : ''}`;
+
+      L.marker(art.coords, { icon }).addTo(this._map).bindPopup(popupHtml);
+    });
+  },
+};
+
+
+/* ------------------------------------------------------------------ */
 /*  Screen transitions                                                  */
 /* ------------------------------------------------------------------ */
 
@@ -41,6 +165,7 @@ function showScreen(id) {
     t.classList.toggle('active', t.dataset.screen === id)
   );
   applyUITranslations(currentLang);
+  if (id === 'screen-passport') PassportManager.initPassportScreen();
 }
 
 
@@ -176,9 +301,8 @@ function getLangData(art, lang) {
   return {
     ...art,
     tagline:      t.tagline      || art.tagline,
-    tools:        t.tools        || art.tools,
-    surface:      t.surface      || art.surface,
-    colours:      t.colours      || art.colours,
+    community:    t.community    || art.community,
+    medium:       t.medium       || art.medium,
     significance: t.significance || art.significance,
   };
 }
@@ -204,9 +328,8 @@ function populateLevel1(key, probability, lang = 'en') {
   document.getElementById('l1-region').textContent       = '✦ ' + art.region.toUpperCase();
   document.getElementById('l1-name').textContent         = art.name;
   document.getElementById('l1-tagline').textContent      = data.tagline;
-  document.getElementById('l1-tools').textContent        = data.tools;
-  document.getElementById('l1-surface').textContent      = data.surface;
-  document.getElementById('l1-colours').textContent      = data.colours;
+  document.getElementById('l1-community').textContent    = data.community;
+  document.getElementById('l1-medium').textContent       = data.medium;
   document.getElementById('l1-significance').textContent = data.significance;
 
   const pct = Math.round(probability * 100);
@@ -388,6 +511,9 @@ document.getElementById('l4-back-btn').addEventListener('click', () => {
   Level4.goBack();
 });
 
+// Passport back button
+document.getElementById('passport-back').addEventListener('click', () => showScreen('screen-home'));
+
 // Language switcher — handles both mobile (#lang-row) and desktop (#l1-hero-langs)
 function _handleLangClick(e) {
   const btn = e.target.closest('.lang-btn');
@@ -404,7 +530,7 @@ document.getElementById('l1-hero-langs').addEventListener('click', _handleLangCl
 // Language pill dropdown (desktop nav)
 const langBtn      = document.getElementById('wn-lang-btn');
 const langDropdown = document.getElementById('wn-lang-dropdown');
-const LANG_LABELS  = { en: 'EN', hi: 'हि', bn: 'বা', ta: 'த', gu: 'ગુ', mr: 'मर' };
+const LANG_LABELS  = { en: 'EN', hi: 'हि', bn: 'বা', ta: 'த', gu: 'ગુ', mr: 'मर', pa: 'ਪੰ' };
 
 langBtn.addEventListener('click', (e) => {
   e.stopPropagation();

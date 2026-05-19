@@ -6,101 +6,101 @@
  * Note: 'Sanji Art  of Uttar Pradesh' has a genuine double-space in the
  * model's label — kept here to match.
  *
- * Fields: name, region, coords, tagline, tools, surface, colours,
- *         significance, translations { hi, bn, ta, gu, mr }
- * Each translation has: tagline (translated), plus significance/tools/
- * surface/colours (empty stubs — fall back to English when blank).
+ * Fields: name, region, coords, community, medium, significance, tagline,
+ *         translations { hi, bn, ta, gu, mr, pa }
+ * Each translation has: community, medium, significance, tagline.
+ * Empty strings fall back to English in getLangData().
  */
 
 const ARTFORMS = {
 
   "Gond Art of Madhya Pradesh": {
     name: "Gond Art",
-    region: "Madhya Pradesh (Mandla, Dindori)",
+    region: "Madhya Pradesh",
     coords: [22.5, 80.5],
-    tagline: "The pulse of the forest in every line",
-    tools: "Fine-tipped brushes, pens, or even fingers for linear designs.",
-    surface: "Walls, floors, or handmade paper and canvas.",
-    colours: "Natural pigments from charcoal, colored soil, and plant sap.",
-    significance: "Uses dots and lines to create a sense of movement. Themes revolve around nature and the belief that 'viewing a good image brings good luck.'",
+    community: "Gond Tribe",
+    medium: "Natural colors on walls, floors, or canvas.",
+    significance: "Celebrates nature and folklore; believed to bring good luck to the home.",
+    tagline: "Mesmerizing patterns of dots and lines that bring nature to life.",
     translations: {
-      hi: { tagline: "हर रेखा में जंगल की धड़कन", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "প্রতিটি রেখায় অরণ্যের স্পন্দন", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "ஒவ்வொரு கோட்டிலும் காட்டின் துடிப்பு", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "प्रत्येक रेषेत जंगलाची स्पंदने", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "गोंड", medium: "दीवारों, फर्श या कैनवास पर प्राकृतिक रंग।", significance: "प्रकृति और लोककथाओं का उत्सव मनाता है; माना जाता है कि यह घर में सौभाग्य लाता है।", tagline: "प्रकृति को जीवंत करने वाले बिंदुओं और रेखाओं के मनमोहक पैटर्न।" },
+      bn: { community: "গোণ্ড", medium: "দেওয়াল, মেঝে বা ক্যানভাসে প্রাকৃতিক রঙ।", significance: "প্রকৃতি ও লোককাহিনী উদযাপন করে; যা বাড়িতে সৌভাগ্য বয়ে আনে বলে বিশ্বাস।", tagline: "বিন্দু এবং রেখার অত্যাশ্চর্য নিদর্শন যা প্রকৃতিকে জীবন্ত করে তোলে।" },
+      ta: { community: "கோண்ட்", medium: "சுவர்கள், தரை அல்லது கேன்வாஸில் இயற்கையான வண்ணங்கள் பூசப்பட்டிருக்கும்.", significance: "இயற்கையையும் நாட்டுப்புறக் கதைகளையும் கொண்டாடுகிறது; இது வீட்டிற்கு நல்ல அதிர்ஷ்டத்தை கொண்டுவரும் என்று நம்பப்படுகிறது.", tagline: "இயற்கையை உயிர்ப்புடன் கொண்டுவரும் புள்ளிகள் மற்றும் கோடுகளின் மெய்மறக்கும் வடிவங்கள்." },
+      gu: { community: "ગોંડ", medium: "દિવાલો, માળ અથવા કેનવાસ પર કુદરતી રંગો.", significance: "પ્રકૃતિ અને લોકકથાઓની ઉજવણી કરે છે; જે ઘરમાં સારા નસીબ લાવે છે તેવું માનવામાં આવે છે.", tagline: "બિંદુઓ અને રેખાઓના મેસ્મેરાઇઝિંગ પેટર્ન જે પ્રકૃતિને જીવંત બનાવે છે." },
+      mr: { community: "गोंड", medium: "कागदावरचे जलरंग.", significance: "निसर्ग आणि लोककथा साजरे करते; घराच्या सुभाग्यासाठी मानले जाते.", tagline: "निसर्गाला जिवंत करणाऱ्या ठिपक्यांच्या आणि रेषांच्या मंत्रमुग्ध करणाऱ्या रचना." },
+      pa: { community: "ਗੋੰਡ", medium: "ਕੰਧਾਂ, ਫਰਸ਼ ਜਾਂ ਕੈਨਵਸ ਉੱਤੇ ਕੁਦਰਤੀ ਰੰਗ।", significance: "ਕੁਦਰਤ ਅਤੇ ਲੋਕ-ਕਥਾਵਾਂ ਦਾ ਜਸ਼ਨ ਮਨਾਉਂਦਾ ਹੈ; ਘਰ ਵਿੱਚ ਚੰਗੀ ਕਿਸਮਤ ਲਿਆਉਣ ਦਾ ਮੰਨਿਆ ਜਾਂਦਾ ਹੈ।", tagline: "ਬਿੰਦੂਆਂ ਅਤੇ ਲਾਈਨਾਂ ਦੇ ਮੰਤਰਮੁੱਖੀ ਨਮੂਨੇ ਜੋ ਕੁਦਰਤ ਨੂੰ ਜੀਵੰਤ ਬਣਾਉਂਦੇ ਹਨ।" }
     }
   },
 
   "Kalighat of Bengal": {
     name: "Kalighat Painting",
-    region: "Kolkata, West Bengal",
+    region: "West Bengal (Kolkata)",
     coords: [22.52, 88.36],
-    tagline: "Sacred devotion meets sharp social wit",
-    tools: "Squirrel hair or goat hair brushes.",
-    surface: "Mill-made paper.",
-    colours: "Water-based pigments; often features silver or tin for jewelry.",
-    significance: "Originated near Kalighat Temple. Known for broad, sweeping brushstrokes and satirical depictions of daily life/social changes.",
+    community: "Patuas",
+    medium: "Watercolors on paper.",
+    significance: "Originally religious; evolved into social satire of 19th-century colonial life.",
+    tagline: "Bold, sweeping brushstrokes that satirized colonial society.",
     translations: {
-      hi: { tagline: "पवित्र भक्ति और तीखी सामाजिक व्यंग्य का संगम", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "পবিত্র ভক্তি মেলে তীক্ষ্ণ সামাজিক ব্যঙ্গের সাথে", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "புனித பக்தியும் கூர்மையான சமூக நகைச்சுவையும்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "पवित्र भक्ती आणि तीव्र सामाजिक व्यंग्य", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "पटूआ", medium: "कागज पर जलरंग।", significance: "मूल रूप से धार्मिक; १९वीं सदी के औपनिवेशिक जीवन के सामाजिक व्यंग्य में विकसित हुआ।", tagline: "बोल्ड, व्यापक ब्रशस्ट्रोक जो औपनिवेशिक समाज का व्यंग्य करते थे।" },
+      bn: { community: "পাটাতন", medium: "কাগজে জলরং।", significance: "মূলত ধর্মীয়; ১৯শ শতকের ঔপনিবেশিক জীবনের সামাজিক ব্যঙ্গাত্মক রূপ নেয়।", tagline: "বোল্ড, বিস্তৃত ব্রাশস্ট্রোক যা ঔপনিবেশিক সমাজকে উপহাস করেছিল।" },
+      ta: { community: "பட்டுப்புடவை", medium: "காகிதத்தில் நீர் வண்ண ஓவியங்கள்.", significance: "முதலில் மதச்சார்புடையதாக இருந்த இது, ௧௯ஆம் நூற்றாண்டின் காலனித்துவ வாழ்க்கையின் சமூக நையாண்டியாக உருவெடுத்தது.", tagline: "காலனித்துவ சமாஜத்தை கேலி செய்யும் வகையில், தடித்த, பரந்த ஓவியங்கள்." },
+      gu: { community: "પતૂરા", medium: "કાગળ પર જળરંગો.", significance: "મૂળ ધાર્મિક; ૧૯મી સદીના વસાહતી જીવનના સામાજિક વ્યંગ્યમાં વિકસિત થયું.", tagline: "બોલ્ડ, વ્યાપક બ્રશસ્ટ્રોક કે જે વસાહતી સમાજનું વ્યંગ્ય કરે છે." },
+      mr: { community: "पाटवा", medium: "चिखल आणि नैसर्गिक रंगद्रव्यांनी मातीच्या भिंती रंगवल्या.", significance: "मूळतः धार्मिक; १९व्या शतकातील वसाहतवादी जीवनाचे सामाजिक उपहासात्मक वर्णन यात विकसित झाले.", tagline: "ठळक, व्यापक ब्रशस्ट्रोक जे वसाहतवादी समाजावर टीकात्मक होते." },
+      pa: { community: "ਪਟੂਆ", medium: "ਕਾਗਜ਼ ਉੱਤੇ ਪਾਣੀ ਰੰਗੀ ਕਲਾ।", significance: "ਮੂਲ ਰੂਪ ਵਿੱਚ ਧਾਰਮਿਕ; ੧੯ਵੀਂ ਸਦੀ ਦੇ ਬਸਤੀਵਾਦੀ ਜੀਵਨ ਦੇ ਸਮਾਜਿਕ ਵਿਅੰਗ ਵਿੱਚ ਵਿਕਸਤ ਹੋਇਆ।", tagline: "ਮੋਟਾ, ਵਿਆਪਕ ਬੁਰਸ਼ ਸਟ੍ਰੋਕ ਜੋ ਬਸਤੀਵਾਦੀ ਸਮਾਜ ਦੀ ਅਲੋਚਨਾ ਕਰਦੇ ਸਨ।" }
     }
   },
 
   "Soharai of Jharkhand": {
     name: "Sohrai Painting",
-    region: "Hazaribagh, Jharkhand",
+    region: "Jharkhand",
     coords: [24.0, 85.3],
-    tagline: "A harvest celebration painted on living walls",
-    tools: "Chewed twigs, cloth rags, or fingers.",
-    surface: "Mud walls of houses.",
-    colours: "Different colored clays (Red, Black, Yellow, White).",
-    significance: "A ritualistic harvest art practiced by women. It celebrates fertility and nature, typically painted after the monsoon.",
+    community: "Santhal, Munda tribes",
+    medium: "Clay and natural pigments on mud walls.",
+    significance: "Harvest festival art; depicts animals and nature to thank deities for crops.",
+    tagline: "A matriarchal harvest art painted on mud walls using natural earth colors.",
     translations: {
-      hi: { tagline: "जीवित दीवारों पर चित्रित फसल उत्सव", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "জীবন্ত দেওয়ালে আঁকা ফসল উৎসব", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "உயிரோட்டமான சுவர்களில் வரையப்பட்ட அறுவடை கொண்டாட்டம்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "जिवंत भिंतींवर रेखाटलेला कापणी उत्सव", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "संथाल, मुंडा जनजातियाँ", medium: "मिट्टी की दीवारों पर मिट्टी और प्राकृतिक वर्णकों से बनी बनावट।", significance: "फसल उत्सव कला; फसलों के लिए देवताओं का धन्यवाद करने के लिए जानवरों और प्रकृति को दर्शाती है।", tagline: "एक मातृसत्तात्मक फसल कला जो प्राकृतिक मिट्टी के रंगों का उपयोग करके मिट्टी की दीवारों पर चित्रित की जाती है।" },
+      bn: { community: "সাঁওতাল, মুন্ডা উপজাতি", medium: "কাদায় মাটি ও প্রাকৃতিক রংয়ের দেওয়াল।", significance: "ফসল কাটার উৎসবের শিল্প; ফসলের জন্য দেবদেবীদের ধন্যবাদ জানাতে প্রাণী এবং প্রকৃতিকে চিত্রিত করে।", tagline: "মাটির দেওয়ালে প্রাকৃতিক মাটির রঙ ব্যবহার করে আঁকা একটি মাতৃতান্ত্রিক ফসল কাটার শিল্প।" },
+      ta: { community: "சாந்தல்கள், முண்டா பழங்குடியினர்", medium: "களிமையும் இயற்கையான நிறமிகளும் சேற்றுச் சுவர்களில்.", significance: "அறுவடைத் திருவிழா கலை; பயிர்களுக்கு தெய்வங்களுக்கு நன்றி தெரிவிக்க விலங்குகளையும் இயற்கையையும் சித்தரிக்கிறது.", tagline: "இயற்கையான மண் வண்ணங்களைப் பயன்படுத்தி, மண் சுவர்களில் வரையப்பட்ட ஒரு தாய்வழிப் பழங்கால அறுவடை கலை." },
+      gu: { community: "સંથલ, મુન્ડા જનજાતિઓ", medium: "કાદવની દિવાલો પર માટી અને કુદરતી રંગદ્રવ્યો.", significance: "લણણી તહેવારની કળા; પાક માટે દેવતાઓને આભાર માનવા માટે પ્રાણીઓ અને પ્રકૃતિને દર્શાવે છે.", tagline: "એક માતૃવંશીય લણણી કળા કુદરતી માટીના રંગોનો ઉપયોગ કરીને કાદવની દિવાલો પર ચિત્રિત કરવામાં આવે છે." },
+      mr: { community: "संथाळ, मुंडा जमाती", medium: "लाकडी फळ्यांवर सोन्याची पाती, दगड आणि रंग.", significance: "कापणीचा उत्सव कला; पिकांसाठी देवतांचे आभार मानण्यासाठी प्राणी आणि निसर्ग चित्रित करते.", tagline: "मातीच्या भिंतींवर नैसर्गिक पृथ्वीच्या रंगांचा वापर करून रंगवलेली मातृसत्ताक कापणीची कला." },
+      pa: { community: "ਸੰਤਾਲ, ਮੁੰਡਾ ਕਬੀਲੇ", medium: "ਮਿੱਟੀ ਦੀਆਂ ਕੰਧਾਂ ਉੱਤੇ ਮਿੱਟੀ ਅਤੇ ਕੁਦਰਤੀ ਰੰਗਦਾਰ ਪਦਾਰਥ।", significance: "ਵਾਢੀ ਦੇ ਤਿਉਹਾਰ ਦੀ ਕਲਾ; ਫਸਲਾਂ ਲਈ ਦੇਵਤਿਆਂ ਦਾ ਧੰਨਵਾਦ ਕਰਨ ਲਈ ਜਾਨਵਰਾਂ ਅਤੇ ਕੁਦਰਤ ਨੂੰ ਦਰਸਾਉਂਦੀ ਹੈ।", tagline: "ਇੱਕ ਮਾਤ੍ਰਵਾਦੀ ਵਾਢੀ ਕਲਾ ਜੋ ਕੁਦਰਤੀ ਧਰਤੀ ਦੇ ਰੰਗਾਂ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਮਿੱਟੀ ਦੀਆਂ ਕੰਧਾਂ ਉੱਤੇ ਪੇਂਟ ਕੀਤੀ ਜਾਂਦੀ ਹੈ।" }
     }
   },
 
   "Tanjore Painting of Tamil Nadu": {
     name: "Tanjore Painting",
-    region: "Thanjavur, Tamil Nadu",
+    region: "Tamil Nadu",
     coords: [10.78, 79.13],
-    tagline: "Devotion rendered in gold and gemstone",
-    tools: "Brushes; wooden planks (Palagai Padam).",
-    surface: "Wooden planks coated with lime/chalk and gum.",
-    colours: "Vivid mineral colors, precious stones, and thick gold foil.",
-    significance: "High-relief (3D) effect. Primarily depicts deities (like infant Krishna) with round faces and large eyes.",
+    community: "Raju & Naidu communities",
+    medium: "Gold foil, stones, and paint on wooden planks.",
+    significance: "Devotional icons of Hindu deities; known for 3D texture and regal appearance.",
+    tagline: "An opulent \"gold-leaf\" devotional art featuring embedded semi-precious stones.",
     translations: {
-      hi: { tagline: "सोने और रत्नपाषाण में ढली भक्ति", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "সোনা ও রত্নপাথরে গড়া ভক্তি", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "தங்கமும் மணிகளும் செய்யும் பக்தி", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "सोने आणि रत्नांमध्ये रेखाटलेली भक्ती", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "राजू और नायडू समुदाय", medium: "लकड़ी के तख्तों पर सोने की पन्नी, पत्थर और रंग चढ़ाया जाता है।", significance: "हिंदू देवताओं की भक्ति प्रतिमाएँ; ३डी बनावट और राजसी रूप के लिए जानी जाती हैं।", tagline: "एक शानदार \"सोने की पत्ती\" की भक्ति कला जिसमें अंतर्निहित अर्ध-कीमती पत्थर हैं।" },
+      bn: { community: "রাজু ও নাইডু সম্প্রদায়", medium: "কাঠের তক্তায় সোনার ফয়েল, পাথর এবং রঙ লাগিয়ে দেওয়া।", significance: "হিন্দু দেবদেবীদের ভক্তির প্রতীক মূর্তি; যা ৩ডি টেক্সচার এবং রাজকীয় চেহারার জন্য পরিচিত।", tagline: "একটি বিলাসবহুল \"সোনার পাতার\" ভক্তিমূলক শিল্প যা অন্তর্নিহিত অর্ধ-মূল্যবান পাথরকে বৈশিষ্ট্যযুক্ত করে।" },
+      ta: { community: "ராஜா மற்றும் நாயுடு சமூகங்கள்", medium: "தங்கப் படலம், கற்கள் மற்றும் மரத் தகடுகளில் வண்ணம் பூசப்படுகிறது.", significance: "ஹிந்து தெய்வங்களின் பக்திப் படங்கள்; ௩டி அமைப்பு மற்றும் அரச தோற்றத்திற்கு பெயர் பெற்றவை.", tagline: "ஒரு ஆடம்பரமான \"தங்க-தகடு\" பக்தி கலை, உட்பகுதியில் அரை விலையுயர்ந்த கற்களைக் கொண்டுள்ளது." },
+      gu: { community: "રાજુ અને નાયડુ સમુદાયો", medium: "લાકડાના સુંવાળા પાટિયાઓ પર સોનાનો વરખ, પથ્થરો અને રંગ.", significance: "હિંદુ દેવી-દેવતાઓનાં ભક્તિ ચિહ્નો; ૩D ટેક્સચર અને રાજવી દેખાવ માટે જાણીતા છે.", tagline: "એક ભવ્ય \"સોનાના પાંદડા\" ભક્તિ કલા જેમાં અર્ધ-કીમતી પથ્થરો અંકિત કરવામાં આવ્યા છે." },
+      mr: { community: "राजू आणि नायडू समुदाय", medium: "बांबूच्या पेनचा वापर करून सुती कापडावर नैसर्गिक रंग.", significance: "हिंदू देवतांची भक्ती प्रतिमा; ३डी पोत आणि राजेशाही स्वरूपासाठी ओळखल्या जातात.", tagline: "एक भव्य \"सोनेरी पाती\" भक्ति कला ज्यामध्ये अंतर्भूत अर्ध-मौल्यवान दगड आहेत." },
+      pa: { community: "ਰਾਜੂ ਅਤੇ ਨਾਇਡੂ ਭਾਈਚਾਰੇ", medium: "ਲੱਕੜ ਦੇ ਪਲੇਟਾਂ ਉੱਤੇ ਸੋਨੇ ਦੀ ਫੁਆਇਲ, ਪੱਥਰ ਅਤੇ ਰੰਗ।", significance: "ਹਿੰਦੂ ਦੇਵਤਿਆਂ ਦੀਆਂ ਭਗਤੀ ਮੂਰਤੀਆਂ; ੩ਡੀ. ਟੈਕਸਟ ਅਤੇ ਸ਼ਾਹੀ ਦਿੱਖ ਲਈ ਜਾਣੀਆਂ ਜਾਂਦੀਆਂ ਹਨ।", tagline: "ਇੱਕ ਸ਼ਾਨਦਾਰ \"ਸੋਨੇ-ਪੱਤੇ\" ਭਗਤੀ ਕਲਾ ਜਿਸ ਵਿੱਚ ਅਰਧ-ਕੀਮਤੀ ਪੱਥਰ ਸ਼ਾਮਲ ਹਨ।" }
     }
   },
 
   "Kalamkari Of Tamil Nadu": {
-    name: "Kalamkari (Srikalahasti)",
+    name: "Kalamkari",
     region: "Andhra Pradesh",
     coords: [14.5, 79.5],
-    tagline: "A pen's journey through myth and cloth",
-    tools: "Kalam (bamboo pen) with a felt/cloth tip.",
-    surface: "Cotton cloth treated with milk and myrobalan.",
-    colours: "Vegetable dyes; fermented jaggery and iron for black.",
-    significance: "\"Kalam\" means pen, \"Kari\" means work. Features the Srikalahasti style (freehand drawing) and Masulipatnam style (block printing).",
+    community: "Chitaras (Srikalahasti/Machilipatnam)",
+    medium: "Natural dyes on cotton fabric using a bamboo pen.",
+    significance: "Narrates Hindu epics (Ramayana/Mahabharata) through intricate textile art.",
+    tagline: "Intricate storytelling on fabric hand-painted with a \"Kalam\" (bamboo pen).",
     translations: {
-      hi: { tagline: "कलम की यात्रा मिथक और वस्त्र के माध्यम से", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "কলমের পথে পৌরাণিক কাহিনি ও বস্ত্রের মধ্য দিয়ে", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "கடவுளின் கதையை துணியில் எழுதும் கலம்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "पौराणिक कथा आणि कापडातून कलमाचा प्रवास", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "चित्तार", medium: "बांस की कलम का उपयोग करके सूती कपड़े पर प्राकृतिक रंग।", significance: "जटिल कपड़ा कला के माध्यम से हिंदू महाकाव्यों (रामायण/महाभारत) की कथाएं सुनाता है।", tagline: "कपड़े पर \"कलाम\" (बांस की कलम) से हाथ से चित्रित विस्तृत कहानी।" },
+      bn: { community: "চিতারা", medium: "বাঁশের কলম ব্যবহার করে তুলোর কাপড়ের উপর প্রাকৃতিক রং।", significance: "সূক্ষ্ম বস্ত্রশিল্পের মাধ্যমে হিন্দু মহাকাব্য (রামায়ণ/মহাভারত) বর্ণনা করেন।", tagline: "কাপড়ের উপর সূক্ষ্ম গল্প বলা হয় \"কালাম\" (বাঁশের কলম) দিয়ে হাতে আঁকা।" },
+      ta: { community: "சிதாரைகள் (ஸ்ரீகாளஹஸ்தி/மச்சிலிபட்னம்)", medium: "மூங்கில் பேனாவைப் பயன்படுத்தி பருத்தி துணியில் இயற்கை சாயங்கள் பூசப்படுகின்றன.", significance: "சிக்கலான ஜவுளி கலை மூலம் இந்து காவியங்களை (ராமாயணம்/மகாபாரதம்) விவரிக்கிறது.", tagline: "கை வண்ணம் பூசப்பட்ட ஒரு \"கலம்\" (வாழைப்பழக் குச்சி) கொண்டு துணியில் நுணுக்கமான கதை சொல்லும் முறை." },
+      gu: { community: "ચિત્રા", medium: "વાંસની પેનથી કપાસના કાપડ પર કુદરતી રંગો.", significance: "જટિલ કાપડ કલા દ્વારા હિંદુ મહાકાવ્યો (રામાયણ/મહાભારત) વર્ણવે છે.", tagline: "કાપડ પર હાથથી રંગેલા \"કલામ\" (બાવડાના પેન) સાથે સૂક્ષ્મ વાર્તા કહેવી." },
+      mr: { community: "चित्तार", medium: "कागदावर छपाई.", significance: "कापडकलेच्या बारीक कलांद्वारे हिंदू महाकाव्यांचे (रामायण/महाभारत) कथन करतो.", tagline: "कापडावर \"कलाम\" (बांबूची पेन) ने हाताने रंगवलेल्या बारीक कथाकथनासह." },
+      pa: { community: "ਚਿਤਾਰਾ", medium: "ਬਾਂਸ ਦੀ ਪੈੱਨ ਨਾਲ ਕਪਾਹ ਦੇ ਕੱਪੜੇ ਉੱਤੇ ਕੁਦਰਤੀ ਰੰਗ।", significance: "ਗੁੰਝਲਦਾਰ ਟੈਕਸਟਾਈਲ ਕਲਾ ਰਾਹੀਂ ਹਿੰਦੂ ਮਹਾਂਕਾਵਿਆਂ (ਰਾਮਾਇਣ/ਮਹਾਭਾਰਤ) ਦਾ ਵਰਣਨ ਕਰਦਾ ਹੈ।", tagline: "ਕੱਪੜੇ 'ਤੇ ਹੱਥ ਨਾਲ ਪੇਂਟ ਕੀਤੀ ਗਈ ਇੱਕ \"ਕਲਾਮ\" (ਬਾਂਸ ਦੀ ਪੈੱਨ) ਨਾਲ ਸੂਖਮ ਕਹਾਣੀ ਕਥਨ।" }
     }
   },
 
@@ -108,107 +108,107 @@ const ARTFORMS = {
     name: "Sanji Art",
     region: "Uttar Pradesh (Mathura)",
     coords: [27.5, 77.7],
-    tagline: "Stencilled flowers as an offering to Krishna",
-    tools: "Specialized fine scissors or stencils.",
-    surface: "Floors, walls, or water surfaces.",
-    colours: "Dry pigments (gulal) or flower petals.",
-    significance: "Though it uses stencils, it is the art of hand-cutting to create intricate silhouettes of Krishna's life. It is often floated on water to create a painting.",
+    community: "Vaishnava community",
+    medium: "Paper stenciling.",
+    significance: "Ritualistic art dedicated to Lord Krishna; used for temple floor decorations.",
+    tagline: "The delicate \"art of hand-cutting\" paper stencils to create ritual floor patterns.",
     translations: {
-      hi: { tagline: "कृष्ण को समर्पित स्टेंसिल से बने फूल", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "কৃষ্ণের পূজায় স্টেনসিল-কাটা ফুল", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "கிருஷ்ணனுக்கு அர்ப்பணிக்கப்பட்ட ஸ்டென்சில் மலர்கள்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "कृष्णाला अर्पण केलेली स्टेन्सिलमधून साकारलेली फुले", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "वैष्णव", medium: "कागज़ का स्टेंसिलिंग।", significance: "अनुष्ठानिक कला जो भगवान कृष्ण को समर्पित है; मंदिर के फर्श सजावट के लिए उपयोग की जाती है।", tagline: "अनुष्ठानिक फर्श के पैटर्न बनाने के लिए नाजुक \"हाथ से काटने की कला\" वाले कागज़ के स्टेंसिल।" },
+      bn: { community: "বৈষ্ণব সম্প্রদায়", medium: "কাগজের ছাপিয়ে দেওয়া।", significance: "ভগবান কৃষ্ণের প্রতি উৎসর্গীকৃত ধর্মীয় শিল্প; মন্দিরের মেঝে সাজানোর জন্য ব্যবহৃত হয়।", tagline: "আচার-অনুষ্ঠানের মেঝে নকশা তৈরি করতে সূক্ষ্ম \"হাত-কাটা\" কাগজের স্টেনসিলের ব্যবহার।" },
+      ta: { community: "வைஷ்ணவர்கள்", medium: "காகிதத்தில் அச்சிடப்பட்ட எழுத்துக்கள்.", significance: "சடங்குமுறை கலை, பகவான் ஸ்ரீ கிருஷ்ணருக்கு அர்ப்பணிக்கப்பட்ட; கோயில் தரை அலங்காரத்திற்கு பயன்படுத்தப்படுகிறது.", tagline: "சடங்குமுறை தரை வடிவங்களை உருவாக்க காகிதத்தில் உள்ள நுணுக்கமான \"கை-வெட்டுவதற்கான\" செதுக்கு நுட்பம்." },
+      gu: { community: "વૈષ્ણવ", medium: "કાગળનું સ્ટેન્સિલિંગ.", significance: "ધાર્મિક કલા ભગવાન કૃષ્ણને સમર્પિત છે; મંદિરના માળની સજાવટ માટે વપરાય છે.", tagline: "ધાર્મિક ફ્લોર પેટર્ન બનાવવા માટે કાગળના નાજુક \"હાથથી કાપવાની\" સ્ટેન્સિલ." },
+      mr: { community: "वैष्णव", medium: "लाल रंग (माती) असलेल्या भिंतींवर तांदळाची पेस्ट.", significance: "भगवान कृष्णाला समर्पित धार्मिक कला; मंदिरांच्या फरशी सजवण्यासाठी वापरली जाते.", tagline: "विधींच्या फरशीवरील नमुने तयार करण्यासाठी हाताने कागदाचे काटेरी \"कला\" करून तयार केलेले नक्षीपट." },
+      pa: { community: "ਵੈਸ਼ਣਵ", medium: "ਕਾਗਜ਼ ਤੋਂ ਛਾਂਟੀ ਕਰਨਾ।", significance: "ਰਸਮੀ ਕਲਾ ਜੋ ਭਗਵਾਨ ਕ੍ਰਿਸ਼ਨ ਨੂੰ ਸਮਰਪਿਤ ਹੈ; ਮੰਦਰ ਦੇ ਫਰਸ਼ਾਂ ਨੂੰ ਸਜਾਉਣ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਹੈ।", tagline: "ਰਸਮਾਂ ਦੇ ਫਰਸ਼ ਦੇ ਨਮੂਨੇ ਬਣਾਉਣ ਲਈ \"ਹੱਥ ਨਾਲ ਕੱਟੇ ਗਏ ਕਾਗਜ਼ ਦੇ ਸਟੈਂਸਿਲ\" ਦੀ ਕਲਾ।" }
     }
   },
 
   "Warli oh Maharashtra": {
     name: "Warli Painting",
-    region: "Thane/Nasik, Maharashtra",
+    region: "Maharashtra",
     coords: [19.9, 72.8],
-    tagline: "The geometry of community life",
-    tools: "Bamboo sticks chewed at the end to form a brush.",
-    surface: "Mud walls of huts.",
-    colours: "White paste made from ground rice and water with gum.",
-    significance: "Tribal art using basic shapes (circle, triangle, square) to represent life. Circles represent the sun/moon; triangles represent trees/mountains.",
+    community: "Warli Tribe",
+    medium: "Rice paste on red ochre (mud) walls.",
+    significance: "Depicts daily social life and harmony with nature using basic geometric shapes.",
+    tagline: "Primitive geometric stick figures depicting the social harmony of tribal life.",
     translations: {
-      hi: { tagline: "सामुदायिक जीवन की ज्यामिति", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "সামাজিক জীবনের জ্যামিতি", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "சமூக வாழ்வின் வடிவியல்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "सामाजिक जीवनाची भूमिती", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "वारली", medium: "लाल गेरुए (मिट्टी) की दीवारों पर चावल का लेप।", significance: "इसमें बुनियादी ज्यामितीय आकृतियों का उपयोग करके दैनिक सामाजिक जीवन और प्रकृति के साथ सामंजस्य को दर्शाया गया है।", tagline: "आदिवासी जीवन के सामाजिक सामंजस्य को दर्शाने वाले आदिम ज्यामितीय छड़ी आकृतियाँ।" },
+      bn: { community: "ওয়ারলি জাতি", medium: "লাল গামলা (মাটি) দেওয়ালে চালের পেস্ট।", significance: "দৈনন্দিন সামাজিক জীবন এবং প্রকৃতির সঙ্গে সামঞ্জস্যকে মৌলিক জ্যামিতিক আকার ব্যবহার করে চিত্রিত করে।", tagline: "আদিম জ্যামিতিক লাঠির মূর্তি যা উপজাতি জীবনের সামাজিক সম্প্রীতিকে চিত্রিত করে।" },
+      ta: { community: "வார்லி", medium: "சிவப்பு களிமண்ணாலான சுவர்களில் அரிசி கரைசல் பூசப்படுகிறது.", significance: "அடிப்படை வடிவியல் வடிவங்களைப் பயன்படுத்தி அன்றாட சமூக வாழ்வையும் இயற்கையுடனான நல்லிணக்கத்தையும் சித்தரிக்கிறது.", tagline: "பழங்குடியினரின் சமூக நல்லிணக்கத்தை சித்தரிக்கும் அடிப்படை வடிவியல் குச்சி உருவங்கள்." },
+      gu: { community: "વારલી", medium: "લાલ ઓચર (માટી) દિવાલો પર ચોખાનો પેસ્ટ.", significance: "મૂળભૂત ભૌમિતિક આકારોનો ઉપયોગ કરીને રોજિંદા સામાજિક જીવન અને પ્રકૃતિ સાથે સંવાદિતા દર્શાવે છે.", tagline: "આદિવાસી જીવનના સામાજિક સંવાદિતાને દર્શાવતી આદિમ ભૌમિતિક લાકડીની આકૃતિઓ." },
+      mr: { community: "वारली", medium: "लांब कापडांच्या स्क्रोलवर भाजीपाल्याचे रंग.", significance: "मूलभूत भौमितिक आकारांचा वापर करून दैनंदिन सामाजिक जीवन आणि निसर्गाशी सुसंवाद दर्शविते.", tagline: "आदिवासी जीवनातील सामाजिक सुसंवाद दर्शविणारे आदिम भौमितिक काठी आकृती." },
+      pa: { community: "ਵਾਰਲੀ ਜਾਤੀ", medium: "ਲਾਲ ਰੰਗ (ਮਿੱਟੀ) ਦੀਆਂ ਕੰਧਾਂ ਉੱਤੇ ਚਾਵਲ ਦਾ ਪੇਸਟ।", significance: "ਰੋਜ਼ਾਨਾ ਸਮਾਜਿਕ ਜੀਵਨ ਅਤੇ ਕੁਦਰਤ ਨਾਲ ਸਦਭਾਵਨਾ ਨੂੰ ਮੁੱਢਲੇ ਜਿਓਮੈਟਿਕ ਆਕਾਰਾਂ ਦੀ ਵਰਤੋਂ ਨਾਲ ਦਰਸਾਉਂਦਾ ਹੈ।", tagline: "ਕਬਾਇਲੀ ਜੀਵਨ ਦੇ ਸਮਾਜਿਕ ਸਦਭਾਵਨਾ ਨੂੰ ਦਰਸਾਉਂਦੇ ਆਦਿਮ ਜਿਓਮੈਟਿਕ ਸਟਿੱਕ ਅੰਕੜੇ।" }
     }
   },
 
   "Phad of Rajasthan": {
     name: "Phad Painting",
-    region: "Bhilwara, Rajasthan",
+    region: "Rajasthan",
     coords: [25.3, 74.6],
-    tagline: "A portable temple that travels with its story",
-    tools: "Brushes made from squirrel/camel hair.",
-    surface: "Phad (long canvas/scroll made of hand-woven cloth).",
-    colours: "Natural stone colours mixed with water and gum.",
-    significance: "Portable folk deities' temples. Used by Bhopas (priest-singers) who travel and sing stories of Pabuji or Devnarayan.",
+    community: "Joshi community",
+    medium: "Vegetable colors on long cloth scrolls.",
+    significance: "Mobile temples; used by priest-singers (Bhopas) to narrate folk hero epics.",
+    tagline: "A portable \"folk-temple\" on cloth used by wandering bards to sing epics.",
     translations: {
-      hi: { tagline: "एक पोर्टेबल मंदिर जो अपनी कहानी के साथ यात्रा करता है", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "নিজের গল্পের সাথে ভ্রমণ করা একটি বহনযোগ্য মন্দির", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "தனது கதையுடன் பயணிக்கும் நடமாடும் கோயில்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "स्वतःच्या कथेसह प्रवास करणारे फिरते मंदिर", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "जोशी समुदाय", medium: "लंबे कपड़े के स्क्रोल पर सब्जियों के रंग।", significance: "चल मंदिर; जो पुजारी-गायक (भोंस) द्वारा लोक नायक महाकाव्यों को सुनाने के लिए उपयोग किए जाते हैं।", tagline: "एक पोर्टेबल \"लोक-मंदिर\" जो कपड़े पर होता है जिसका उपयोग भटकते हुए कवियों द्वारा महाकाव्य गाने के लिए किया जाता है।" },
+      bn: { community: "যোশী সম্প্রদায়", medium: "লম্বা কাপড়ের স্ক্রোলগুলিতে উদ্ভিজ্জ রঙ।", significance: "মোবাইল মন্দির; যা পুরোহিত-গায়ক (ভোপা)রা লোকনায়ক মহাকাব্য বর্ণনা করতে ব্যবহার করেন।", tagline: "একটি বহনযোগ্য \"জনসাধারণের মন্দির\"-এর উপর কাপড় ব্যবহার করে ভ্রমণকারী বার্ডরা মহাকাব্য গাইতেন।" },
+      ta: { community: "ஜோஷி", medium: "நீண்ட துணியில் உள்ள காய்கறி வண்ணங்கள்.", significance: "கைவினை கோயில்கள்; நாட்டுப்புறக் கதாநாயகர்களைப் பற்றிய காவியங்களை (போவாக்கள்) பாடுவதற்காக பூசாரி-பாடகர்களால் பயன்படுத்தப்படுகின்றன.", tagline: "ஒரு போர்ட்டபிள் \"நாட்டுப்புற-கோயில்\" என்பது ஆடைகளால் பயன்படுத்தப்படும் ஒரு வகை, இது பயணக் கவிஞர்கள் காவியங்களை பாட பயன்படுத்துகின்றனர்." },
+      gu: { community: "જોશી સમુદાય", medium: "લાંબા કાપડના સ્ક્રોલ પર શાકભાજીના રંગો.", significance: "મોબાઇલ મંદિરો; જે પૂજારી-ગાયકો (ભોપો) દ્વારા લોક હીરો મહાકાવ્યોનું વર્ણન કરવા માટે વપરાય છે.", tagline: "એક પોર્ટેબલ \"લોક-મંદિર\" જે વણકરો દ્વારા મહાકાવ્યો ગાવા માટે વપરાતું હતું." },
+      mr: { community: "जोशी", medium: "કापड के पर्दों पर पत्थरी रंगद्रव्ये.", significance: "मोबाईल मंदिरे; पुरोहित-गायकांनी (भोपांनी) लोकनायक महाकाव्यांचे वर्णन करण्यासाठी वापरली.", tagline: "एक पोर्टेबल \"लोक-मंदिर\" जे भटक्या विद्वानांद्वारे महाकाव्ये गाण्यासाठी वापरले जाणारे कापडावरचे असते." },
+      pa: { community: "ਜੋਸ਼ੀ ਜਾਤੀ", medium: "ਲੰਬੇ ਕੱਪੜੇ ਦੇ ਸਕਰੋਲਾਂ ਉੱਤੇ ਸਬਜ਼ੀਆਂ ਦੇ ਰੰਗ।", significance: "ਮੋਬਾਈਲ ਮੰਦਰ; ਜੋ ਪੁਜਾਰੀ-ਗਾਇਕਾਂ (ਭੋਆ) ਦੁਆਰਾ ਲੋਕ ਨਾਇਕ ਮਹਾਂਕਾਵਿ ਨੂੰ ਬਿਆਨ ਕਰਨ ਲਈ ਵਰਤੇ ਜਾਂਦੇ ਹਨ।", tagline: "ਇੱਕ ਪੋਰਟੇਬਲ \"ਲੋਕ-ਮੰਦਰ\" ਕੱਪੜੇ ਉੱਤੇ ਜੋ ਭਟਕਣ ਵਾਲੇ ਭਿਖਾਰੀਆਂ ਦੁਆਰਾ ਮਹਾਂਕਾਵਿ ਗਾਉਣ ਲਈ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।" }
     }
   },
 
   "Pichhwai of Rajasthan": {
     name: "Pichhwai",
-    region: "Nathdwara, Rajasthan",
+    region: "Rajasthan (Nathdwara)",
     coords: [24.93, 73.82],
-    tagline: "A living backdrop to the divine",
-    tools: "Fine squirrel-hair brushes.",
-    surface: "Hand-spun starched cloth.",
-    colours: "Gold and silver leaf, stone pigments.",
-    significance: "\"Pichh\" means back and \"wai\" means hanging. These are large paintings hung behind the idol of Shrinathji to depict different seasons and festivals.",
+    community: "Pushtimarg artists",
+    medium: "Stone pigments on cloth hangings.",
+    significance: "Devotional backdrops for Shrinathji (Lord Krishna) depicting his \"leelas.\"",
+    tagline: "Large, soulful textile paintings dedicated to the various moods of Lord Krishna.",
     translations: {
-      hi: { tagline: "देवत्व की जीवंत पृष्ठभूमि", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "ঐশ্বরিক দৃশ্যের জীবন্ত পটভূমি", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "தெய்வீகத்திற்கு உயிரோட்டமான பின்னணி", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "दैवी उपस्थितीची जिवंत पार्श्वभूमी", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "पुष्टिमार्ग कलाकार", medium: "कपड़े के अलंकारों पर पत्थर के रंग।", significance: "श्रीनाथ जी (भगवान कृष्ण) के \"लीलाओं\" को दर्शाने वाले भक्ति पृष्ठभूमि।", tagline: "भगवान कृष्ण के विभिन्न मनोदशाओं को समर्पित बड़े, भावपूर्ण वस्त्र चित्र।" },
+      bn: { community: "পুষ্টিমার্গের শিল্পী", medium: "কাপড়ের উপর পাথরের রং।", significance: "শ্রীনাজজির (ভগবান কৃষ্ণ) \"লীলা\" চিত্রিত করার জন্য ভক্তিমূলক প্রেক্ষাপট।", tagline: "ভগবান কৃষ্ণের বিভিন্ন মেজাজের প্রতি উৎসর্গীকৃত বৃহৎ, প্রাণবন্ত কাপড়ের চিত্রকর্ম।" },
+      ta: { community: "உறுதிபாடமைந்த கலை", medium: "துணியில் உள்ள கல் நிறமிகள்.", significance: "ஸ்ரீநாதஜியின் (பகவான் கிருஷ்ணரின்) \"லீலைகளை\" சித்தரிக்கும் பக்திப் பின்னணி.", tagline: "பகவான் ஸ்ரீ கிருஷ்ணரின் பல்வேறு மனநிலைகளுக்கு அர்ப்பணிக்கப்பட்ட பெரிய, ஆன்மிகமிக்க துணிப்பாவைகள்." },
+      gu: { community: "પુષ્ટિમાર્ગના કલાકારો", medium: "કાપડ પર પથ્થરના રંગદ્રવ્યો.", significance: "શ્રીનાથજી (ભગવાન કૃષ્ણ) માટે ભક્તિ પૃષ્ઠભૂમિ, જેમાં તેમના \"લીલા\" દર્શાવવામાં આવ્યા છે.", tagline: "ભગવાન કૃષ્ણના વિવિધ moods ને સમર્પિત મોટા, આત્મીય કાપડ ચિત્રો." },
+      mr: { community: "पुष्यमई कलाकार", medium: "बोटांनी, काडतुसांनी आणि नखांच्या पेननी उपचार केलेल्या कागदावर किंवा भिंतींवर रेखाटणे.", significance: "श्रीनाथजी (भगवान कृष्ण) यांच्या \"लीला\" दाखवणारे भक्तिपर पार्श्वभूमी.", tagline: "भगवान कृष्णाच्या विविध moods ला समर्पित असलेले मोठे, भावपूर्ण कापडचित्र." },
+      pa: { community: "ਪੁਸ਼ਟੀਮਾਰਗ ਕਲਾਕਾਰ", medium: "ਕੱਪੜੇ ਦੇ ਪਰਦੇ ਉੱਤੇ ਪੱਥਰ ਦੇ ਰੰਗਦਾਰ ਰੰਗ।", significance: "ਸ਼੍ਰੀਨਾਥ ਜੀ (ਭਗਵਾਨ ਕ੍ਰਿਸ਼ਨ) ਲਈ ਭਗਤੀ ਦੇ ਪਿਛੋਕੜ, ਉਸ ਦੀਆਂ \"ਲੀਲਾਂ\" ਨੂੰ ਦਰਸਾਉਂਦੇ ਹਨ।", tagline: "ਭਗਵਾਨ ਕ੍ਰਿਸ਼ਨ ਦੇ ਵੱਖ-ਵੱਖ moods ਨੂੰ ਸਮਰਪਿਤ ਵੱਡੇ, ਦਿਲਕੰਪਨ ਵਾਲੇ ਟੈਕਸਟਾਈਲ ਪੇਂਟਿੰਗ।" }
     }
   },
 
   "Madhubani of Bihar": {
     name: "Madhubani (Mithila Art)",
-    region: "Mithila region, Bihar",
+    region: "Bihar (Mithila)",
     coords: [26.37, 86.07],
-    tagline: "The mythology of Mithila in every line",
-    tools: "Twigs, matchsticks, fingers, and nib-pens.",
-    surface: "Walls (Bhitti Chitra) and handmade paper.",
-    colours: "Natural dyes from turmeric, indigo, flowers, and soot.",
-    significance: "Traditionally done by women to mark births and marriages. Known for lack of empty space; gaps are filled with flowers and birds.",
+    community: "Mithila women",
+    medium: "Fingers, twigs, and nib-pens on treated paper/walls.",
+    significance: "Ancient ritual art (Ramayana roots); represents fertility, protection, and nature.",
+    tagline: "Vibrant, symbolic folk art characterized by its complete lack of empty space.",
     translations: {
-      hi: { tagline: "हर रेखा में मिथिला की पौराणिक कथा", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "প্রতিটি রেখায় মিথিলার পৌরাণিক কাহিনি", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "ஒவ்வொரு கோட்டிலும் மிதிலையின் புராணக்கதை", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "प्रत्येक रेषेत मिथिलेची पौराणिक कथा", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "मिथिलावासी महिलाएँ", medium: "उंगलियों, टहनियों और नब-पेन का उपयोग करके उपचारित कागज/दीवारों पर।", significance: "प्राचीन अनुष्ठान कला (रामायण की जड़ें) प्रजनन क्षमता, सुरक्षा और प्रकृति का प्रतिनिधित्व करती है।", tagline: "जीवंत, प्रतीकात्मक लोक कला जो अपनी खाली जगह की पूर्ण कमी की विशेषता है।" },
+      bn: { community: "মৈথিলী মহিলা", medium: "আঙুল, ডালপালা এবং নিব-পেন চিকিৎসা করা কাগজ/দেয়ালগুলিতে।", significance: "প্রাচীন আচার-অনুষ্ঠানমূলক শিল্প (রামায়ণের মূল) উর্বরতা, সুরক্ষা এবং প্রকৃতিকে প্রতিনিধিত্ব করে।", tagline: "উজ্জ্বল, প্রতীকী লোক শিল্প যা তার সম্পূর্ণ শূন্য স্থানের অভাব দ্বারা চিহ্নিত।" },
+      ta: { community: "மிதிலையர்கள்", medium: "விரல்கள், முட்கள், மற்றும் நுனி-காகிதங்கள்/சுவர்களில் எழுதப் பயன்படுத்தப்படும் காகிதம்/சுவர்கள்.", significance: "பண்டைய சடங்கு கலை (ராமாயண வேர்கள்) கருவுறுதல், பாதுகாப்பு மற்றும் இயற்கையைக் குறிக்கிறது.", tagline: "துடிப்பான, அடையாளச் சின்னமான நாட்டுப்புறக் கலை, அதில் வெற்று இடம் முற்றிலும் இல்லாமல் இருக்கும்." },
+      gu: { community: "મિથિલા સ્ત્રીઓ", medium: "આંગળીઓ, ડાળીઓ અને નિબ-પેન, સારવાર કરાયેલ કાગળ/દિવાલો પર.", significance: "પ્રાચીન ધાર્મિક કલા (રામાયણની મૂળિયાં); પ્રજનનક્ષમતા, રક્ષણ અને પ્રકૃતિનું પ્રતિનિધિત્વ કરે છે.", tagline: "તેજસ્વી, પ્રતીકાત્મક લોક કલા જે તેના ખાલી જગ્યાના સંપૂર્ણ અભાવ દ્વારા વર્ગીકૃત થયેલ છે." },
+      mr: { community: "मिथिला स्त्रिया", medium: "कापूस किंवा रेशमावर पाणी-विलेय रंगद्रव्ये.", significance: "प्राचीन विधी कला (रामायण मूळ) प्रजननक्षमता, संरक्षण आणि निसर्गाचे प्रतिनिधित्व करते.", tagline: "रंगीबेरंगी, प्रतीकात्मक लोककला जी तिच्यात रिक्त जागेचा पूर्ण अभाव असून वैशिष्ट्यीकृत आहे." },
+      pa: { community: "ਮਧੂਬੁੱਕੀਆਂ", medium: "ਉਂਗਲਾਂ, ਟਹਿਣੀਆਂ ਅਤੇ ਨੋਕਦਾਰ ਪੈੱਨ, ਇਲਾਜ ਕੀਤੇ ਕਾਗਜ਼/ਕੰਧਾਂ ਉੱਤੇ।", significance: "ਪ੍ਰਾਚੀਨ ਰਸਮ ਕਲਾ (ਰਾਮਾਇਣ ਦੀਆਂ ਜੜ੍ਹਾਂ); ਉਪਜਾਊ ਸ਼ਕਤੀ, ਸੁਰੱਖਿਆ ਅਤੇ ਕੁਦਰਤ ਨੂੰ ਦਰਸਾਉਂਦੀ ਹੈ।", tagline: "ਚਮਕਦਾਰ, ਪ੍ਰਤੀਕਾਤਮਕ ਲੋਕ ਕਲਾ ਜੋ ਇਸ ਦੀ ਪੂਰੀ ਤਰ੍ਹਾਂ ਖਾਲੀ ਜਗ੍ਹਾ ਦੀ ਘਾਟ ਦੁਆਰਾ ਦਰਸਾਈ ਜਾਂਦੀ ਹੈ।" }
     }
   },
 
   "Thangka Painting of Sikkim": {
     name: "Thangka Painting",
-    region: "Lahaul, Spiti, & Sikkim",
+    region: "Himalayan Regions",
     coords: [27.5, 88.5],
-    tagline: "A scroll that opens a portal to enlightenment",
-    tools: "Precision brushes.",
-    surface: "Cotton or silk appliqué.",
-    colours: "Mineral pigments (Gold, Lapis Lazuli, Malachite).",
-    significance: "Buddhist scroll paintings used for meditation. Each detail — from the deity's posture to the landscape — has precise theological meaning.",
+    community: "Buddhist Monks",
+    medium: "Water-soluble pigments on cotton or silk.",
+    significance: "Meditation tools; depicts Buddhist deities, mandalas, and spiritual philosophy.",
+    tagline: "A sacred, meditative scroll used to visualize Buddhist deities and philosophy.",
     translations: {
-      hi: { tagline: "एक स्क्रॉल जो ज्ञान प्राप्ति के द्वार खोलता है", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "জ্ঞানালোকের দরজা খুলে দেওয়া একটি স্ক্রল", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "ஞானோதயத்திற்கான வாயிலை திறக்கும் சுருள்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "बोधप्राप्तीचे दालन उघडणारी एक गुंडाळी", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "बौद्ध भिक्षु", medium: "कपास या रेशम पर जल-घुलनशील वर्णक।", significance: "ध्यान उपकरण; बौद्ध देवताओं, मंडलों और आध्यात्मिक दर्शन को दर्शाते हैं।", tagline: "एक पवित्र, ध्यानपूर्ण पट जो बौद्ध देवताओं और दर्शन को चित्रित करने के लिए उपयोग किया जाता है।" },
+      bn: { community: "বৌদ্ধ সন্ন্যাসী", medium: "তুলো বা রেশমে জল-দ্রবণীয় রঞ্জক।", significance: "ধ্যান সরঞ্জাম; বৌদ্ধ দেবদেবী, মণ্ডল এবং আধ্যাত্মিক দর্শনকে চিত্রিত করে।", tagline: "একটি পবিত্র, ধ্যানমূলক স্ক্রোল যা বৌদ্ধ দেবদেবী এবং দর্শনকে কল্পনা করতে ব্যবহৃত হয়।" },
+      ta: { community: "பௌத்த துறவிகள்", medium: "பருத்தி அல்லது பட்டு மீது நீர்-கரைகிற நிறமிகள்.", significance: "தியானக் கருவிகள்; புத்த தெய்வங்கள், மண்டலங்கள் மற்றும் ஆன்மீக தத்துவத்தை சித்தரிக்கின்றன.", tagline: "பௌத்த தெய்வங்களையும் தத்துவங்களையும் காட்சிப்படுத்தப் பயன்படும் ஒரு புனிதமான, தியானப் பட்டை." },
+      gu: { community: "બૌદ્ધ સાધુ", medium: "કપાસ અથવા રેશમ પર પાણીમાં દ્રાવ્ય રંગદ્રવ્યો.", significance: "ધ્યાન સાધનો; બૌદ્ધ દેવી-દેવતાઓ, મંડળો અને આધ્યાત્મિક ફિલસૂફીને દર્શાવે છે.", tagline: "એક પવિત્ર, ધ્યાનાત્મક સ્ક્રોલ કે જેનો ઉપયોગ બૌદ્ધ દેવતાઓ અને ફિલસૂફીની કલ્પના કરવા માટે થાય છે." },
+      mr: { community: "बौद्ध भिक्षु", medium: "जमिनीवर/दारावर तांदळाचे पीठ.", significance: "ध्यानसाधनेची साधने; बौद्ध देवता, मंडळे आणि आध्यात्मिक तत्त्वज्ञान दर्शवतात.", tagline: "एक पवित्र, ध्यानशील स्क्रोल जो बौद्ध देवता आणि तत्त्वज्ञानाचे चित्रण करण्यासाठी वापरला जातो." },
+      pa: { community: "ਬੋਧੀ", medium: "ਕਪਾਹ ਜਾਂ ਰੇਸ਼ਮ ਉੱਤੇ ਪਾਣੀ ਵਿੱਚ ਘੁਲਣਸ਼ੀਲ ਰੰਗਦਾਰ ਪਦਾਰਥ।", significance: "ਧਿਆਨ ਸੰਦ; ਬੋਧੀ ਦੇਵਤਿਆਂ, ਮੰਡਲਾਂ ਅਤੇ ਅਧਿਆਤਮਿਕ ਦਰਸ਼ਨ ਨੂੰ ਦਰਸਾਉਂਦੇ ਹਨ।", tagline: "ਇੱਕ ਪਵਿੱਤਰ, ਧਿਆਨਮਗਨ ਸਕਰੋਲ ਜੋ ਬੋਧੀ ਦੇਵਤਿਆਂ ਅਤੇ ਦਰਸ਼ਨ ਦੀ ਕਲਪਨਾ ਕਰਨ ਲਈ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ।" }
     }
   },
 
@@ -216,17 +216,17 @@ const ARTFORMS = {
     name: "Kolam Art",
     region: "Tamil Nadu",
     coords: [11.1, 78.7],
-    tagline: "A daily prayer drawn at the threshold of dawn",
-    tools: "Drawn by hand using fingers.",
-    surface: "Ground/Threshold of houses.",
-    colours: "Rice flour (dry or wet paste).",
-    significance: "A daily morning ritual to welcome Lakshmi. Uses geometric grids of dots (Pulli) connected by loops or lines.",
+    community: "Local Women",
+    medium: "Rice flour on the floor/doorsteps.",
+    significance: "Daily ritual to welcome Goddess Lakshmi and feed small insects (Ahimsa).",
+    tagline: "A daily mathematical ritual of dots and lines to invite positive energy.",
     translations: {
-      hi: { tagline: "भोर की दहलीज पर खींची जाने वाली दैनिक प्रार्थना", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "ভোরের দোরগোড়ায় আঁকা দৈনিক প্রার্থনা", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "விடியல் வாசலில் வரையப்படும் தினசரி வழிபாடு", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "पहाटेच्या उंबरठ्यावर रेखाटलेली दैनिक प्रार्थना", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "स्थानीय महिलाएँ", medium: "फर्श/दरवाजों पर चावल का आटा।", significance: "देवी लक्ष्मी का स्वागत करने और छोटे कीड़ों (अहिंसा) को खिलाने के लिए दैनिक अनुष्ठान।", tagline: "सकारात्मक ऊर्जा को आमंत्रित करने के लिए बिंदुओं और रेखाओं का एक दैनिक गणितीय अनुष्ठान।" },
+      bn: { community: "স্থানীয় মহিলা", medium: "মেঝেতে/দরজার সামনে চালের আটা।", significance: "দেবী লক্ষ্মীকে স্বাগত জানানোর জন্য এবং ছোট ছোট পোকামাকড়কে খাওয়ানোর জন্য দৈনিক আচার (অহিংসা)।", tagline: "ইতিবাচক শক্তিকে আমন্ত্রণ জানানোর জন্য বিন্দু এবং রেখার একটি দৈনিক গাণিতিক আচার।" },
+      ta: { community: "உள்ளூர் பெண்கள்", medium: "தரை/தெருமுனைகளில் அரிசி மாவு.", significance: "லட்சுமி தேவியை வரவேற்று சிறு பூச்சிகளுக்கு (அகிம்சா) உணவளிக்கும் தினசரி சடங்கு.", tagline: "நேர்மறையான ஆற்றலை அழைக்க புள்ளிகள் மற்றும் கோடுகளின் தினசரி கணித சடங்கு." },
+      gu: { community: "સ્થાનિક સ્ત્રીઓ", medium: "જમીન/બારણા પર ચોખાનો લોટ.", significance: "દેવી લક્ષ્મીનું સ્વાગત કરવા અને નાના જંતુઓને (અહિંસા) ખવડાવવા માટે દૈનિક વિધિ.", tagline: "હકારાત્મક ઊર્જાને આમંત્રણ આપવા માટે બિંદુઓ અને રેખાઓની દૈનિક ગાણિતિક વિધિ." },
+      mr: { community: "स्थानिक महिला", medium: "कोरलेल्या ताडपत्रांवर लोखंडी खंजीर वापरून कोरणे.", significance: "देवी लक्ष्मीचे स्वागत करण्यासाठी आणि लहान कीटकांना (अहिंसा) अन्नदान करण्यासाठी दैनंदिन विधी.", tagline: "सकारात्मक ऊर्जा आकर्षित करण्यासाठी ठिपके आणि रेषांचा दैनंदिन गणितीय विधी." },
+      pa: { community: "ਸਥਾਨਕ ਔਰਤਾਂ", medium: "ਫਰਸ਼/ਦਰਵਾਜ਼ੇ ਦੇ ਪਰਚਮ ਉੱਤੇ ਚਾਵਲ ਦਾ ਆਟਾ।", significance: "ਦੇਵੀ ਲਕਸ਼ਮੀ ਦਾ ਸਵਾਗਤ ਕਰਨ ਅਤੇ ਛੋਟੇ ਕੀੜਿਆਂ (ਅਹਿੰਸਾ) ਨੂੰ ਭੋਜਨ ਦੇਣ ਲਈ ਰੋਜ਼ਾਨਾ ਰਸਮ।", tagline: "ਸਕਾਰਾਤਮਕ ਊਰਜਾ ਨੂੰ ਸੱਦਾ ਦੇਣ ਲਈ ਬਿੰਦੂਆਂ ਅਤੇ ਲਾਈਨਾਂ ਦੀ ਇੱਕ ਰੋਜ਼ਾਨਾ ਗਣਿਤਿਕ ਰਸਮ।" }
     }
   },
 
@@ -234,17 +234,17 @@ const ARTFORMS = {
     name: "Talapatra Chitra",
     region: "Odisha",
     coords: [20.0, 85.8],
-    tagline: "Stories engraved on leaves of time",
-    tools: "An iron stylus (Lekhani) for engraving.",
-    surface: "Dried palm leaves stitched together.",
-    colours: "Natural soot (lampblack) and turmeric.",
-    significance: "A form of Pattachitra where the image is etched into the leaf rather than painted. Black ink is rubbed over the etching to reveal the design.",
+    community: "Mahapatra community",
+    medium: "Etching with iron stylus on dried palm leaves.",
+    significance: "Ancient manuscript tradition; tells stories of Lord Jagannath and the epics.",
+    tagline: "Fine, needle-etched engravings that record mythology and classical poetry.",
     translations: {
-      hi: { tagline: "समय की पत्तियों पर उकेरी गई कहानियाँ", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "সময়ের পাতায় খোদাই করা গল্প", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "காலத்தின் இலைகளில் பொறிக்கப்பட்ட கதைகள்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "काळाच्या पानांवर कोरलेल्या कथा", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "महापात्र समुदाय", medium: "सूखे ताड़ के पत्तों पर लोहे के स्टाइलस से नक्काशी।", significance: "प्राचीन पांडुलिपि परंपरा; भगवान जगन्नाथ और महाकाव्यों की कहानियाँ बताती है।", tagline: "अच्छा, सुई से तराशी गई नक्काशी जो पौराणिक कथाओं और शास्त्रीय कविताओं को दर्ज करती हैं।" },
+      bn: { community: "মহাপাত্র সম্প্রদায়", medium: "শুকনো তালপাতায় লোহার স্টাইলাস দিয়ে খোদাই করা।", significance: "প্রাচীন পাণ্ডুলিপি ঐতিহ্য; ভগবান জগন্নাথ এবং মহাকাব্যের গল্প বলে।", tagline: "ঠিক আছে, সূঁচ খোদাই করা খোদাই যা পৌরাণিক কাহিনী এবং ধ্রুপদী কবিতা রেকর্ড করে।" },
+      ta: { community: "மகாபத்ரா", medium: "உலர்ந்த பனை இலைகளில் இரும்பு ஸ்டைலஸைக் கொண்டு செதுக்குதல்.", significance: "பண்டைய கையெழுத்துப் பிரதி பாரம்பரியம்; ஜெகநாதர் மற்றும் இதிகாசங்களின் கதைகளைச் சொல்கிறது.", tagline: "சரி, புராணங்களையும் பாரம்பரியக் கவிதைகளையும் பதிவு செய்யும் ஊசி-அச்சிடப்பட்ட செதுக்கல்கள்." },
+      gu: { community: "મહાપાત્રા સમુદાય", medium: "સૂકા પામ પાંદડા પર લોખંડની સ્ટાઇલસ થી કોતરેલી લખાણ.", significance: "પ્રાચીન હસ્તપ્રત પરંપરા; ભગવાન જગન્નાથ અને મહાકાવ્યોની વાર્તાઓ કહે છે.", tagline: "સારું, સૂઇ-ખંડો જે પૌરાણિક કથાઓ અને શાસ્ત્રીય કવિતાઓનું નોંધણી કરે છે." },
+      mr: { community: "महापात्र", medium: "लाल मातीच्या (गेरू) पार्श्वभूमीवर पांढरा तांदळाचा लेप.", significance: "प्राचीन हस्तलिखित परंपरा; भगवान जगन्नाथ आणि महाकाव्यांच्या कथा सांगते.", tagline: "ठीक आहे, मिथके आणि शास्त्रीय काव्यांचे ध्वनिमुद्रण करणारी सुई कोरलेली कोरीवकाम." },
+      pa: { community: "ਮਹਾਪ੍ਰਦਾ", medium: "ਸੁੱਕੇ ਪਾਮ ਪੱਤਿਆਂ ਉੱਤੇ ਲੋਹੇ ਦੇ ਸਟਾਈਲ ਨਾਲ ਐਚਿੰਗ।", significance: "ਪ੍ਰਾਚੀਨ ਹੱਥ-ਲਿਖਤ ਪਰੰਪਰਾ; ਭਗਵਾਨ ਜਗਨਨਾਥ ਅਤੇ ਮਹਾਂਕਾਵਿਆਂ ਦੀਆਂ ਕਹਾਣੀਆਂ ਦੱਸਦੀ ਹੈ।", tagline: "ਚੰਗਾ, ਸੂਈਆਂ ਨਾਲ ਉੱਕਰੀਆਂ ਹੋਈਆਂ ਨੱਕਾਸ਼ੀਆਂ ਜੋ ਮਿਥਿਹਾਸ ਅਤੇ ਕਲਾਸੀਕਲ ਕਵਿਤਾਵਾਂ ਨੂੰ ਦਰਜ ਕਰਦੀਆਂ ਹਨ।" }
     }
   },
 
@@ -252,17 +252,17 @@ const ARTFORMS = {
     name: "Aipan Art",
     region: "Uttarakhand (Kumaon)",
     coords: [29.6, 79.6],
-    tagline: "Sacred geometry from the Himalayan foothills",
-    tools: "Drawn with the fingers (specifically the ring finger).",
-    surface: "Floors and walls of houses/courtyards.",
-    colours: "Geru (red clay) base with white Bisvar (rice paste).",
-    significance: "Ritualistic art done to seek divine protection. Features motifs like Vasudhara (vertical lines) and footprints of Goddess Lakshmi.",
+    community: "Kumaoni Women",
+    medium: "White rice paste on red clay (Geru) background.",
+    significance: "Ritualistic floor/wall art for ceremonies; believed to invoke divine powers.",
+    tagline: "Red-and-white geometric motifs used to sanctify floors and thresholds.",
     translations: {
-      hi: { tagline: "हिमालय की तलहटी से पवित्र ज्यामिति", significance: "", tools: "", surface: "", colours: "" },
-      bn: { tagline: "হিমালয়ের পাদদেশ থেকে পবিত্র জ্যামিতি", significance: "", tools: "", surface: "", colours: "" },
-      ta: { tagline: "இமயமலை அடிவாரத்தின் புனித வடிவியல்", significance: "", tools: "", surface: "", colours: "" },
-      gu: { tagline: "", significance: "", tools: "", surface: "", colours: "" },
-      mr: { tagline: "हिमालयाच्या पायथ्याशी पवित्र भूमिती", significance: "", tools: "", surface: "", colours: "" }
+      hi: { community: "कुमाऊँनी महिला", medium: "लाल मिट्टी (गेरू) की पृष्ठभूमि पर सफेद चावल का लेप।", significance: "समारोहों के लिए अनुष्ठानिक फर्श/दीवार कला; दिव्य शक्तियों का आह्वान करने के लिए माना जाता है।", tagline: "फर्श और चौखटों को पवित्र करने के लिए उपयोग किए जाने वाले लाल-और-सफेद ज्यामितीय रूपांकन।" },
+      bn: { community: "কুমায়ুনি মহিলা", medium: "লাল মাটির (গেরু) পটভূমিতে সাদা চালের পেস্ট।", significance: "অনুষ্ঠানের জন্য আচারিক মেঝে/দেয়াল শিল্প; ঐশ্বরিক ক্ষমতা জাগ্রত করতে ব্যবহৃত হয়।", tagline: "মেঝে এবং চৌকাঠ পবিত্র করার জন্য ব্যবহৃত লাল-সাদা জ্যামিতিক নকশা।" },
+      ta: { community: "குமாவுனி", medium: "சிவப்பு களிமண்ணின் (கெரு) பின்னணியில் வெள்ளை அரிசி கரைசல்.", significance: "விழாக்களுக்கான சடங்கு தரை/சுவர் கலை; தெய்வீக சக்திகளை அழைப்பதாக நம்பப்படுகிறது.", tagline: "தரையையும் வாசலையும் புனிதப்படுத்தப் பயன்படும் சிவப்பு மற்றும் வெள்ளை வடிவியல் உருவங்கள்." },
+      gu: { community: "કુમાઉની મહિલા", medium: "લાલ માટી (ગેરુ)ની પૃષ્ઠભૂમિ પર સફેદ ચોખાનો ગોળ.", significance: "વિધિઓ માટે ધાર્મિક ભોંયતળિયું/દીવાલ કલા; દૈવી શક્તિઓને બોલાવવા માટેની માન્યતા.", tagline: "ઉંબરો અને ભોંયતળિયાને પવિત્ર કરવા માટે વપરાતા લાલ-અને-સફેદ ભૌમિતિક નમૂનાઓ." },
+      mr: { community: "कुमाऊँनी महिला", medium: "लाल मातीच्या (गेरू) पार्श्वभूमीवर पांढऱ्या तांदळाची पेस्ट.", significance: "शुभ कार्यांसाठी जमिनीवर किंवा भिंतीवर केलेली धार्मिक कला; दैवी शक्तींचे आवाहन करते असे मानले जाते.", tagline: "जमिनी आणि उंबरठा पवित्र करण्यासाठी वापरली जाणारी लाल आणि पांढऱ्या रंगाची भूमितीय नक्षी." },
+      pa: { community: "ਕੁਮਾਉਨੀ ਮਹਿਲਾ", medium: "ਲਾਲ ਮਿੱਟੀ (ਗੇਰੂ) ਦੇ ਪਿਛੋਕੜ ਉੱਤੇ ਚਿੱਟਾ ਚਾਵਲ ਦਾ ਲੇਪ।", significance: "ਸਮਾਗਮਾਂ ਲਈ ਰਸਮੀ ਫਰਸ਼/ਕੰਧ ਕਲਾ; ਦੈਵੀ ਸ਼ਕਤੀਆਂ ਨੂੰ ਬੁਲਾਉਣ ਲਈ ਮੰਨੀ ਜਾਂਦੀ ਹੈ।", tagline: "ਫਰਸ਼ਾਂ ਅਤੇ ਦਹਿਲੀਜ਼ਾਂ ਨੂੰ ਪਵਿੱਤਰ ਕਰਨ ਲਈ ਵਰਤੇ ਜਾਣ ਵਾਲੇ ਲਾਲ-ਅਤੇ-ਚਿੱਟੇ ਜਿਓਮੈਟ੍ਰਿਕ ਪੈਟਰਨ।" }
     }
   }
 

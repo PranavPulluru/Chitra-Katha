@@ -47,6 +47,7 @@
       <button class="wn-tab" data-screen="screen-l3-select" data-i18n="navLearn">Learn</button>
       <button class="wn-tab wn-tab--coming-soon" data-screen="screen-l4"><span data-i18n="navCompare">Compare</span></button>
       <button class="wn-tab" data-screen="screen-atlas"     data-i18n="navAtlas">Atlas</button>
+      <button class="wn-tab" data-screen="screen-passport"  data-i18n="navPassport">Passport</button>
     </div>
     <div class="wn-right" style="position:relative">
       <button class="wn-pill" id="wn-lang-btn">EN ⌄</button>
@@ -57,6 +58,7 @@
         <button class="wn-lang-opt" data-lang="ta">த · Tamil</button>
         <button class="wn-lang-opt" data-lang="gu">ગુ · Gujarati</button>
         <button class="wn-lang-opt" data-lang="mr">मर · Marathi</button>
+        <button class="wn-lang-opt" data-lang="pa">ਪੰ · Punjabi</button>
       </div>
     </div>
   </nav>
@@ -195,6 +197,7 @@
         <button class="lang-btn" data-lang="ta">த</button>
         <button class="lang-btn" data-lang="gu">ગુ</button>
         <button class="lang-btn" data-lang="mr">मर</button>
+        <button class="lang-btn" data-lang="pa">ਪੰ</button>
       </div>
     </div>
 
@@ -211,18 +214,13 @@
       </div>
 
       <div class="info-card">
-        <h3 class="card-heading" data-i18n="cardTools">Primary Tools</h3>
-        <p id="l1-tools"></p>
+        <h3 class="card-heading" data-i18n="cardCommunity">Community</h3>
+        <p id="l1-community"></p>
       </div>
 
       <div class="info-card">
-        <h3 class="card-heading" data-i18n="cardSurface">Surface &amp; Canvas</h3>
-        <p id="l1-surface"></p>
-      </div>
-
-      <div class="info-card">
-        <h3 class="card-heading" data-i18n="cardColours">Colours &amp; Pigments</h3>
-        <p id="l1-colours"></p>
+        <h3 class="card-heading" data-i18n="cardMedium">Medium &amp; Surface</h3>
+        <p id="l1-medium"></p>
       </div>
 
       <div class="info-card">
@@ -240,6 +238,7 @@
           <button class="lang-btn" data-lang="ta">த</button>
           <button class="lang-btn" data-lang="gu">ગુ</button>
           <button class="lang-btn" data-lang="mr">मर</button>
+          <button class="lang-btn" data-lang="pa">ਪੰ</button>
         </div>
       </div>
 
@@ -622,6 +621,22 @@
 
 
   <!-- ================================================================
+       SCREEN — ART PASSPORT
+  ================================================================ -->
+  <div id="screen-passport" class="screen">
+    <div class="passport-header">
+      <button class="btn-back" id="passport-back">← Back</button>
+      <h2 class="passport-title">My Art Passport</h2>
+      <span class="passport-count" id="passport-count">0 / 9</span>
+    </div>
+    <div id="passport-map"></div>
+    <div class="passport-grid-section">
+      <p class="passport-grid-title">My Stamps</p>
+      <div class="passport-grid" id="passport-grid"></div>
+    </div>
+  </div>
+
+  <!-- ================================================================
        CAMERA MODAL — per-step check (Level 3 v2)
   ================================================================ -->
   <div id="l3t-cam-modal" class="l3t-cam-modal" style="display:none">
@@ -632,6 +647,9 @@
       </div>
       <div class="l3t-cam-viewport">
         <video id="l3t-cam-video" class="l3t-cam-video" playsinline muted autoplay></video>
+        <div class="l3t-cam-guide-box"></div>
+        <div class="l3t-cam-crosshair"></div>
+        <span class="l3t-cam-hint">Fill the frame with your artwork</span>
         <span class="l3t-cam-corner tl"></span>
         <span class="l3t-cam-corner tr"></span>
         <span class="l3t-cam-corner bl"></span>
@@ -647,6 +665,8 @@
 
 </div><!-- /#app -->
 
+<!-- Stamp-earned toast (lives outside #app so it overlays everything) -->
+<div id="passport-toast" class="passport-toast" aria-live="polite"></div>
 
 <!-- External libraries -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
