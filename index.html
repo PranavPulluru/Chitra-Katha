@@ -624,16 +624,141 @@
        SCREEN — ART PASSPORT
   ================================================================ -->
   <div id="screen-passport" class="screen">
-    <div class="passport-header">
+
+    <!-- Mobile header row -->
+    <div class="passport-mobile-header">
       <button class="btn-back" id="passport-back">← Back</button>
-      <h2 class="passport-title">My Art Passport</h2>
+      <h2 class="passport-title-mobile">My Art Passport</h2>
       <span class="passport-count" id="passport-count">0 / 9</span>
     </div>
-    <div id="passport-map"></div>
-    <div class="passport-grid-section">
-      <p class="passport-grid-title">My Stamps</p>
-      <div class="passport-grid" id="passport-grid"></div>
+
+    <!-- Desktop breadcrumb (hidden on mobile) -->
+    <div class="pp-breadcrumb">
+      <nav class="pp-bc">
+        <span>Home</span><span class="pp-bc-sep">·</span>
+        <span>My journey</span><span class="pp-bc-sep">·</span>
+        <span class="pp-bc-current">Art Passport</span>
+      </nav>
+      <span class="pp-last-saved">Stamps saved automatically</span>
     </div>
+
+    <!-- Hero section (desktop only) -->
+    <section class="pp-hero">
+      <div class="pp-hero-left">
+        <div class="pp-hero-eyebrow">A Folk-Art Atlas of Bhārat</div>
+        <h1 class="pp-hero-title">My Art Passport</h1>
+        <p class="pp-hero-lede">Every tradition you complete a tutorial in gets a stamp on the atlas. Collect them all — the country fills in colour by colour.</p>
+
+        <div class="pp-progress">
+          <div class="pp-progress-head">
+            <span class="pp-count-big">
+              <strong id="pp-earned-count">0</strong><span class="pp-slash">/</span><span id="pp-total-count">9</span>
+            </span>
+            <span class="pp-count-label">traditions visited</span>
+          </div>
+          <div class="pp-progress-bar" id="pp-progress-bar">
+            <div class="pp-progress-fill" id="pp-progress-fill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="pp-stats">
+          <div class="pp-stat">
+            <div class="pp-stat-num" id="pp-master">0</div>
+            <div class="pp-stat-label">Master tier</div>
+          </div>
+          <div class="pp-stat-div"></div>
+          <div class="pp-stat">
+            <div class="pp-stat-num" id="pp-journeyman">0</div>
+            <div class="pp-stat-label">Journeyman</div>
+          </div>
+          <div class="pp-stat-div"></div>
+          <div class="pp-stat">
+            <div class="pp-stat-num" id="pp-apprentice">0</div>
+            <div class="pp-stat-label">Apprentice</div>
+          </div>
+          <div class="pp-stat-div"></div>
+          <div class="pp-stat">
+            <div class="pp-stat-num" id="pp-todo">0</div>
+            <div class="pp-stat-label">To discover</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pp-hero-right">
+        <div id="pp-recent-card" class="pp-recent-card pp-recent-empty">
+          <div class="pp-recent-eyebrow">No stamps yet</div>
+          <div class="pp-recent-seal pp-recent-seal--empty">○</div>
+          <div class="pp-recent-name">Begin your journey</div>
+          <div class="pp-recent-region">Complete a tutorial in the Studio</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Atlas: India map + side panel -->
+    <section class="pp-atlas">
+      <div class="pp-atlas-map-wrap">
+        <div class="pp-atlas-frame">
+          <div class="pp-map-corner pp-mc-tl"></div>
+          <div class="pp-map-corner pp-mc-tr"></div>
+          <div class="pp-map-corner pp-mc-bl"></div>
+          <div class="pp-map-corner pp-mc-br"></div>
+
+          <div class="pp-map-caption">
+            <span class="pp-map-caption-line"></span>
+            <span class="pp-map-caption-text">A Folk-Art Atlas of Bhārat</span>
+            <span class="pp-map-caption-line"></span>
+          </div>
+
+          <div id="passport-map" class="pp-atlas-map">
+            <div id="pp-india-svg-wrap"></div>
+            <div class="pp-map-labels" id="pp-map-labels"></div>
+            <div class="pp-map-instruction">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 4v3M7 9.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              Click a state to see its traditions
+            </div>
+          </div>
+
+          <div class="pp-map-legend">
+            <span class="pp-legend-item"><i class="pp-legend-dot pp-ld-earned"></i>Earned</span>
+            <span class="pp-legend-item"><i class="pp-legend-dot pp-ld-locked"></i>Tutorial available</span>
+            <span class="pp-legend-item"><i class="pp-legend-dot pp-ld-info"></i>Explore only</span>
+          </div>
+        </div>
+      </div>
+
+      <aside class="pp-atlas-side" id="pp-atlas-side">
+        <div class="pp-side-header">
+          <div class="pp-side-eyebrow">Selected region</div>
+          <div class="pp-side-region" id="pp-side-region">Pick a state</div>
+        </div>
+        <div class="pp-side-arts" id="pp-side-arts">
+          <p class="pp-side-empty">Click any state on the map to see its art traditions.</p>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Stamp wall -->
+    <section class="pp-stamp-wall">
+      <div class="pp-wall-header">
+        <div>
+          <div class="pp-wall-eyebrow">Collection</div>
+          <h2 class="pp-wall-title">My Stamps</h2>
+        </div>
+        <div class="pp-wall-meta">
+          <strong id="pp-earned-count-wall">0</strong> earned
+          <span class="pp-wall-sep">·</span>
+          <span id="pp-todo-count-wall">0</span> to discover
+        </div>
+      </div>
+      <div class="passport-grid" id="passport-grid"></div>
+    </section>
+
+    <footer class="pp-footer">
+      <span>Chitra Katha · A folk-art companion for young artists</span>
+      <span class="pp-footer-sep">·</span>
+      <span>Made with paper, ink, and pixels</span>
+    </footer>
+
   </div>
 
   <!-- ================================================================
