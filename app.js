@@ -757,10 +757,6 @@ document.getElementById('btn-try-tutorial').addEventListener('click', () => {
   Level3v2.start(currentArtKey, currentImageSrc);
 });
 
-// Compare & Contrast — coming soon, no-op
-document.getElementById('btn-compare').addEventListener('click', (e) => {
-  e.preventDefault();
-});
 
 // Level 2 legacy handlers (screen unreachable but keep listeners to avoid errors)
 document.getElementById('l2-back').addEventListener('click', () => {
