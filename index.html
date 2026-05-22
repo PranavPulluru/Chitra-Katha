@@ -210,11 +210,6 @@
         <img id="l1-ref-img" class="l1-ref-img" src="" alt="Your uploaded artwork" />
       </div>
 
-      <div class="map-card">
-        <h3 class="card-heading" data-i18n="cardOrigin">Origin</h3>
-        <div id="l1-map"></div>
-      </div>
-
       <div class="info-card">
         <h3 class="card-heading" data-i18n="cardCommunity">Community</h3>
         <p id="l1-community"></p>
@@ -230,7 +225,14 @@
         <p id="l1-significance"></p>
       </div>
 
-      <!-- Language switcher — mobile only (desktop uses hero-langs) -->
+      <!-- Map moved to end to reduce early visual clutter on mobile -->
+      <div class="map-card">
+        <h3 class="card-heading" data-i18n="cardOrigin">Origin</h3>
+        <div id="l1-map"></div>
+      </div>
+
+      <!-- Language switcher — mobile only (desktop uses hero-langs) — hidden for now -->
+      <!--
       <div class="lang-card">
         <p class="lang-label" data-i18n="langLabel">Read in your language</p>
         <div class="lang-row" id="lang-row">
@@ -243,6 +245,7 @@
           <button class="lang-btn" data-lang="pa">ਪੰ</button>
         </div>
       </div>
+      -->
 
     </div><!-- /.l1-body -->
 
