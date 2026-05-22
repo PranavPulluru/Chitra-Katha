@@ -844,7 +844,7 @@ document.querySelectorAll('.wn-tab').forEach(tab => {
     } else if (screenId === 'screen-l3-select') {
       Level3v2.start(null, null);
     } else if (screenId === 'screen-identify') {
-      goIdentify();
+      goScanAgain();
     } else {
       showScreen(screenId);
     }

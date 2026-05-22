@@ -253,12 +253,12 @@ const TUTORIAL_DATA = {
     ]
   },
 
-  // ── Gond Painting (28 steps) ──────────────────────────────────────────────
+  // ── Gond Painting (18 steps) ──────────────────────────────────────────────
   gond: {
     name: "Gond Painting",
     subtitle: "Deer in the Forest — Madhya Pradesh",
     artformKeys: ["Gond Art of Madhya Pradesh"],
-    totalSteps: 28,
+    totalSteps: 18,
     driveUrl: "https://drive.google.com/drive/folders/1iHsnair9wHsxxeaKO4THyUBDjnyGceEk",
     steps: [
       {
@@ -314,36 +314,6 @@ const TUTORIAL_DATA = {
       },
       {
         instruction: "Next add shades of ochre and orange to the remaining body of the deer."
-      },
-      {
-        instruction: "Paint the branches in two different shades of purple."
-      },
-      {
-        instruction: "Next paint some leaves in a light green shade."
-      },
-      {
-        instruction: "Finish some of the leaves by painting them a medium green tone."
-      },
-      {
-        instruction: "Complete the leftover leaves by painting them with a deeper shade of green."
-      },
-      {
-        instruction: "Next paint the details around deer's body with red color."
-      },
-      {
-        instruction: "Start adding dot/blob texture around the borders of the deer's body in a deeper shade of orange."
-      },
-      {
-        instruction: "Next add some more dots and dashes on the deer's body in a contrasting pink color."
-      },
-      {
-        instruction: "Throw in some dots with brown color as well."
-      },
-      {
-        instruction: "Next add texture to the branch using dots of a contrasting color."
-      },
-      {
-        instruction: "Finish the painting by following the similar dot techniques on the leaves."
       }
     ]
   },
