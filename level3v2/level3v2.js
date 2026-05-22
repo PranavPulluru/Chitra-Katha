@@ -850,6 +850,8 @@ const Level3v2 = (() => {
       _renderQuiz(tutorialId);
     };
 
+    document.getElementById('l3e-quiz-home').onclick = () => goScanAgain();
+
     quizEl.style.display = 'block';
     setTimeout(() => quizEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
   }

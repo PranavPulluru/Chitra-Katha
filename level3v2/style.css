@@ -1112,6 +1112,24 @@
 }
 .l3e-quiz-retry-btn:hover { background: var(--terracotta); color: #fff; }
 
+.l3e-quiz-home-btn {
+  display: block;
+  margin-top: 10px;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  -webkit-tap-highlight-color: transparent;
+}
+.l3e-quiz-home-btn:hover { color: var(--terracotta); }
+
 
 /* ============================================================
    Responsive
