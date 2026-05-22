@@ -795,7 +795,7 @@ function _handleLangClick(e) {
   populateLevel1(currentArtKey, (pct || 0) / 100, lang);
   applyUITranslations(lang);
 }
-document.getElementById('lang-row').addEventListener('click', _handleLangClick);
+document.getElementById('lang-row')?.addEventListener('click', _handleLangClick);
 document.getElementById('l1-hero-langs').addEventListener('click', _handleLangClick);
 
 // Language pill dropdown (desktop nav)
@@ -843,6 +843,8 @@ document.querySelectorAll('.wn-tab').forEach(tab => {
       showScreen(screenId);
     } else if (screenId === 'screen-l3-select') {
       Level3v2.start(null, null);
+    } else if (screenId === 'screen-identify') {
+      goIdentify();
     } else {
       showScreen(screenId);
     }

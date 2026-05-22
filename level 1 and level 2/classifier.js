@@ -9,7 +9,7 @@
 const Classifier = (() => {
 
   /* —— Config ———————————————————————————————————————————————————— */
-  const MODEL_URL = "https://teachablemachine.withgoogle.com/models/CefyWcpll/";
+  const MODEL_URL = "https://teachablemachine.withgoogle.com/models/gParFaTNd/";
   const THRESHOLD = 0.85;
 
   /* —— State ————————————————————————————————————————————————————— */
