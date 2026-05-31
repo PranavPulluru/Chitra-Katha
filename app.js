@@ -958,3 +958,69 @@ function initAtlas() {
     grid.appendChild(card);
   });
 }
+
+/* ── Bug report ───────────────────────────────────────────────────────────── */
+(function () {
+  const btn        = document.getElementById('bug-report-btn');
+  const modal      = document.getElementById('bug-modal');
+  const textarea   = document.getElementById('bug-description');
+  const preview    = document.getElementById('bug-screenshot-preview');
+  const retakeBtn  = document.getElementById('bug-retake-btn');
+  const submitBtn  = document.getElementById('bug-submit-btn');
+  const cancelBtn  = document.getElementById('bug-cancel-btn');
+  const status     = document.getElementById('bug-status');
+
+  let _screenshot = null;
+
+  async function takeScreenshot() {
+    preview.src = '';
+    retakeBtn.style.display = 'none';
+    try {
+      const canvas = await html2canvas(document.getElementById('app'),
+                                       { useCORS: true, scale: 0.5, logging: false });
+      _screenshot = canvas.toDataURL('image/jpeg', 0.6);
+      preview.src = _screenshot;
+      preview.style.display = 'block';
+      retakeBtn.style.display = 'inline-block';
+    } catch (_) { /* screenshot unavailable */ }
+  }
+
+  btn.addEventListener('click', async () => {
+    textarea.value = '';
+    status.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send Report';
+    modal.hidden = false;
+    await takeScreenshot();
+  });
+
+  retakeBtn.addEventListener('click', takeScreenshot);
+  cancelBtn.addEventListener('click', () => { modal.hidden = true; });
+  modal.addEventListener('click', e => { if (e.target === modal) modal.hidden = true; });
+
+  submitBtn.addEventListener('click', async () => {
+    const desc = textarea.value.trim();
+    if (!desc) { textarea.focus(); return; }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    status.style.display = 'none';
+    try {
+      const resp = await fetch('/bug', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: desc, screenshot: _screenshot || '' }),
+      });
+      if (!resp.ok) throw new Error();
+      status.textContent = 'Report sent — thank you!';
+      status.className = 'bug-status bug-success';
+      status.style.display = 'block';
+      setTimeout(() => { modal.hidden = true; }, 1800);
+    } catch (_) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Report';
+      status.textContent = 'Failed to send. Please try again.';
+      status.className = 'bug-status bug-error';
+      status.style.display = 'block';
+    }
+  });
+})();

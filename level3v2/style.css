@@ -1130,6 +1130,61 @@
 }
 .l3e-quiz-home-btn:hover { color: var(--terracotta); }
 
+/* Submission prompt */
+#l3e-submit-prompt { width: 100%; margin-top: 28px; }
+.l3e-submit-card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 1rem;
+  text-align: center;
+}
+.l3e-submit-heading {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--brown);
+  margin: 0 0 6px;
+}
+.l3e-submit-sub {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+.l3e-submit-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.l3e-submit-confirm-btn {
+  padding: 11px 22px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--forest);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.l3e-submit-confirm-btn:disabled { opacity: 0.6; cursor: default; }
+.l3e-submit-retry-btn {
+  padding: 11px 22px;
+  border: 1.5px solid var(--border);
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.l3e-submit-status {
+  margin-top: 10px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+}
+.l3e-submit-success { color: var(--forest); }
+.l3e-submit-error   { color: var(--terracotta); }
+
 
 /* ============================================================
    Responsive

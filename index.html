@@ -519,6 +519,18 @@
 
       </div><!-- /#l3e-results -->
 
+      <div id="l3e-submit-prompt" style="display:none">
+        <div class="l3e-submit-card">
+          <p class="l3e-submit-heading" id="l3e-submit-heading">Happy with your score?</p>
+          <p class="l3e-submit-sub">Submit your artwork to the gallery, or head back to the tutorial to improve.</p>
+          <div class="l3e-submit-btns">
+            <button class="l3e-submit-confirm-btn" id="l3e-submit-confirm">✓ Submit Artwork</button>
+            <button class="l3e-submit-retry-btn"   id="l3e-submit-retry">↻ Try Again</button>
+          </div>
+          <p class="l3e-submit-status" id="l3e-submit-status" style="display:none"></p>
+        </div>
+      </div>
+
       <div id="l3e-quiz" style="display:none">
         <div class="l3e-quiz-divider">
           <div class="home-ornament">✦</div>
@@ -800,12 +812,35 @@
     </div>
   </div>
 
+  <!-- Bug report floating button -->
+  <button id="bug-report-btn" aria-label="Report a bug" title="Report a bug">🐛</button>
+
+  <!-- Bug report modal -->
+  <div id="bug-modal" class="bug-modal" hidden>
+    <div class="bug-modal-box">
+      <h3 class="bug-modal-title">Report a Bug</h3>
+      <textarea id="bug-description" class="bug-textarea"
+        placeholder="What went wrong? What were you doing when it happened?" rows="4"></textarea>
+      <div class="bug-screenshot-row">
+        <img id="bug-screenshot-preview" class="bug-screenshot-preview" alt="screenshot" />
+        <button id="bug-retake-btn" class="bug-retake-btn">↻ Retake</button>
+      </div>
+      <div class="bug-modal-actions">
+        <button id="bug-submit-btn"  class="bug-submit-btn">Send Report</button>
+        <button id="bug-cancel-btn"  class="bug-cancel-btn">Cancel</button>
+      </div>
+      <p id="bug-status" class="bug-status" style="display:none"></p>
+    </div>
+  </div>
+
 </div><!-- /#app -->
 
 <!-- Stamp-earned toast (lives outside #app so it overlays everything) -->
 <div id="passport-toast" class="passport-toast" aria-live="polite"></div>
 
 <!-- External libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>

@@ -44,6 +44,7 @@ const Level3v2 = (() => {
   let _currentStep  = 0;      // 0-based step index
   let _refImageSrc  = null;   // data-URL or blob-URL for evaluation reference
   let _fromSelect   = false;  // true if user navigated via art-select screen
+  let _lastZones    = [];     // zone results from last comparison, sent with submission
 
   // ── Improvement tips per art form + zone ────────────────────────────────
   const IMPROVEMENT_TIPS = {
@@ -656,11 +657,83 @@ const Level3v2 = (() => {
       });
     }
 
+    _lastZones = zones || [];
+
     document.getElementById('l3e-results').style.display = 'flex';
     document.getElementById('screen-l3-eval').scrollTop  = 500;
 
-    // Show quiz after a short delay so user can absorb the score first
-    setTimeout(() => _renderQuiz(_tutorialId), 800);
+    setTimeout(() => _showSubmitPrompt(rounded, _scoreTier(score), childDataURL), 800);
+  }
+
+  function _resizeDataURL(dataURL, maxPx) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxPx / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width  = Math.round(img.width  * scale);
+        c.height = Math.round(img.height * scale);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        resolve(c.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = dataURL;
+    });
+  }
+
+  function _showSubmitPrompt(score, tier, imageDataURL) {
+    const prompt     = document.getElementById('l3e-submit-prompt');
+    const heading    = document.getElementById('l3e-submit-heading');
+    const status     = document.getElementById('l3e-submit-status');
+    const confirmBtn = document.getElementById('l3e-submit-confirm');
+    const retryBtn   = document.getElementById('l3e-submit-retry');
+
+    heading.textContent = `You scored ${score} — ${tier}. Happy with this?`;
+    status.style.display = 'none';
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = '✓ Submit Artwork';
+    retryBtn.style.display = '';
+    prompt.style.display = 'block';
+    setTimeout(() => prompt.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 80);
+
+    _resizeDataURL(imageDataURL, 400).then(smallImg => {
+      confirmBtn.onclick = async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'Submitting…';
+        status.style.display = 'none';
+        try {
+          const resp = await fetch('/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              tutorial_id: _tutorialId,
+              score,
+              tier,
+              zones: _lastZones,
+              image: smallImg,
+            }),
+          });
+          if (!resp.ok) throw new Error('Server error');
+          confirmBtn.textContent = '✓ Submitted!';
+          status.textContent = 'Your artwork has been saved. Now test your knowledge below ↓';
+          status.className = 'l3e-submit-status l3e-submit-success';
+          status.style.display = 'block';
+          retryBtn.style.display = 'none';
+          setTimeout(() => _renderQuiz(_tutorialId), 600);
+        } catch (_) {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = '✓ Submit Artwork';
+          status.textContent = 'Submission failed — check your connection and try again.';
+          status.className = 'l3e-submit-status l3e-submit-error';
+          status.style.display = 'block';
+        }
+      };
+    });
+
+    retryBtn.onclick = () => {
+      prompt.style.display = 'none';
+      showScreen('screen-l3-tutorial');
+      document.getElementById('screen-l3-tutorial').scrollTop = 0;
+    };
   }
 
   function _showErrorResults(err) {

@@ -2896,3 +2896,100 @@ h3.card-heading {
   .passport-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; }
   .stamp-card { min-height: 170px; padding: 20px 12px 14px; }
 }
+
+/* ── Bug report floating button ──────────────────────────────────────────── */
+#bug-report-btn {
+  position: fixed;
+  bottom: 80px; right: 16px;
+  z-index: 50;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--paper);
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(58,26,2,0.15);
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+@media (min-width: 900px) {
+  #bug-report-btn { bottom: 24px; }
+}
+
+/* Bug report modal backdrop */
+.bug-modal {
+  position: fixed; inset: 0;
+  background: rgba(20,8,2,0.55);
+  z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.bug-modal[hidden] { display: none; }
+.bug-modal-box {
+  background: var(--paper);
+  border-radius: 16px;
+  padding: 1.5rem;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 8px 32px rgba(20,8,2,0.2);
+}
+.bug-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--brown);
+  margin: 0 0 0.75rem;
+}
+.bug-textarea {
+  width: 100%; box-sizing: border-box;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  resize: vertical;
+  background: var(--cream);
+  color: var(--text);
+}
+.bug-screenshot-row {
+  margin-top: 0.75rem;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.bug-screenshot-preview {
+  max-width: 100%; border-radius: 8px;
+  border: 1px solid var(--border);
+  flex: 1; display: none;
+}
+.bug-retake-btn {
+  padding: 5px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 9999px;
+  background: transparent;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: var(--muted);
+  white-space: nowrap;
+  display: none;
+}
+.bug-modal-actions {
+  margin-top: 1rem;
+  display: flex; gap: 10px; justify-content: flex-end;
+}
+.bug-submit-btn {
+  padding: 10px 20px;
+  border: none; border-radius: 9999px;
+  background: var(--terracotta); color: #fff;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.875rem;
+  cursor: pointer;
+}
+.bug-submit-btn:disabled { opacity: 0.6; cursor: default; }
+.bug-cancel-btn {
+  padding: 10px 20px;
+  border: 1.5px solid var(--border); border-radius: 9999px;
+  background: transparent; color: var(--muted);
+  font-family: var(--font-body); font-size: 0.875rem;
+  cursor: pointer;
+}
+.bug-status { font-size: 0.82rem; margin-top: 8px; text-align: center; }
+.bug-success { color: var(--forest); }
+.bug-error   { color: var(--terracotta); }
+
