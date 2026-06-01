@@ -34,6 +34,21 @@ def _gspread_client():
     creds = Credentials.from_service_account_info(json.loads(raw), scopes=_SCOPES)
     return gspread.Client(auth=creds)
 
+
+def _upload_image_to_imgbb(b64_data_url: str) -> str:
+    api_key = os.environ.get('IMGBB_API_KEY')
+    if not api_key or not b64_data_url:
+        return ''
+    if ',' in b64_data_url:
+        b64_data_url = b64_data_url.split(',', 1)[1]
+    import urllib.request, urllib.parse
+    payload = urllib.parse.urlencode({'key': api_key, 'image': b64_data_url}).encode()
+    try:
+        with urllib.request.urlopen('https://api.imgbb.com/1/upload', payload, timeout=15) as r:
+            return json.loads(r.read())['data']['url']
+    except Exception:
+        return ''
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _WEB_DIR = os.path.join(BASE_DIR, '..')
 if BASE_DIR not in sys.path:
@@ -395,11 +410,13 @@ def submit():
     sheet_id = os.environ.get('GOOGLE_SHEET_ID')
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
 
+    img_url = _upload_image_to_imgbb(data.get('image', ''))
+
     sh = gc_client.open_by_key(sheet_id)
     ws = sh.worksheet('Submissions')
     ws.append_row(
         [ts, data['tutorial_id'], data['score'], data['tier'],
-         json.dumps(data['zones'])],
+         json.dumps(data['zones']), img_url],
         value_input_option='USER_ENTERED')
     return jsonify({'ok': True})
 
@@ -419,9 +436,11 @@ def bug():
     sheet_id = os.environ.get('GOOGLE_SHEET_ID')
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
 
+    img_url = _upload_image_to_imgbb(data.get('screenshot', ''))
+
     sh = gc_client.open_by_key(sheet_id)
     ws = sh.worksheet('Bug Reports')
-    ws.append_row([ts, data['description']], value_input_option='USER_ENTERED')
+    ws.append_row([ts, data['description'], img_url], value_input_option='USER_ENTERED')
     return jsonify({'ok': True})
 
 
