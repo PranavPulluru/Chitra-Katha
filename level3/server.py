@@ -18,16 +18,11 @@ from PIL import Image
 try:
     import gspread
     from google.oauth2.service_account import Credentials
-    from googleapiclient.discovery import build
-    from googleapiclient.http import MediaInMemoryUpload
     _GOOGLE_LIBS = True
 except ImportError:
     _GOOGLE_LIBS = False
 
-_SCOPES = [
-    'https://www.googleapis.com/auth/spreadsheets',
-    'https://www.googleapis.com/auth/drive',
-]
+_SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
 
 def _gspread_client():
@@ -37,23 +32,7 @@ def _gspread_client():
     if not raw:
         return None
     creds = Credentials.from_service_account_info(json.loads(raw), scopes=_SCOPES)
-    return gspread.authorize(creds), creds
-
-
-def _upload_image_to_drive(b64_data_url: str, filename: str, creds) -> str | None:
-    folder_id = os.environ.get('GOOGLE_DRIVE_FOLDER_ID')
-    if not folder_id or not b64_data_url:
-        return None
-    if ',' in b64_data_url:
-        b64_data_url = b64_data_url.split(',', 1)[1]
-    raw_bytes = base64.b64decode(b64_data_url)
-    service = build('drive', 'v3', credentials=creds)
-    meta = {'name': filename, 'parents': [folder_id]}
-    media = MediaInMemoryUpload(raw_bytes, mimetype='image/jpeg')
-    file_ = service.files().create(body=meta, media_body=media, fields='id').execute()
-    fid = file_.get('id')
-    service.permissions().create(fileId=fid, body={'type': 'anyone', 'role': 'reader'}).execute()
-    return f'https://drive.google.com/uc?id={fid}'
+    return gspread.Client(auth=creds)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 _WEB_DIR = os.path.join(BASE_DIR, '..')
@@ -412,17 +391,15 @@ def submit():
         print('[submit] GOOGLE_CREDENTIALS_JSON not set — skipping sheet write')
         return jsonify({'ok': True, 'warn': 'credentials not configured'})
 
-    gc_client, creds = result
+    gc_client = result
     sheet_id = os.environ.get('GOOGLE_SHEET_ID')
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
-    img_url = _upload_image_to_drive(
-        data['image'], f"{ts}_{data['tutorial_id']}.jpg", creds) or ''
 
     sh = gc_client.open_by_key(sheet_id)
     ws = sh.worksheet('Submissions')
     ws.append_row(
         [ts, data['tutorial_id'], data['score'], data['tier'],
-         json.dumps(data['zones']), img_url],
+         json.dumps(data['zones'])],
         value_input_option='USER_ENTERED')
     return jsonify({'ok': True})
 
@@ -438,16 +415,13 @@ def bug():
         print('[bug] GOOGLE_CREDENTIALS_JSON not set — skipping sheet write')
         return jsonify({'ok': True, 'warn': 'credentials not configured'})
 
-    gc_client, creds = result
+    gc_client = result
     sheet_id = os.environ.get('GOOGLE_SHEET_ID')
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
-    img_url = _upload_image_to_drive(
-        data.get('screenshot', ''), f"bug_{ts}.jpg", creds) or ''
 
     sh = gc_client.open_by_key(sheet_id)
     ws = sh.worksheet('Bug Reports')
-    ws.append_row([ts, data['description'], img_url],
-                  value_input_option='USER_ENTERED')
+    ws.append_row([ts, data['description']], value_input_option='USER_ENTERED')
     return jsonify({'ok': True})
 
 
