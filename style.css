@@ -835,16 +835,6 @@ html, body {
   margin-bottom: 0.6rem;
 }
 
-.l1-tagline {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 0.9rem;
-  opacity: 0.92;
-  max-width: 300px;
-  line-height: 1.55;
-  margin: 0;
-}
-
 /* Uploaded artwork card — top of content, in document flow */
 .l1-ref-card {
   height: 210px;
@@ -1139,11 +1129,6 @@ h3.card-heading {
   .l1-name {
     font-size: 84px;
     line-height: 0.95;
-  }
-
-  .l1-tagline {
-    font-size: 1.1rem;
-    max-width: 540px;
   }
 
   .l1-hero-langs {

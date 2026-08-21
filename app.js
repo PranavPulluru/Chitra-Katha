@@ -598,7 +598,6 @@ function populateLevel1(key, probability, lang = 'en') {
 
   document.getElementById('l1-region').textContent       = '✦ ' + art.region.toUpperCase();
   document.getElementById('l1-name').textContent         = art.name;
-  document.getElementById('l1-tagline').textContent      = data.tagline;
   document.getElementById('l1-about').textContent        = data.tagline;
   document.getElementById('l1-community').textContent    = data.community;
   document.getElementById('l1-region-body').textContent  = art.region;
